@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | AI CA Platform – Profile & ID Management</title>
+  <meta name="description" content="Administrator portal for managing user profiles, access IDs, and platform security.">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ===== ADMIN-SPECIFIC OVERRIDES ===== */
+    .admin-layout {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .admin-header {
+      background: rgba(10, 7, 18, 0.90);
+      border-bottom: 1px solid rgba(168, 85, 247, 0.22);
+      backdrop-filter: blur(18px);
+      padding: 0 2rem;
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .admin-brand .brand-logo-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: rgba(14, 10, 26, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 2px;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4), 0 0 10px rgba(168, 85, 247, 0.3);
+      flex-shrink: 0;
+    }
+
+    .admin-brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-brand-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .admin-brand-badge {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #c084fc;
+      font-family: var(--font-mono);
+    }
+
+    .admin-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .db-status-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+
+    .db-status-pill.connected {
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.35);
+      color: #10b981;
+    }
+
+    .db-status-pill.fallback {
+      background: rgba(245,158,11,0.12);
+      border: 1px solid rgba(245,158,11,0.35);
+      color: #f59e0b;
+    }
+
+    .db-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 2s infinite;
+    }
+
+    /* Main Content */
+    .admin-body {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+
+    .admin-page-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .admin-page-header h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 30%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .admin-page-header p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    /* Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: rgba(17, 11, 29, 0.72);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(192, 132, 252, 0.4);
+      box-shadow: 0 8px 24px -6px rgba(168, 85, 247, 0.2);
+    }
+
+    .stat-icon {
+      font-size: 1.6rem;
+    }
+
+    .stat-info strong {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-info small {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Controls Row */
+    .controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .search-bar {
+      position: relative;
+      flex: 1;
+      min-width: 220px;
+      max-width: 380px;
+    }
+
+    .search-bar svg {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 0.55rem 0.85rem 0.55rem 2.5rem;
+      background: rgba(10, 7, 18, 0.65);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9px;
+      color: var(--text-primary);
+      font-size: 0.84rem;
+      transition: all 0.2s;
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      border-color: var(--cyan-primary);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+    }
+
+    /* Table */
+    .profiles-table-wrap {
+      background: rgba(14, 9, 24, 0.65);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+
+    .profiles-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.83rem;
+    }
+
+    .profiles-table thead th {
+      background: rgba(10, 7, 18, 0.75);
+      padding: 0.8rem 1rem;
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+
+    .profiles-table tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s;
+    }
+
+    .profiles-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .profiles-table tbody tr:hover {
+      background: rgba(168, 85, 247, 0.06);
+    }
+
+    .profiles-table td {
+      padding: 0.85rem 1rem;
+      vertical-align: middle;
+    }
+
+    .user-name-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .user-mini-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(168, 85, 247, 0.14);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--cyan-primary);
+      font-family: var(--font-mono);
+    }
+
+    .user-name-text strong {
+      display: block;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.84rem;
+    }
+
+    .user-name-text small {
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .role-badge.ca {
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    .role-badge.client {
+      background: rgba(16,185,129,0.12);
+      color: #10b981;
+      border: 1px solid rgba(16,185,129,0.25);
+    }
+
+    .role-badge.auditor {
+      background: rgba(245,158,11,0.12);
+      color: #f59e0b;
+      border: 1px solid rgba(245,158,11,0.25);
+    }
+
+    .role-badge.admin {
+      background: rgba(124, 58, 237, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(124, 58, 237, 0.3);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .status-pill.active {
+      background: rgba(16,185,129,0.12);
+      color: #10b981;
+    }
+
+    .status-pill.inactive {
+      background: rgba(100,116,139,0.15);
+      color: #94a3b8;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .btn-icon-sm {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      color: var(--text-muted);
+    }
+
+    .btn-icon-sm:hover.view { border-color: rgba(168, 85, 247, 0.45); color: #c084fc; background: rgba(168, 85, 247, 0.1); }
+    .btn-icon-sm:hover.edit { border-color: rgba(245,158,11,0.4); color: #f59e0b; background: rgba(245,158,11,0.08); }
+    .btn-icon-sm:hover.delete { border-color: rgba(244,63,94,0.4); color: #f43f5e; background: rgba(244,63,94,0.08); }
+
+    .empty-state {
+      text-align: center;
+      padding: 3.5rem 1rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state svg { margin-bottom: 0.75rem; opacity: 0.4; }
+    .empty-state p { font-size: 0.86rem; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 3, 10, 0.88);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: rgba(15, 10, 26, 0.98);
+      border: 1px solid rgba(168, 85, 247, 0.28);
+      border-radius: 16px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 560px;
+      box-shadow: 0 30px 80px -15px rgba(0,0,0,0.92);
+      animation: modalPop 0.28s cubic-bezier(0.16,1,0.3,1) forwards;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .modal-header p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    .modal-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(244,63,94,0.12);
+      border-color: rgba(244,63,94,0.35);
+      color: #f43f5e;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.95rem;
+    }
+
+    .modal-form .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .modal-form .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .modal-form label {
+      font-size: 0.77rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .modal-form input,
+    .modal-form select {
+      padding: 0.6rem 0.85rem;
+      background: rgba(7,9,14,0.65);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.84rem;
+      font-family: var(--font-main);
+      transition: all 0.2s;
+    }
+
+    .modal-form select option { background: #0e1320; }
+
+    .modal-form input:focus,
+    .modal-form select:focus {
+      outline: none;
+      border-color: var(--cyan-primary);
+      box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 0.65rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    /* View modal profile card */
+    .profile-view-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .profile-view-item {
+      background: rgba(7,9,14,0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+    }
+
+    .profile-view-item label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    .profile-view-item span {
+      font-size: 0.83rem;
+      color: #ffffff;
+      font-weight: 500;
+      word-break: break-all;
+    }
+
+    .profile-view-item.full-width {
+      grid-column: 1 / -1;
+    }
+
+    /* Delete confirm modal */
+    .delete-confirm-body {
+      text-align: center;
+      padding: 0.5rem 0 1rem;
+    }
+
+    .delete-icon-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(244,63,94,0.12);
+      border: 1px solid rgba(244,63,94,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      color: #f43f5e;
+    }
+
+    .delete-confirm-body h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.4rem;
+    }
+
+    .delete-confirm-body p {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      max-width: 320px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* Notification Toast overrides for admin */
+    .toast-container { bottom: 1.5rem; right: 1.5rem; }
+
+    /* Loading state */
+    .table-loading {
+      text-align: center;
+      padding: 2.5rem;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+    }
+
+    /* Error state */
+    .api-error-banner {
+      background: rgba(244,63,94,0.1);
+      border: 1px solid rgba(244,63,94,0.3);
+      border-radius: 10px;
+      padding: 0.9rem 1.2rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 0.82rem;
+      color: #fca5a5;
+    }
+
+    @media (max-width: 768px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .modal-form .form-row-2 { grid-template-columns: 1fr; }
+      .profile-view-grid { grid-template-columns: 1fr; }
+      .profile-view-item.full-width { grid-column: unset; }
+      .admin-body { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient Background -->
+  <div class="ambient-background">
+    <div class="glow-orb orb-primary"></div>
+    <div class="glow-orb orb-secondary"></div>
+    <div class="blueprint-grid"></div>
+  </div>
+
+  <div class="admin-layout">
+    <!-- Admin Header -->
+    <header class="admin-header">
+      <div class="admin-brand">
+        <div class="brand-logo-icon">
+          <img src="logo.png" alt="AI Chartered Accountant Logo" class="brand-logo-img">
+        </div>
+        <div class="admin-brand-text">
+          <div class="admin-brand-title">AI Chartered Accountant</div>
+          <div class="admin-brand-badge">ADMIN PANEL v2.0</div>
+        </div>
+      </div>
+
+      <div class="admin-header-actions">
+        <div class="db-status-pill fallback" id="dbStatusPill">
+          <span class="db-status-dot"></span>
+          <span id="dbStatusText">Connecting...</span>
+        </div>
+        <button class="btn-secondary" style="height:36px; font-size:0.8rem;" onclick="window.location.href='index.html'" id="backToDashBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 5l-7 7 7 7"/>
+          </svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="btn-secondary" style="height:36px; font-size:0.8rem;" onclick="doLogout()" id="adminLogoutBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          <span>Log Out</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Admin Body -->
+    <main class="admin-body">
+      <div class="admin-page-header">
+        <div>
+          <div class="section-tag" style="margin-bottom:0.5rem;">ADMINISTRATOR PORTAL • PROFILE & ID REGISTRY</div>
+          <h1>Profile & Access Management</h1>
+          <p>View, add, edit, and remove user profiles and institutional access IDs from the platform.</p>
+        </div>
+        <button class="btn-primary" id="addProfileBtn" onclick="openAddModal()" style="height:42px; font-size:0.88rem;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span>Add New Profile / ID</span>
+        </button>
+      </div>
+
+      <!-- API Error Banner -->
+      <div class="api-error-banner" id="apiBanner" style="display:none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <span id="apiBannerText">Could not connect to backend. Showing embedded data.</span>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <strong id="statTotal">—</strong>
+            <small>Total Profiles</small>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-info">
+            <strong id="statActive">—</strong>
+            <small>Active Accounts</small>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏢</div>
+          <div class="stat-info">
+            <strong id="statCa">—</strong>
+            <small>CA Practitioners</small>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📋</div>
+          <div class="stat-info">
+            <strong id="statOther">—</strong>
+            <small>Clients & Auditors</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-row">
+        <div class="search-bar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Search by name, email, ID..." oninput="filterProfiles()">
+        </div>
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <select id="roleFilter" onchange="filterProfiles()" style="background:rgba(7,9,14,0.65); border:1px solid rgba(255,255,255,0.08); color:var(--text-secondary); padding:0.5rem 0.85rem; border-radius:8px; font-size:0.82rem; font-family:var(--font-main); cursor:pointer;">
+            <option value="">All Roles</option>
+            <option value="ca">Chartered Accountant</option>
+            <option value="client">Enterprise Client</option>
+            <option value="auditor">Auditor</option>
+          </select>
+          <button class="btn-secondary" style="height:36px; font-size:0.8rem;" onclick="loadProfiles()" title="Refresh">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.49-4.21"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Profiles Table -->
+      <div class="profiles-table-wrap">
+        <table class="profiles-table" id="profilesTable">
+          <thead>
+            <tr>
+              <th>Profile</th>
+              <th>Role</th>
+              <th>Email</th>
+              <th>Firm / Organization</th>
+              <th>Membership ID</th>
+              <th>Status</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="profilesTbody">
+            <tr>
+              <td colspan="8" class="table-loading">
+                <span>⏳ Loading profiles from database...</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== MODALS ===== -->
+
+  <!-- ADD / EDIT PROFILE MODAL -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 id="modalTitle">Add New Profile / ID</h3>
+          <p id="modalSubtitle">Register a new user account and access credentials.</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('profileModal')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div id="modalError" class="auth-error-message" style="margin-bottom:1rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span id="modalErrorText">An error occurred.</span>
+      </div>
+
+      <form class="modal-form" id="profileForm" onsubmit="submitProfileForm(event)">
+        <input type="hidden" id="editingId">
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="fName" placeholder="e.g. CA. Aditya Tripathi, FCA" required>
+          </div>
+          <div class="form-group">
+            <label>Username / ID *</label>
+            <input type="text" id="fUsername" placeholder="e.g. aditya tripathi" required>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Password *</label>
+            <input type="password" id="fPassword" placeholder="Min 4 characters">
+          </div>
+          <div class="form-group">
+            <label>Role *</label>
+            <select id="fRole">
+              <option value="Senior Partner CA">Senior Partner CA</option>
+              <option value="Enterprise CFO">Enterprise CFO / Client</option>
+              <option value="Statutory Lead Auditor">Statutory Lead Auditor</option>
+              <option value="Admin">Platform Admin</option>
+              <option value="Chartered Accountant">Chartered Accountant</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address *</label>
+          <input type="email" id="fEmail" placeholder="e.g. name@firm.com" required>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Firm / Organization</label>
+            <input type="text" id="fFirm" placeholder="e.g. Tripathi & Associates CA">
+          </div>
+          <div class="form-group">
+            <label>Membership / Access ID</label>
+            <input type="text" id="fMembershipId" placeholder="e.g. CA-ADITYA-7701">
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>FRN (Firm Reg. Number)</label>
+            <input type="text" id="fFrn" placeholder="e.g. FRN-012938N" style="font-family:var(--font-mono);">
+          </div>
+          <div class="form-group">
+            <label>DSC / Signature Status</label>
+            <input type="text" id="fDsc" placeholder="e.g. Class 3 DSC Active">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Account Status</label>
+          <select id="fStatus">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+            <option value="Suspended">Suspended</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('profileModal')">Cancel</button>
+          <button type="submit" class="btn-primary" id="profileSubmitBtn">
+            <span id="profileSubmitText">Create Profile</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- VIEW PROFILE MODAL -->
+  <div class="modal-overlay" id="viewModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 id="viewModalName">Profile Details</h3>
+          <p id="viewModalRole">Role</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('viewModal')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="profile-view-grid" id="viewModalBody"></div>
+      <div class="modal-footer" style="margin-top:1.25rem;">
+        <button class="btn-secondary" onclick="closeModal('viewModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-card" style="max-width:420px;">
+      <div class="delete-confirm-body">
+        <div class="delete-icon-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+        </div>
+        <h4>Remove Profile & Access ID</h4>
+        <p>Are you sure you want to permanently delete <strong id="deleteTargetName" style="color:#fff;">"Profile"</strong> from the platform? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer" style="justify-content:center; gap:0.75rem; margin-top:0.5rem;">
+        <button class="btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+        <button class="btn-primary" id="confirmDeleteBtn" style="background:linear-gradient(135deg,#f43f5e,#e11d48); box-shadow: 0 4px 14px rgba(244,63,94,0.4);" onclick="confirmDelete()">
+          Permanently Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    const API_BASE = "http://localhost:8000";
+    let allProfiles = [];
+    let deletingId = null;
+    let isEditing = false;
+    let usingFallback = false;
+
+    // ---- INIT ----
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Check auth guard
+      const user = localStorage.getItem("ai_ca_user") || sessionStorage.getItem("ai_ca_user");
+      if (!user) { window.location.replace("signin.html"); return; }
+
+      await checkDbStatus();
+      await loadProfiles();
+    });
+
+    // ---- DATABASE STATUS ----
+    async function checkDbStatus() {
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/status`, { signal: AbortSignal.timeout(3000) });
+        const data = await res.json();
+        const pill = document.getElementById("dbStatusPill");
+        const text = document.getElementById("dbStatusText");
+        if (data.connected_to_live_mongodb) {
+          pill.className = "db-status-pill connected";
+          text.textContent = "MongoDB Live";
+        } else {
+          pill.className = "db-status-pill fallback";
+          text.textContent = "Embedded DB (JSON)";
+          usingFallback = true;
+        }
+      } catch {
+        const pill = document.getElementById("dbStatusPill");
+        const text = document.getElementById("dbStatusText");
+        pill.className = "db-status-pill fallback";
+        text.textContent = "Backend Offline";
+        showApiError("Backend server not running. Start it with: python -m uvicorn backend.main:app --reload");
+        usingFallback = true;
+      }
+    }
+
+    function showApiError(msg) {
+      const banner = document.getElementById("apiBanner");
+      banner.style.display = "flex";
+      document.getElementById("apiBannerText").textContent = msg;
+    }
+
+    // ---- LOAD PROFILES ----
+    async function loadProfiles() {
+      const tbody = document.getElementById("profilesTbody");
+      tbody.innerHTML = `<tr><td colspan="8" class="table-loading">⏳ Loading profiles...</td></tr>`;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/profiles`, { signal: AbortSignal.timeout(4000) });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        allProfiles = await res.json();
+        document.getElementById("apiBanner").style.display = "none";
+      } catch (err) {
+        // Load from localStorage as fallback
+        const stored = localStorage.getItem("ai_ca_user") || sessionStorage.getItem("ai_ca_user");
+        if (stored) {
+          const user = JSON.parse(stored);
+          allProfiles = [{
+            id: user.membershipId || "USR-7701",
+            username: user.username || "aditya tripathi",
+            name: user.name || "CA. Aditya Tripathi, FCA",
+            role: user.role || "Senior Partner CA",
+            email: user.email || "",
+            firm: user.firm || "",
+            frn: user.frn || "",
+            cop: user.cop || "",
+            membershipId: user.membershipId || "",
+            dscStatus: user.dscStatus || "Active",
+            status: "Active",
+            created_at: user.loginDate || ""
+          }];
+        } else {
+          allProfiles = [];
+        }
+        showApiError("Backend API not reachable — showing limited local session data. Start server with: python -m uvicorn backend.main:app --reload");
+      }
+
+      updateStats();
+      renderTable(allProfiles);
+    }
+
+    // ---- RENDER TABLE ----
+    function renderTable(profiles) {
+      const tbody = document.getElementById("profilesTbody");
+
+      if (!profiles || profiles.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8">
+              <div class="empty-state">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+                <p>No profiles found. Add your first profile using the button above.</p>
+              </div>
+            </td>
+          </tr>`;
+        return;
+      }
+
+      tbody.innerHTML = profiles.map(p => {
+        const initials = (p.name || p.username || "?")
+          .split(" ")
+          .filter(Boolean)
+          .slice(0, 2)
+          .map(w => w[0])
+          .join("")
+          .toUpperCase();
+
+        const roleLower = (p.role || "").toLowerCase();
+        let roleClass = "ca";
+        if (roleLower.includes("client") || roleLower.includes("cfo")) roleClass = "client";
+        else if (roleLower.includes("audit")) roleClass = "auditor";
+        else if (roleLower.includes("admin")) roleClass = "admin";
+
+        const statusClass = (p.status || "Active").toLowerCase() === "active" ? "active" : "inactive";
+        const dateStr = p.created_at ? new Date(p.created_at).toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" }) : "—";
+
+        return `
+          <tr>
+            <td>
+              <div class="user-name-cell">
+                <div class="user-mini-avatar">${initials.slice(0,2)}</div>
+                <div class="user-name-text">
+                  <strong>${escHtml(p.name || p.username)}</strong>
+                  <small>${escHtml(p.username || "")}</small>
+                </div>
+              </div>
+            </td>
+            <td><span class="role-badge ${roleClass}">${escHtml(p.role || "—")}</span></td>
+            <td style="font-size:0.79rem; color:var(--text-secondary);">${escHtml(p.email || "—")}</td>
+            <td style="font-size:0.79rem; color:var(--text-secondary); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escHtml(p.firm || "")}">${escHtml(p.firm || "—")}</td>
+            <td style="font-family:var(--font-mono); font-size:0.75rem; color:var(--cyan-primary);">${escHtml(p.membershipId || p.id || "—")}</td>
+            <td>
+              <span class="status-pill ${statusClass}">
+                <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block;"></span>
+                ${escHtml(p.status || "Active")}
+              </span>
+            </td>
+            <td style="font-size:0.76rem; color:var(--text-muted);">${dateStr}</td>
+            <td>
+              <div class="action-btns">
+                <button class="btn-icon-sm view" onclick="viewProfile(${JSON.stringify(JSON.stringify(p))})" title="View Profile">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <button class="btn-icon-sm edit" onclick="openEditModal(${JSON.stringify(JSON.stringify(p))})" title="Edit Profile">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="btn-icon-sm delete" onclick="openDeleteModal(${JSON.stringify(JSON.stringify(p))})" title="Delete Profile">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>`;
+      }).join("");
+    }
+
+    // ---- STATS ----
+    function updateStats() {
+      document.getElementById("statTotal").textContent = allProfiles.length;
+      document.getElementById("statActive").textContent = allProfiles.filter(p => (p.status || "Active").toLowerCase() === "active").length;
+      document.getElementById("statCa").textContent = allProfiles.filter(p => (p.role || "").toLowerCase().includes("ca") || (p.role || "").toLowerCase().includes("chartered")).length;
+      document.getElementById("statOther").textContent = allProfiles.filter(p => !((p.role || "").toLowerCase().includes("ca") || (p.role || "").toLowerCase().includes("chartered"))).length;
+    }
+
+    // ---- SEARCH / FILTER ----
+    function filterProfiles() {
+      const query = document.getElementById("searchInput").value.trim().toLowerCase();
+      const roleFilter = document.getElementById("roleFilter").value.toLowerCase();
+
+      let filtered = allProfiles.filter(p => {
+        const matchText = !query || 
+          (p.name || "").toLowerCase().includes(query) ||
+          (p.username || "").toLowerCase().includes(query) ||
+          (p.email || "").toLowerCase().includes(query) ||
+          (p.membershipId || "").toLowerCase().includes(query) ||
+          (p.firm || "").toLowerCase().includes(query) ||
+          (p.id || "").toLowerCase().includes(query);
+
+        const roleLower = (p.role || "").toLowerCase();
+        const matchRole = !roleFilter || 
+          (roleFilter === "ca" && (roleLower.includes("ca") || roleLower.includes("chartered"))) ||
+          (roleFilter === "client" && (roleLower.includes("client") || roleLower.includes("cfo"))) ||
+          (roleFilter === "auditor" && roleLower.includes("audit"));
+
+        return matchText && matchRole;
+      });
+
+      renderTable(filtered);
+    }
+
+    // ---- ADD MODAL ----
+    function openAddModal() {
+      isEditing = false;
+      document.getElementById("modalTitle").textContent = "Add New Profile / ID";
+      document.getElementById("modalSubtitle").textContent = "Register a new user account and access credentials.";
+      document.getElementById("profileSubmitText").textContent = "Create Profile";
+      document.getElementById("editingId").value = "";
+      document.getElementById("profileForm").reset();
+      document.getElementById("fPassword").required = true;
+      document.getElementById("fPassword").placeholder = "Min 4 characters (required)";
+      hideModalError();
+      openModal("profileModal");
+    }
+
+    // ---- EDIT MODAL ----
+    function openEditModal(jsonStr) {
+      const p = JSON.parse(jsonStr);
+      isEditing = true;
+      document.getElementById("modalTitle").textContent = "Edit Profile";
+      document.getElementById("modalSubtitle").textContent = `Editing: ${p.name || p.username}`;
+      document.getElementById("profileSubmitText").textContent = "Save Changes";
+      document.getElementById("editingId").value = p.id || p.username;
+
+      document.getElementById("fName").value = p.name || "";
+      document.getElementById("fUsername").value = p.username || "";
+      document.getElementById("fPassword").value = "";
+      document.getElementById("fPassword").required = false;
+      document.getElementById("fPassword").placeholder = "Leave blank to keep unchanged";
+      document.getElementById("fRole").value = p.role || "Senior Partner CA";
+      document.getElementById("fEmail").value = p.email || "";
+      document.getElementById("fFirm").value = p.firm || "";
+      document.getElementById("fMembershipId").value = p.membershipId || "";
+      document.getElementById("fFrn").value = p.frn || "";
+      document.getElementById("fDsc").value = p.dscStatus || "";
+      document.getElementById("fStatus").value = p.status || "Active";
+
+      hideModalError();
+      openModal("profileModal");
+    }
+
+    // ---- SUBMIT FORM (ADD / EDIT) ----
+    async function submitProfileForm(e) {
+      e.preventDefault();
+      const btn = document.getElementById("profileSubmitBtn");
+      btn.disabled = true;
+      btn.innerHTML = `<span>Processing...</span>`;
+
+      const payload = {
+        name: document.getElementById("fName").value.trim(),
+        username: document.getElementById("fUsername").value.trim(),
+        password: document.getElementById("fPassword").value,
+        role: document.getElementById("fRole").value,
+        email: document.getElementById("fEmail").value.trim(),
+        firm: document.getElementById("fFirm").value.trim(),
+        membershipId: document.getElementById("fMembershipId").value.trim(),
+        frn: document.getElementById("fFrn").value.trim(),
+        dscStatus: document.getElementById("fDsc").value.trim(),
+        status: document.getElementById("fStatus").value
+      };
+
+      if (!payload.password && !isEditing) {
+        showModalError("Password is required for new profiles.");
+        btn.disabled = false;
+        btn.innerHTML = `<span>Create Profile</span>`;
+        return;
+      }
+
+      try {
+        let res, data;
+
+        if (!isEditing) {
+          res = await fetch(`${API_BASE}/api/profiles`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            signal: AbortSignal.timeout(5000)
+          });
+        } else {
+          const updatePayload = { ...payload };
+          if (!updatePayload.password) delete updatePayload.password;
+          const id = document.getElementById("editingId").value;
+          res = await fetch(`${API_BASE}/api/profiles/${encodeURIComponent(id)}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatePayload),
+            signal: AbortSignal.timeout(5000)
+          });
+        }
+
+        data = await res.json();
+
+        if (!res.ok) {
+          showModalError(data.detail || "An unexpected error occurred.");
+          btn.disabled = false;
+          btn.innerHTML = `<span>${isEditing ? "Save Changes" : "Create Profile"}</span>`;
+          return;
+        }
+
+        closeModal("profileModal");
+        showToast(isEditing ? `✅ Profile updated successfully!` : `✅ New profile created for ${payload.name}!`);
+        await loadProfiles();
+
+      } catch (err) {
+        showModalError(`API not reachable: ${err.message}. Please start the backend server.`);
+        btn.disabled = false;
+        btn.innerHTML = `<span>${isEditing ? "Save Changes" : "Create Profile"}</span>`;
+      }
+    }
+
+    // ---- VIEW MODAL ----
+    function viewProfile(jsonStr) {
+      const p = JSON.parse(jsonStr);
+      document.getElementById("viewModalName").textContent = p.name || p.username;
+      document.getElementById("viewModalRole").textContent = p.role || "Unknown Role";
+
+      const fields = [
+        { label: "Full Name", value: p.name },
+        { label: "Username / Login ID", value: p.username },
+        { label: "Role", value: p.role },
+        { label: "Email", value: p.email },
+        { label: "Firm / Organization", value: p.firm, full: true },
+        { label: "Membership ID", value: p.membershipId },
+        { label: "FRN", value: p.frn },
+        { label: "Certificate of Practice", value: p.cop },
+        { label: "DSC Status", value: p.dscStatus, full: true },
+        { label: "Account Status", value: p.status },
+        { label: "Internal ID", value: p.id },
+        { label: "Created", value: p.created_at ? new Date(p.created_at).toLocaleString() : "—" }
+      ];
+
+      document.getElementById("viewModalBody").innerHTML = fields.map(f =>
+        `<div class="profile-view-item${f.full ? " full-width" : ""}">
+          <label>${f.label}</label>
+          <span>${escHtml(f.value || "—")}</span>
+        </div>`
+      ).join("");
+
+      openModal("viewModal");
+    }
+
+    // ---- DELETE ----
+    function openDeleteModal(jsonStr) {
+      const p = JSON.parse(jsonStr);
+      deletingId = p.id || p.username;
+      document.getElementById("deleteTargetName").textContent = p.name || p.username;
+      openModal("deleteModal");
+    }
+
+    async function confirmDelete() {
+      if (!deletingId) return;
+      const btn = document.getElementById("confirmDeleteBtn");
+      btn.disabled = true;
+      btn.textContent = "Deleting...";
+
+      try {
+        const res = await fetch(`${API_BASE}/api/profiles/${encodeURIComponent(deletingId)}`, {
+          method: "DELETE",
+          signal: AbortSignal.timeout(5000)
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(`❌ Error: ${data.detail || "Failed to delete."}`, true);
+        } else {
+          showToast(`🗑️ ${data.message}`);
+          closeModal("deleteModal");
+          await loadProfiles();
+        }
+      } catch (err) {
+        showToast(`❌ API not reachable: ${err.message}`, true);
+      }
+
+      btn.disabled = false;
+      btn.textContent = "Permanently Delete";
+      deletingId = null;
+    }
+
+    // ---- LOGOUT ----
+    function doLogout() {
+      localStorage.removeItem("ai_ca_user");
+      sessionStorage.removeItem("ai_ca_user");
+      showToast("Logging out...");
+      setTimeout(() => window.location.replace("signin.html"), 700);
+    }
+
+    // ---- MODAL HELPERS ----
+    function openModal(id) { document.getElementById(id).classList.add("open"); }
+    function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+
+    function showModalError(msg) {
+      const el = document.getElementById("modalError");
+      document.getElementById("modalErrorText").textContent = msg;
+      el.classList.add("show");
+    }
+
+    function hideModalError() {
+      document.getElementById("modalError").classList.remove("show");
+    }
+
+    // ---- TOAST ----
+    function showToast(msg, isError = false) {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.style.borderColor = isError ? "rgba(244,63,94,0.4)" : "rgba(168,85,247,0.35)";
+      toast.innerHTML = `<span>${msg}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateX(40px)";
+        toast.style.transition = "all 0.3s ease";
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function escHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    // Close modals on backdrop click
+    document.querySelectorAll(".modal-overlay").forEach(overlay => {
+      overlay.addEventListener("click", e => {
+        if (e.target === overlay) overlay.classList.remove("open");
+      });
+    });
+  </script>
+</body>
+</html>
