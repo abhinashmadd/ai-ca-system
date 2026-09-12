@@ -1,0 +1,50 @@
+{
+  "users": [
+    {
+      "id": "USR-7701",
+      "username": "aditya tripathi",
+      "password": "12345678",
+      "name": "CA. Aditya Tripathi, FCA",
+      "role": "Senior Partner CA",
+      "email": "aditya.tripathi@tripathi-ca.com",
+      "firm": "Tripathi & Associates Chartered Accountants",
+      "frn": "FRN-012938N",
+      "cop": "COP-88192",
+      "membershipId": "CA-ADITYA-7701",
+      "dscStatus": "Class 3 DSC Active (Nov 2027)",
+      "status": "Active",
+      "created_at": "2026-08-15T09:30:00"
+    },
+    {
+      "id": "USR-7702",
+      "username": "finance@apexcorp.com",
+      "password": "clientPass2026",
+      "name": "Alex Mercer (CFO)",
+      "role": "Enterprise CFO",
+      "email": "alex.mercer@apexcorp.com",
+      "firm": "Apex Global Technologies Corp",
+      "frn": "FRN-CORP-4491",
+      "cop": "COP-CLIENT-01",
+      "membershipId": "CLIENT-APEX-901",
+      "dscStatus": "Corporate e-Sign Verified",
+      "status": "Active",
+      "created_at": "2026-08-20T11:15:00"
+    },
+    {
+      "id": "USR-7703",
+      "username": "AUD-IN-88902",
+      "password": "auditSecure99",
+      "name": "Audit Director (Ernst & Young LLP)",
+      "role": "Statutory Lead Auditor",
+      "email": "statutory.audit@ey-firm.com",
+      "firm": "Ernst & Young Statutory Audit & Assurance LLP",
+      "frn": "FRN-001928A",
+      "cop": "COP-AUD-882",
+      "membershipId": "AUD-IN-88902",
+      "dscStatus": "Peer Review Certified Tier-1",
+      "status": "Active",
+      "created_at": "2026-08-22T14:40:00"
+    }
+  ],
+  "otps": []
+}
