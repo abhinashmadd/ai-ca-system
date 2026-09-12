@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In | AI Chartered Accountant Platform</title>
+  <meta name="description" content="Secure Sign In - AI Chartered Accountant Automation Platform. Access your ledger cockpit, tax portals, and real-time financial statements.">
+  <link rel="icon" type="image/png" href="logo.png">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-body">
+  <!-- Ambient Blueprint Grid & Glow Background -->
+  <div class="ambient-background">
+    <div class="glow-orb orb-primary"></div>
+    <div class="glow-orb orb-secondary"></div>
+    <div class="blueprint-grid"></div>
+  </div>
+
+  <div class="auth-container">
+    <!-- Brand Logo Header -->
+    <div class="auth-brand">
+      <div class="brand-logo-icon">
+        <img src="logo.png" alt="AI Chartered Accountant Logo" class="brand-logo-img">
+      </div>
+      <h2>AI Chartered Accountant</h2>
+      <p class="auth-subtitle">Autonomous Financial Intelligence & Multi-Tier Audit Infrastructure</p>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="auth-card card-glass">
+      <!-- Role Switcher -->
+      <div class="auth-tabs" id="roleTabs">
+        <button type="button" class="auth-tab active" data-role="ca" id="tabRoleCa">
+          <span>Chartered Accountant</span>
+        </button>
+        <button type="button" class="auth-tab" data-role="client" id="tabRoleClient">
+          <span>Enterprise Client</span>
+        </button>
+        <button type="button" class="auth-tab" data-role="auditor" id="tabRoleAuditor">
+          <span>Auditor / Reviewer</span>
+        </button>
+      </div>
+
+      <div class="auth-header-text">
+        <h3 id="authTitle">Practitioner Sign In</h3>
+        <p id="authDesc">Enter your institutional credentials or license ID to access your ledger cockpit.</p>
+      </div>
+
+      <!-- Error Message Banner -->
+      <div class="auth-error-message" id="authErrorBanner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span id="authErrorText">Please enter both your username and password.</span>
+      </div>
+
+      <!-- Sign-In Form -->
+      <form id="signInForm" class="auth-form" novalidate>
+        <!-- Username Field -->
+        <div class="form-group">
+          <label for="usernameInput" id="lblUsername">Username / CA Membership No. or Email</label>
+          <div class="input-with-icon">
+            <svg class="input-prefix-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <input 
+              type="text" 
+              id="usernameInput" 
+              name="username"
+              class="input-field" 
+              placeholder="e.g. aditya tripathi or partner@ca-firm.com" 
+              autocomplete="username" 
+              required 
+              value="aditya tripathi"
+            >
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <div class="label-split">
+            <label for="passwordInput" id="lblPassword">Password / Security PIN</label>
+            <a href="#" class="forgot-link" id="forgotPassLink">Forgot PIN/Password?</a>
+          </div>
+          <div class="input-with-icon">
+            <svg class="input-prefix-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input 
+              type="password" 
+              id="passwordInput" 
+              name="password"
+              class="input-field font-mono" 
+              placeholder="••••••••" 
+              autocomplete="current-password" 
+              required 
+              value="12345678"
+            >
+            <button type="button" class="toggle-password-btn" id="togglePasswordBtn" title="Show or Hide Password" aria-label="Toggle Password Visibility">
+              <svg id="eyeIconOpen" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg id="eyeIconClosed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Session Checkbox -->
+        <div class="auth-checkbox-row">
+          <label class="check-container">
+            <input type="checkbox" id="rememberMe" checked>
+            <span>Keep session active for 30 days</span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-primary auth-submit-btn" id="submitLoginBtn">
+          <span id="btnText">Authorize & Enter Cockpit</span>
+          <svg id="btnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+
+        <!-- Divider -->
+        <div class="auth-divider">
+          <span>OR 1-CLICK QUICK ACCESS</span>
+        </div>
+
+        <!-- Quick Demo Profiles Grid -->
+        <div class="demo-login-grid">
+          <button type="button" class="demo-login-btn" id="demoCaBtn" title="Log in as Senior Partner CA">
+            <span style="color: var(--cyan-primary);">⚡</span>
+            <span>Partner CA</span>
+          </button>
+          <button type="button" class="demo-login-btn" id="demoClientBtn" title="Log in as Enterprise Client / CFO">
+            <span style="color: var(--emerald);">🏢</span>
+            <span>Client CFO</span>
+          </button>
+          <button type="button" class="demo-login-btn" id="demoAuditorBtn" title="Log in as Statutory Auditor">
+            <span style="color: var(--amber);">⚖️</span>
+            <span>Auditor</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Security Trust Footer -->
+      <div class="auth-trust-footer">
+        <div class="trust-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span>256-Bit SSL Financial Encryption • ICAI Standards Compliant</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const signInForm = document.getElementById("signInForm");
+      const usernameInput = document.getElementById("usernameInput");
+      const passwordInput = document.getElementById("passwordInput");
+      const submitBtn = document.getElementById("submitLoginBtn");
+      const btnText = document.getElementById("btnText");
+      const btnIcon = document.getElementById("btnIcon");
+      const errorBanner = document.getElementById("authErrorBanner");
+      const errorText = document.getElementById("authErrorText");
+      const rememberMe = document.getElementById("rememberMe");
+
+      const tabCa = document.getElementById("tabRoleCa");
+      const tabClient = document.getElementById("tabRoleClient");
+      const tabAuditor = document.getElementById("tabRoleAuditor");
+      const authTitle = document.getElementById("authTitle");
+      const authDesc = document.getElementById("authDesc");
+      const lblUsername = document.getElementById("lblUsername");
+
+      const togglePassBtn = document.getElementById("togglePasswordBtn");
+      const eyeOpen = document.getElementById("eyeIconOpen");
+      const eyeClosed = document.getElementById("eyeIconClosed");
+
+      let currentRole = "CA";
+
+      // Toggle Password Visibility
+      togglePassBtn.addEventListener("click", () => {
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          eyeOpen.style.display = "none";
+          eyeClosed.style.display = "block";
+        } else {
+          passwordInput.type = "password";
+          eyeOpen.style.display = "block";
+          eyeClosed.style.display = "none";
+        }
+      });
+
+      // Role Selection Tabs
+      tabCa.addEventListener("click", () => selectRole("CA"));
+      tabClient.addEventListener("click", () => selectRole("Client"));
+      tabAuditor.addEventListener("click", () => selectRole("Auditor"));
+
+      function selectRole(role) {
+        currentRole = role;
+        hideError();
+        [tabCa, tabClient, tabAuditor].forEach(tab => tab.classList.remove("active"));
+
+        if (role === "CA") {
+          tabCa.classList.add("active");
+          authTitle.textContent = "Practitioner Sign In";
+          authDesc.textContent = "Enter your institutional credentials or license ID to access your ledger cockpit.";
+          lblUsername.textContent = "Username / CA Membership No. or Email";
+          usernameInput.placeholder = "e.g. aditya tripathi or partner@ca-firm.com";
+          usernameInput.value = "aditya tripathi";
+          passwordInput.value = "12345678";
+        } else if (role === "Client") {
+          tabClient.classList.add("active");
+          authTitle.textContent = "Enterprise Client Sign In";
+          authDesc.textContent = "Access real-time business financial statements, tax estimates, and invoice portals.";
+          lblUsername.textContent = "Username / Corporate GSTIN or Email";
+          usernameInput.placeholder = "e.g. 27AAACA1234F1Z8 or finance@corp.com";
+          usernameInput.value = "finance@apexcorp.com";
+          passwordInput.value = "clientPass2026";
+        } else if (role === "Auditor") {
+          tabAuditor.classList.add("active");
+          authTitle.textContent = "Statutory Auditor Sign In";
+          authDesc.textContent = "Secure audit trail inspection, double-entry verification, and ledger compliance log.";
+          lblUsername.textContent = "Auditor ID / Registration Key or Email";
+          usernameInput.placeholder = "e.g. AUD-9921 or audit@ey-advisory.com";
+          usernameInput.value = "AUD-IN-88902";
+          passwordInput.value = "auditSecure99";
+        }
+      }
+
+      function showError(message) {
+        errorText.textContent = message;
+        errorBanner.classList.remove("show");
+        void errorBanner.offsetWidth;
+        errorBanner.classList.add("show");
+      }
+
+      function hideError() {
+        errorBanner.classList.remove("show");
+      }
+
+      function handleSuccessfulAuth(userData) {
+        submitBtn.classList.add("loading");
+        btnText.textContent = "Authorizing Session...";
+        btnIcon.innerHTML = `<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" stroke-dasharray="32" stroke-dashoffset="10"/>`;
+
+        const storage = rememberMe.checked ? localStorage : sessionStorage;
+        storage.setItem("ai_ca_user", JSON.stringify(userData));
+
+        showToast(`Authentication successful! Welcome, ${userData.name}`);
+
+        setTimeout(() => {
+          window.location.replace("index.html");
+        }, 650);
+      }
+
+      function formatTitleCase(str) {
+        return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+      }
+
+      // Form Submission
+      signInForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (!username) {
+          showError("Please enter your Username, CA Membership ID, or Email.");
+          usernameInput.focus();
+          return;
+        }
+
+        if (!password) {
+          showError("Please enter your Password or Security PIN.");
+          passwordInput.focus();
+          return;
+        }
+
+        if (password.length < 4) {
+          showError("Password must be at least 4 characters.");
+          passwordInput.focus();
+          return;
+        }
+
+        hideError();
+
+        // Build User Profile dynamically based on inputs and role
+        let displayName = formatTitleCase(username);
+        let roleTitle = "Chartered Accountant";
+        let firmName = "Tripathi & Associates Chartered Accountants";
+        let email = username.includes("@") ? username : `${username.toLowerCase().replace(/[^a-z0-9]/g, '')}@tripathi-ca.com`;
+
+        if (currentRole === "CA") {
+          roleTitle = "Senior Partner CA";
+          displayName = displayName.toLowerCase().includes("tripathi") ? "CA. Aditya Tripathi, FCA" : `CA. ${displayName}, FCA`;
+        } else if (currentRole === "Client") {
+          roleTitle = "Enterprise CFO";
+          displayName = `${displayName} (CFO)`;
+          firmName = "Apex Global Technologies Corp";
+        } else if (currentRole === "Auditor") {
+          roleTitle = "Statutory Lead Auditor";
+          displayName = `${displayName} (Lead Auditor)`;
+          firmName = "EY Statutory Audit & Assurance LLP";
+        }
+
+        const userObj = {
+          role: roleTitle,
+          name: displayName,
+          username: username,
+          membershipId: username.toLowerCase().includes("tripathi") ? "CA-ADITYA-7701" : username,
+          email: email,
+          firm: firmName,
+          frn: "FRN-012938N",
+          cop: "COP-88192",
+          dscStatus: "Class 3 DSC Active (Nov 2027)",
+          loginTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          loginDate: new Date().toLocaleDateString()
+        };
+
+        handleSuccessfulAuth(userObj);
+      });
+
+      // 1-Click Quick Demo Buttons
+      document.getElementById("demoCaBtn").addEventListener("click", () => {
+        selectRole("CA");
+        const userObj = {
+          role: "Senior Partner CA",
+          name: "CA. Aditya Tripathi, FCA",
+          username: "aditya tripathi",
+          membershipId: "CA-ADITYA-7701",
+          email: "aditya.tripathi@tripathi-ca.com",
+          firm: "Tripathi & Associates Chartered Accountants",
+          frn: "FRN-012938N",
+          cop: "COP-88192",
+          dscStatus: "Class 3 DSC Active (Nov 2027)",
+          loginTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          loginDate: new Date().toLocaleDateString()
+        };
+        handleSuccessfulAuth(userObj);
+      });
+
+      document.getElementById("demoClientBtn").addEventListener("click", () => {
+        selectRole("Client");
+        const userObj = {
+          role: "Enterprise CFO",
+          name: "Alex Mercer (CFO)",
+          username: "finance@apexcorp.com",
+          membershipId: "CLIENT-APEX-901",
+          email: "alex.mercer@apexcorp.com",
+          firm: "Apex Global Technologies Corp",
+          frn: "FRN-CORP-4491",
+          cop: "COP-CLIENT-01",
+          dscStatus: "Corporate e-Sign Verified",
+          loginTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          loginDate: new Date().toLocaleDateString()
+        };
+        handleSuccessfulAuth(userObj);
+      });
+
+      document.getElementById("demoAuditorBtn").addEventListener("click", () => {
+        selectRole("Auditor");
+        const userObj = {
+          role: "Statutory Lead Auditor",
+          name: "Audit Director (Ernst & Young LLP)",
+          username: "AUD-IN-88902",
+          membershipId: "AUD-IN-88902",
+          email: "statutory.audit@ey-firm.com",
+          firm: "Ernst & Young Statutory Audit & Assurance LLP",
+          frn: "FRN-001928A",
+          cop: "COP-AUD-882",
+          dscStatus: "Peer Review Certified Tier-1",
+          loginTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          loginDate: new Date().toLocaleDateString()
+        };
+        handleSuccessfulAuth(userObj);
+      });
+
+      // Forgot Password Modal simulation
+      document.getElementById("forgotPassLink").addEventListener("click", (e) => {
+        e.preventDefault();
+        const entered = usernameInput.value.trim() || "your registered email";
+        showToast(`Password reset instructions sent to registered contact for: ${entered}`);
+      });
+
+      function showToast(msg) {
+        const container = document.getElementById("toastContainer");
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.innerHTML = `<span style="color: var(--cyan-primary);">⚡</span><span>${msg}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          toast.style.transform = "translateX(40px)";
+          toast.style.transition = "all 0.3s ease";
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+    });
+  </script>
+</body>
+</html>
