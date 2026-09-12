@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI CA Platform | Autonomous Financial Ecosystem</title>
+  <meta name="description"
+    content="AI Chartered Accountant Automation Platform - Real-time analytics, automated bookkeeping, OCR extraction, GST compliance, and one-click report generation.">
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Immediate Auth Guard: Redirects to signin.html if user is not authenticated -->
+  <script>
+    (function () {
+      try {
+        const user = localStorage.getItem("ai_ca_user") || sessionStorage.getItem("ai_ca_user");
+        if (!user) {
+          window.location.replace("signin.html");
+        }
+      } catch (e) {
+        window.location.replace("signin.html");
+      }
+    })();
+  </script>
+
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+  <!-- Chart.js for High-Precision Financial Visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!-- Global SVG Gradients for Profile & Brand Icons -->
+  <svg width="0" height="0" style="position: absolute; pointer-events: none;" aria-hidden="true">
+    <defs>
+      <linearGradient id="avatarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#e879f9" />
+        <stop offset="100%" stop-color="#c084fc" />
+      </linearGradient>
+      <linearGradient id="heroAvatarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#e879f9" />
+        <stop offset="50%" stop-color="#c084fc" />
+        <stop offset="100%" stop-color="#9333ea" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- Ambient Blueprint Grid & Glow Background -->
+  <div class="ambient-background">
+    <div class="glow-orb orb-primary"></div>
+    <div class="glow-orb orb-secondary"></div>
+    <div class="blueprint-grid"></div>
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  <div class="app-layout">
+    <!-- Top Header -->
+    <header class="navbar" id="mainHeader">
+      <div class="nav-brand">
+        <div class="brand-logo-icon">
+          <img src="logo.png" alt="AI Chartered Accountant Logo" class="brand-logo-img">
+        </div>
+        <div class="brand-info">
+          <div class="brand-title">AI Chartered Accountant</div>
+          <div class="brand-badge">BLUEPRINT V2.4</div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-links" id="navTabs">
+        <button class="nav-tab active" data-tab="analytics" id="tabAnalytics">
+          <span class="tab-icon">📊</span>
+          <span>Live Analytics</span>
+        </button>
+        <button class="nav-tab" data-tab="documents" id="tabDocuments">
+          <span class="tab-icon">📥</span>
+          <span>Document Portal</span>
+        </button>
+        <button class="nav-tab" data-tab="ledger" id="tabLedger">
+          <span class="tab-icon">📑</span>
+          <span>General Ledger</span>
+        </button>
+        <button class="nav-tab" data-tab="compliance" id="tabCompliance">
+          <span class="tab-icon">⚖️</span>
+          <span>GST & Compliance</span>
+        </button>
+        <button class="nav-tab" data-tab="reports" id="tabReports">
+          <span class="tab-icon">📤</span>
+          <span>Report Center</span>
+        </button>
+        <button class="nav-tab" data-tab="blueprint" id="tabBlueprint">
+          <span class="tab-icon">🏗️</span>
+          <span>Architecture Specs</span>
+        </button>
+        <div class="nav-currency-dropdown" style="display:flex; align-items:center; gap:4px; margin-left:8px;">
+          <label for="navCurrencySelect"
+            style="background:#2c3e50; color:#fff; padding:2px 6px; border-radius:4px; margin-right:6px;">Currency:</label>
+          <select id="navCurrencySelect" style="background:#34495e; color:#fff; padding:2px; border-radius:4px;">
+            <option value="USD" selected>US Dollar ($)</option>
+            <option value="INR">Indian Rupee (₹)</option>
+            <option value="EUR">Euro (€)</option>
+            <option value="GBP">Pound Sterling (£)</option>
+            <option value="JPY">Japanese Yen (¥)</option>
+            <option value="CNY">Chinese Yuan (¥)</option>
+            <option value="KRW">South Korean Won (₩)</option>
+            <option value="RUB">Russian Ruble (₽)</option>
+            <option value="CAD">Canadian Dollar (C$)</option>
+            <option value="AUD">Australian Dollar (A$)</option>
+            <option value="CHF">Swiss Franc (CHF)</option>
+            <option value="SGD">Singapore Dollar (S$)</option>
+            <option value="AED">UAE Dirham (د.إ)</option>
+            <option value="SAR">Saudi Riyal (﷼)</option>
+            <option value="QAR">Qatari Riyal (﷼)</option>
+            <option value="THB">Thai Baht (฿)</option>
+            <option value="MYR">Malaysian Ringgit (RM)</option>
+            <option value="IDR">Indonesian Rupiah (Rp)</option>
+            <option value="NPR">Nepalese Rupee (NRs)</option>
+            <option value="BDT">Bangladeshi Taka (৳)</option>
+            <option value="PKR">Pakistani Rupee (₨)</option>
+            <option value="ZAR">South African Rand (R)</option>
+            <option value="BRL">Brazilian Real (R$)</option>
+            <option value="MXN">Mexican Peso ($)</option>
+            <option value="TRY">Turkish Lira (₺)</option>
+            <option value="AFN">Afghan Afghani (؋)</option>
+            <option value="ARS">Argentine Peso (ARS$)</option>
+            <option value="EGP">Egyptian Pound (£)</option>
+            <option value="ILS">Israeli New Shekel (₪)</option>
+            <option value="NZD">New Zealand Dollar (NZ$)</option>
+            <option value="PHP">Philippine Peso (₱)</option>
+            <option value="VND">Vietnamese Dong (₫)</option>
+            <option value="LKR">Sri Lankan Rupee (Rs)</option>
+            <option value="SEK">Swedish Krona (kr)</option>
+            <option value="NOK">Norwegian Krone (kr)</option>
+            <option value="DKK">Danish Krone (kr)</option>
+            <option value="PLN">Polish Zloty (zł)</option>
+            <option value="CZK">Czech Koruna (Kč)</option>
+            <option value="UAH">Ukrainian Hryvnia (₴)</option>
+            <option value="KWD">Kuwaiti Dinar (KD)</option>
+            <option value="BHD">Bahraini Dinar (BD)</option>
+            <option value="OMR">Omani Rial (OMR)</option>
+            <option value="JOD">Jordanian Dinar (JD)</option>
+            <option value="IQD">Iraqi Dinar (IQD)</option>
+            <option value="IRR">Iranian Rial (﷼)</option>
+            <option value="BTC">Bitcoin (₿)</option>
+            <option value="ETH">Ethereum (Ξ)</option>
+          </select>
+        </div>
+        <button class="nav-tab" data-tab="profile" id="tabProfile">
+          <span class="tab-icon">👤</span>
+          <span>CA Profile & Settings</span>
+        </button>
+      </nav>
+
+      <!-- System Status Indicators & User Profile Chip -->
+      <div class="nav-actions">
+        <div class="sys-pulse-pill" title="Backend: Python / FastAPI (Ready)">
+          <span class="pulse-dot"></span>
+          <span class="pulse-text">AI Engine Active</span>
+        </div>
+        <button class="btn-secondary" id="adminPanelBtn" onclick="window.location.href='admin.html'"
+          style="height:34px; font-size:0.76rem; padding:0 0.75rem; gap:0.4rem; border-color:rgba(99,102,241,0.35); color:#818cf8;"
+          title="Open Admin Panel — Manage Profiles & IDs">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span>Admin</span>
+        </button>
+        <button class="ai-query-btn" id="openAiModalBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          <span>Ask AI Assistant</span>
+        </button>
+        <div class="user-profile-chip" id="navUserChip" title="Click to manage CA Profile & Settings">
+          <div class="user-avatar-wrap">
+            <div class="user-avatar">
+              <svg class="avatar-svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="7.5" r="4" fill="url(#avatarGradient)" />
+                <path d="M4 20.5c0-4.2 3.6-7.5 8-7.5s8 3.3 8 7.5" stroke="url(#avatarGradient)" stroke-width="2.2"
+                  stroke-linecap="round" />
+              </svg>
+            </div>
+            <span class="user-avatar-badge" title="Verified FCA Practitioner">✓</span>
+          </div>
+          <div class="user-profile-text" style="display:flex; flex-direction:column; text-align:left; line-height:1.2;">
+            <span id="navUserName" style="font-size:0.82rem; font-weight:600; color:#fff;">CA. Aditya Tripathi,
+              FCA</span>
+            <span id="navUserRole" style="font-size:0.7rem; color:var(--cyan-primary);">Senior Partner CA</span>
+          </div>
+          <svg class="chip-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
+      <div class="currency-switcher" style="margin-left: auto; display:flex; align-items:center; gap:4px;">
+        <label for="currencySelect" style="color:#fff;">Currency:</label>
+        <select id="currencySelect">
+          <option value="USD" selected>USD ($)</option>
+          <option value="INR">INR (₹)</option>
+          <option value="EUR">EUR (€)</option>
+        </select>
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const rates = { USD: 1, INR: 82, EUR: 0.85 };
+          const symbols = { USD: '$', INR: '₹', EUR: '€' };
+          const ids = ['kpiRevenue', 'kpiExpenses', 'kpiCashFlow', 'kpiTax'];
+          const select = document.getElementById('currencySelect');
+          const format = (text, cur) => {
+            const num = parseFloat(text.replace(/[^0-9.-]+/g, ''));
+            if (isNaN(num)) return text;
+            const conv = (num * rates[cur]).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return symbols[cur] + conv;
+          };
+          const update = () => {
+            const cur = select.value;
+            ids.forEach(id => {
+              const el = document.getElementById(id);
+              if (el) {
+                el.textContent = format(el.textContent, cur);
+              }
+            });
+          };
+          select.addEventListener('change', update);
+        });
+      </script>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-container">
+
+      <!-- ================= 1. LIVE ANALYTICS DASHBOARD ================= -->
+      <section class="tab-panel active" id="panelAnalytics">
+        <div class="panel-header">
+          <div>
+            <div class="section-tag">MODULE 1 • INSTANT FINANCIAL VISIBILITY</div>
+            <h1 class="panel-title">Live Analytics Dashboard</h1>
+            <p class="panel-desc">Real-time cash flow monitoring, dynamic Profit & Loss summaries, and autonomous ledger
+              balances.</p>
+          </div>
+          <div class="timeframe-selector">
+            <button class="time-btn" data-time="MTD">MTD</button>
+            <button class="time-btn active" data-time="Q3">Q3 FY26</button>
+            <button class="time-btn" data-time="YTD">YTD</button>
+          </div>
+        </div>
+
+        <!-- Metric KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Total Realized Revenue</span>
+              <span class="kpi-tag positive">+18.4%</span>
+            </div>
+            <div class="kpi-value" id="kpiRevenue">$842,950</div>
+            <div class="kpi-subtext">Automated reconciled across 3 business accounts</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Operating Expenses</span>
+              <span class="kpi-tag negative">-4.2%</span>
+            </div>
+            <div class="kpi-value" id="kpiExpenses">$318,420</div>
+            <div class="kpi-subtext">LLM categorized into 14 distinct ledger heads</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Net Operating Cash Flow</span>
+              <span class="kpi-tag positive">+26.8%</span>
+            </div>
+            <div class="kpi-value highlight-cyan" id="kpiCashFlow">$524,530</div>
+            <div class="kpi-subtext">Real-time liquidity ratio: 3.42 (Optimal)</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Accrued GST Liability</span>
+              <span class="kpi-tag neutral">In Review</span>
+            </div>
+            <div class="kpi-value" id="kpiTax">$68,340</div>
+            <div class="kpi-subtext">Eligible ITC Deductions: $24,190</div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="analytics-charts-grid">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Real-Time Cash Flow & Forecast</h3>
+                <p class="chart-subtitle">Computed vs Projected Liquidity via Predictive Model</p>
+              </div>
+              <span class="badge-live">LIVE SYNC</span>
+            </div>
+            <div class="chart-body">
+              <canvas id="cashFlowChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Profit & Loss Breakdown</h3>
+                <p class="chart-subtitle">Revenue Sources vs Direct & Operational Expenditures</p>
+              </div>
+              <span class="badge-soft">P&L REAL-TIME</span>
+            </div>
+            <div class="chart-body">
+              <canvas id="pnlChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Balance Sheet Snapshot -->
+        <div class="balance-sheet-summary card-glass">
+          <div class="summary-header">
+            <h3>Automated Balance Sheet Snapshot</h3>
+            <span class="text-muted">As of Today, 13:42 • Audited by LLM Logic Rules</span>
+          </div>
+          <div class="bs-grid">
+            <div class="bs-column">
+              <h4>Total Current Assets</h4>
+              <div class="bs-metric">$1,240,800</div>
+              <ul class="bs-list">
+                <li><span>Cash & Bank Balances</span> <strong>$682,400</strong></li>
+                <li><span>Accounts Receivable (Automated Invoicing)</span> <strong>$398,400</strong></li>
+                <li><span>Input Tax Credit (ITC) Balance</span> <strong>$160,000</strong></li>
+              </ul>
+            </div>
+            <div class="bs-column">
+              <h4>Current Liabilities</h4>
+              <div class="bs-metric">$385,200</div>
+              <ul class="bs-list">
+                <li><span>Accounts Payable (OCR Verified)</span> <strong>$214,300</strong></li>
+                <li><span>Net GST / VAT Payable</span> <strong>$68,340</strong></li>
+                <li><span>Short-Term Working Accruals</span> <strong>$102,560</strong></li>
+              </ul>
+            </div>
+            <div class="bs-column">
+              <h4>Shareholder Equity & Net Worth</h4>
+              <div class="bs-metric highlight-cyan">$855,600</div>
+              <ul class="bs-list">
+                <li><span>Retained Earnings (Current Year)</span> <strong>$524,530</strong></li>
+                <li><span>Capital Reserves</span> <strong>$331,070</strong></li>
+                <li><span>Reconciliation Confidence</span> <strong class="text-emerald">99.8%</strong></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. DOCUMENT PORTAL (OCR EXTRACTION) ================= -->
+      <section class="tab-panel" id="panelDocuments">
+        <div class="panel-header">
+          <div>
+            <div class="section-tag">MODULE 2 • ZERO MANUAL DATA ENTRY</div>
+            <h1 class="panel-title">Document Portal & OCR Parsing</h1>
+            <p class="panel-desc">Drag and drop raw invoices, receipts, or bank statements. The optical character
+              recognition engine instantly extracts fields, tags line items, and validates compliance.</p>
+          </div>
+        </div>
+
+        <div class="doc-portal-layout">
+          <!-- Dropzone & Upload Actions -->
+          <div class="doc-upload-column">
+            <div class="dropzone-card" id="dropzoneContainer">
+              <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.csv" style="display: none;">
+              <div class="dropzone-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.8">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="12" y1="18" x2="12" y2="12" />
+                  <polyline points="9 15 12 12 15 15" />
+                </svg>
+              </div>
+              <h3>Drag & Drop Financial Document</h3>
+              <p>Supports Tax Invoices, Scanned Receipts, Bank Statements (.PDF, .PNG, .JPG)</p>
+              <div class="dropzone-actions">
+                <button class="btn-primary" id="selectFileBtn">Browse Local File</button>
+                <button class="btn-secondary" id="loadSampleInvoiceBtn">Load Sample Invoice</button>
+              </div>
+              <div class="ocr-status-indicator" id="ocrLiveStatus">
+                <span class="status-ready">OCR Engine Standby</span>
+              </div>
+            </div>
+
+            <!-- Pre-processed queue items -->
+            <div class="queue-card card-glass">
+              <h4>Recent Ingestion Queue</h4>
+              <div class="queue-list" id="queueList">
+                <div class="queue-item active" data-id="1">
+                  <span class="item-ext">PDF</span>
+                  <div class="item-meta">
+                    <strong>Invoice-AWS-Cloud-Aug.pdf</strong>
+                    <small>Processed • Confidence 99.6% • $12,450.00</small>
+                  </div>
+                  <span class="badge-success">Extracted</span>
+                </div>
+                <div class="queue-item" data-id="2">
+                  <span class="item-ext">PNG</span>
+                  <div class="item-meta">
+                    <strong>Dell-Hardware-Receipt.png</strong>
+                    <small>Processed • Confidence 98.9% • $4,280.00</small>
+                  </div>
+                  <span class="badge-success">Extracted</span>
+                </div>
+                <div class="queue-item" data-id="3">
+                  <span class="item-ext">PDF</span>
+                  <div class="item-meta">
+                    <strong>CoWorking-Office-Lease.pdf</strong>
+                    <small>Processed • Confidence 99.2% • $8,500.00</small>
+                  </div>
+                  <span class="badge-success">Extracted</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Extraction & Validation Form -->
+          <div class="doc-preview-column card-glass">
+            <div class="preview-header">
+              <div>
+                <h3>Intelligent OCR Extraction Results</h3>
+                <p class="text-muted" id="currentDocFilename">Viewing: Invoice-AWS-Cloud-Aug.pdf</p>
+              </div>
+              <div class="confidence-badge" id="docConfidenceBadge">
+                <span>LLM Confidence:</span>
+                <strong>99.6%</strong>
+              </div>
+            </div>
+
+            <div class="ocr-progress-bar-container" id="ocrProgressContainer" style="display: none;">
+              <div class="ocr-progress-label">
+                <span id="ocrStageText">Scanning text coordinates via Optical Character Recognition...</span>
+                <span id="ocrPercent">68%</span>
+              </div>
+              <div class="ocr-bar">
+                <div class="ocr-bar-fill" id="ocrBarFill"></div>
+              </div>
+            </div>
+
+            <form class="ocr-extracted-form" id="ocrForm">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Vendor / Counterparty Name</label>
+                  <input type="text" id="extractedVendor" value="Amazon Web Services EMEA" class="input-field">
+                </div>
+                <div class="form-group">
+                  <label>Tax ID / GSTIN / VAT</label>
+                  <input type="text" id="extractedTaxId" value="27AAACA1234F1Z8" class="input-field font-mono">
+                </div>
+              </div>
+
+              <div class="form-row-3">
+                <div class="form-group">
+                  <label>Document Type</label>
+                  <select id="extractedType" class="input-field">
+                    <option value="Tax Invoice" selected>Tax Invoice</option>
+                    <option value="Expense Receipt">Expense Receipt</option>
+                    <option value="Bank Statement">Bank Statement</option>
+                    <option value="Credit Note">Credit Note</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Invoice / Ref Number</label>
+                  <input type="text" id="extractedInvoiceNo" value="INV-2026-9812" class="input-field font-mono">
+                </div>
+                <div class="form-group">
+                  <label>Invoice Date</label>
+                  <input type="date" id="extractedDate" value="2026-08-28" class="input-field">
+                </div>
+              </div>
+
+              <div class="form-row-3">
+                <div class="form-group">
+                  <label>Subtotal (Excl. Tax)</label>
+                  <input type="number" id="extractedSubtotal" value="10550.85" step="0.01" class="input-field">
+                </div>
+                <div class="form-group">
+                  <label>GST / Tax Amount (18%)</label>
+                  <input type="number" id="extractedTaxAmt" value="1899.15" step="0.01" class="input-field">
+                </div>
+                <div class="form-group">
+                  <label>Total Invoiced Value</label>
+                  <input type="number" id="extractedTotal" value="12450.00" step="0.01" class="input-field font-bold">
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>AI Suggested Ledger Head</label>
+                  <select id="extractedCategory" class="input-field">
+                    <option value="Cloud Infrastructure & Hosting" selected>Cloud Infrastructure & Hosting (5210)
+                    </option>
+                    <option value="Office & Hardware Equipment">Office & Hardware Equipment (1520)</option>
+                    <option value="Rent & Facilities">Rent & Facilities (5100)</option>
+                    <option value="Professional Consulting">Professional Consulting (5300)</option>
+                    <option value="Software Subscriptions">Software Subscriptions (5220)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>ITC Tax Credit Eligibility</label>
+                  <select id="extractedItcStatus" class="input-field">
+                    <option value="Eligible - 100% ITC" selected>Eligible - 100% ITC Claim</option>
+                    <option value="Ineligible">Ineligible (Section 17(5))</option>
+                    <option value="Partial">Partial Reversal Required</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-actions-bar">
+                <button type="button" class="btn-secondary" id="reScanDocBtn">Re-run LLM Parse</button>
+                <button type="button" class="btn-primary" id="postToLedgerBtn">
+                  <span>⚡ Post to General Ledger</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. GENERAL LEDGER HUB ================= -->
+      <section class="tab-panel" id="panelLedger">
+        <div class="panel-header">
+          <div>
+            <div class="section-tag">MODULE 3 • COMPLETE AUDITABILITY</div>
+            <h1 class="panel-title">General Ledger Hub</h1>
+            <p class="panel-desc">Master transaction directory powered by LLM rules featuring automated transaction
+              categorization, search filtering, and permanent ledger record storage.</p>
+          </div>
+          <div class="ledger-actions">
+            <button class="btn-secondary" id="reconcileBankBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+              </svg>
+              <span>Auto Bank Reconciliation</span>
+            </button>
+            <button class="btn-primary" id="exportLedgerCsvBtn">Export Ledger (.CSV)</button>
+          </div>
+        </div>
+
+        <!-- Ledger Controls & Filters -->
+        <div class="filter-toolbar card-glass">
+          <div class="search-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input type="text" id="ledgerSearchInput" placeholder="Search by vendor, reference, or account code...">
+          </div>
+
+          <div class="filter-chips" id="ledgerFilterChips">
+            <button class="chip active" data-filter="ALL">All Entries</button>
+            <button class="chip" data-filter="REVENUE">Revenue</button>
+            <button class="chip" data-filter="EXPENSE">Expense</button>
+            <button class="chip" data-filter="ASSET">Asset</button>
+            <button class="chip" data-filter="LIABILITY">Liability</button>
+          </div>
+
+          <div class="ledger-stats">
+            <span>Showing <strong id="visibleTxCount">8</strong> verified transactions</span>
+          </div>
+        </div>
+
+        <!-- Master Transactions Table -->
+        <div class="table-container card-glass">
+          <table class="ledger-table" id="ledgerTable">
+            <thead>
+              <tr>
+                <th>Tx ID & Date</th>
+                <th>Description / Counterparty</th>
+                <th>Ledger Head & Code</th>
+                <th>Classification</th>
+                <th>Debit ($)</th>
+                <th>Credit ($)</th>
+                <th>AI Rule & Confidence</th>
+                <th>Reconciliation Status</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody">
+              <!-- Dynamically Populated by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= 4. COMPLIANCE & GST PANEL ================= -->
+      <section class="tab-panel" id="panelCompliance">
+        <div class="panel-header">
+          <div>
+            <div class="section-tag">MODULE 4 • ERROR-FREE TAX COMPLIANCE</div>
+            <h1 class="panel-title">Compliance & GST Panel</h1>
+            <p class="panel-desc">Automated tax breakdown engine, GST calculation modules, and readiness checks prepared
+              specifically for human professional review and sign-off.</p>
+          </div>
+          <div class="compliance-actions">
+            <button class="btn-success" id="caSignOffBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span>Professional CA Sign-off</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tax Overview Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Gross Output Tax Liability</div>
+            <div class="kpi-value font-mono" id="valOutputTax">$92,530.00</div>
+            <div class="kpi-subtext">Sales Invoices tax accrued</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Eligible Input Tax Credit (ITC)</div>
+            <div class="kpi-value font-mono text-emerald" id="valItcCredit">-$24,190.00</div>
+            <div class="kpi-subtext">Reconciled via GSTR-2B API matching</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Net Payable to Tax Authority</div>
+            <div class="kpi-value font-mono highlight-cyan" id="valNetTaxPayable">$68,340.00</div>
+            <div class="kpi-subtext">Due Date: 20th of Upcoming Month</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Audit Readiness Check</div>
+            <div class="kpi-value" id="valReadinessStatus">
+              <span class="badge-success">100% Audit Ready</span>
+            </div>
+            <div class="kpi-subtext">0 Discrepancies detected across ledgers</div>
+          </div>
+        </div>
+
+        <div class="compliance-grid">
+          <!-- GST Rate Breakdown -->
+          <div class="card-glass p-lg">
+            <h3>Automated GST Slab Breakdown</h3>
+            <p class="text-muted">Calculated from verified vendor line items</p>
+            <div class="tax-breakdown-list">
+              <div class="tax-row">
+                <div class="tax-slab">
+                  <strong>CGST (Central Tax 9%)</strong>
+                  <small>Intra-State Transactions</small>
+                </div>
+                <div class="tax-amt font-mono">$34,170.00</div>
+              </div>
+              <div class="tax-row">
+                <div class="tax-slab">
+                  <strong>SGST (State Tax 9%)</strong>
+                  <small>Intra-State Transactions</small>
+                </div>
+                <div class="tax-amt font-mono">$34,170.00</div>
+              </div>
+              <div class="tax-row">
+                <div class="tax-slab">
+                  <strong>IGST (Integrated Tax 18%)</strong>
+                  <small>Inter-State & Cross Border</small>
+                </div>
+                <div class="tax-amt font-mono">$24,190.00</div>
+              </div>
+              <div class="tax-row total-row">
+                <div class="tax-slab">
+                  <strong>Total Output Liability</strong>
+                </div>
+                <div class="tax-amt font-mono highlight-cyan">$92,530.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Professional Review Checklist -->
+          <div class="card-glass p-lg">
+            <div class="checklist-header">
+              <h3>Human Professional Review Checklist</h3>
+              <span class="badge-soft" id="checklistProgress">4 of 4 Verified</span>
+            </div>
+            <p class="text-muted">Pre-computation validations ready for Chartered Accountant authorization.</p>
+            <div class="checklist-items">
+              <label class="check-item">
+                <input type="checkbox" checked id="chk1">
+                <div class="check-content">
+                  <strong>Cross-Verification with Live Bank API</strong>
+                  <p>All bank debits match corresponding vendor receipts without variance.</p>
+                </div>
+              </label>
+
+              <label class="check-item">
+                <input type="checkbox" checked id="chk2">
+                <div class="check-content">
+                  <strong>Vendor Tax ID & GSTIN Active Verification</strong>
+                  <p>All counterparty registrations verified active on official tax portal.</p>
+                </div>
+              </label>
+
+              <label class="check-item">
+                <input type="checkbox" checked id="chk3">
+                <div class="check-content">
+                  <strong>Section 17(5) Ineligible Credit Isolation</strong>
+                  <p>Personal expenditures automatically segregated from business ITC claims.</p>
+                </div>
+              </label>
+
+              <label class="check-item">
+                <input type="checkbox" checked id="chk4">
+                <div class="check-content">
+                  <strong>General Ledger Trial Balance Balancing</strong>
+                  <p>Total Debits ($1,161,370) strictly match Total Credits ($1,161,370).</p>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 5. REPORT EXPORT CENTER ================= -->
+      <section class="tab-panel" id="panelReports">
+        <div class="panel-header">
+          <div>
+            <div class="section-tag">MODULE 5 • SEAMLESS STAKEHOLDER SHARING</div>
+            <h1 class="panel-title">Report Export Center</h1>
+            <p class="panel-desc">One-click generation and exporting of audit-ready PDFs, Excel workbooks, and custom
+              financial statements ready for immediate distribution.</p>
+          </div>
+        </div>
+
+        <div class="reports-grid">
+          <div class="report-card card-glass">
+            <div class="report-card-icon">📄</div>
+            <div class="report-card-body">
+              <h3>Comprehensive P&L Statement</h3>
+              <p>Certified Profit & Loss accounting breakdown detailing gross revenue, COGS, operating overheads, and
+                EBITDA.</p>
+              <div class="report-meta">
+                <span>Format: PDF / Excel</span>
+                <span>Audit-Ready: Yes</span>
+              </div>
+            </div>
+            <div class="report-card-actions">
+              <button class="btn-secondary" id="previewPnlBtn">Preview Statement</button>
+              <button class="btn-primary" id="downloadPnlBtn">Download PDF</button>
+            </div>
+          </div>
+
+          <div class="report-card card-glass">
+            <div class="report-card-icon">📑</div>
+            <div class="report-card-body">
+              <h3>Certified Balance Sheet</h3>
+              <p>Statement of financial position showing assets, liabilities, and shareholder equity computed via
+                double-entry ledger rules.</p>
+              <div class="report-meta">
+                <span>Format: PDF / Excel</span>
+                <span>Audit-Ready: Yes</span>
+              </div>
+            </div>
+            <div class="report-card-actions">
+              <button class="btn-secondary" id="previewBsBtn">Preview Statement</button>
+              <button class="btn-primary" id="downloadBsBtn">Download PDF</button>
+            </div>
+          </div>
+
+          <div class="report-card card-glass">
+            <div class="report-card-icon">⚖️</div>
+            <div class="report-card-body">
+              <h3>GST & Tax Audit Workbook</h3>
+              <p>Complete reconciliation report between GSTR-1, GSTR-3B, and GSTR-2B with automated ITC calculations.
+              </p>
+              <div class="report-meta">
+                <span>Format: XLSX / CSV</span>
+                <span>Audit-Ready: Yes</span>
+              </div>
+            </div>
+            <div class="report-card-actions">
+              <button class="btn-secondary" id="previewGstBtn">Preview Workbook</button>
+              <button class="btn-primary" id="downloadGstBtn">Export Excel (.CSV)</button>
+            </div>
+          </div>
+
+          <div class="report-card card-glass">
+            <div class="report-card-icon">🏦</div>
+            <div class="report-card-body">
+              <h3>Automated Bank Reconciliation Ledger</h3>
+              <p>Line-by-line cross verification between internal ledger data and financial institution statement APIs.
+              </p>
+              <div class="report-meta">
+                <span>Format: PDF / CSV</span>
+                <span>Audit-Ready: Yes</span>
+              </div>
+            </div>
+            <div class="report-card-actions">
+              <button class="btn-secondary" id="previewRecBtn">Preview Log</button>
+              <button class="btn-primary" id="downloadRecBtn">Export Report</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Report Document Viewer -->
+        <div class="report-preview-sheet card-glass" id="reportPreviewSheet">
+          <div class="sheet-top-bar">
+            <div class="sheet-title-info">
+              <span class="sheet-tag">DOCUMENT PREVIEWER</span>
+              <h3 id="previewSheetTitle">Comprehensive Profit & Loss Statement (Q3 FY26)</h3>
+            </div>
+            <div class="sheet-actions">
+              <button class="btn-secondary" id="printSheetBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 6 2 18 2 18 9" />
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                  <rect x="6" y="14" width="12" height="8" />
+                </svg>
+                <span>Print Document</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="sheet-content" id="previewSheetContent">
+            <!-- Rendered by app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. SYSTEM ARCHITECTURE & ROADMAP SPECS ================= -->
+      <section class="tab-panel" id="panelBlueprint">
+        <div class="panel-header">
+          <div>
+            <div class="section-tag">BLUEPRINT SPECIFICATION • PAGES 1, 2 & 3</div>
+            <h1 class="panel-title">System Architecture & Tech Stack</h1>
+            <p class="panel-desc">Interactive documentation of the underlying infrastructure, AI workflow engine, domain
+              terminology, and future ecosystem roadmap.</p>
+          </div>
+        </div>
+
+        <!-- 2. System Architecture & Tech Stack Grid from PDF -->
+        <div class="blueprint-section-title">2. System Architecture & Tech Stack</div>
+        <div class="tech-stack-grid">
+          <div class="tech-card card-glass">
+            <div class="tech-header">
+              <span class="tech-role">Frontend Framework</span>
+              <span class="tech-pill">React.js</span>
+            </div>
+            <p>Powers an interactive, highly responsive user interface designed for real-time analytics dashboards, live
+              data updates, and smooth user interaction.</p>
+          </div>
+
+          <div class="tech-card card-glass">
+            <div class="tech-header">
+              <span class="tech-role">Backend Architecture</span>
+              <span class="tech-pill">Python / FastAPI</span>
+            </div>
+            <p>Provides ultra-fast backend processing, asynchronous endpoint management, and seamless integration
+              between AI models and database engines.</p>
+          </div>
+
+          <div class="tech-card card-glass">
+            <div class="tech-header">
+              <span class="tech-role">Database Storage</span>
+              <span class="tech-pill">PostgreSQL</span>
+            </div>
+            <p>Offers robust, reliable, and secure relational data storage for ledger balances, user accounts, and
+              historical financial records.</p>
+          </div>
+
+          <div class="tech-card card-glass">
+            <div class="tech-header">
+              <span class="tech-role">AI & Third-Party APIs</span>
+              <span class="tech-pill">LLM / OCR / Banking APIs</span>
+            </div>
+            <p>Integrates LLMs for accounting rules, OCR for document extraction, GST verification modules, and
+              automated banking reconciliation APIs.</p>
+          </div>
+        </div>
+
+        <!-- 3. Core System Functions & Workflow Engine -->
+        <div class="blueprint-section-title">3. Core System Functions & Workflow Engine</div>
+        <div class="workflow-steps-grid">
+          <div class="workflow-step-card card-glass">
+            <div class="step-number">01</div>
+            <h4>Data Extraction & Ingestion</h4>
+            <p>Captures data directly from raw financial files, digital invoices, or scanned receipts via optical
+              character recognition (OCR).</p>
+          </div>
+          <div class="workflow-step-card card-glass">
+            <div class="step-number">02</div>
+            <h4>Intelligent AI Bookkeeping</h4>
+            <p>LLM-driven engine parses text, interprets complex accounting rules, and automatically categorizes
+              transactions into the General Ledger.</p>
+          </div>
+          <div class="workflow-step-card card-glass">
+            <div class="step-number">03</div>
+            <h4>Automated Bank Reconciliation</h4>
+            <p>Communicates with banking APIs to cross-verify internally computed records against live bank data.</p>
+          </div>
+          <div class="workflow-step-card card-glass">
+            <div class="step-number">04</div>
+            <h4>Tax Calculation & Compliance</h4>
+            <p>Calculates GST obligations instantly and generates complete tax estimations prepared for human
+              professional sign-off.</p>
+          </div>
+          <div class="workflow-step-card card-glass">
+            <div class="step-number">05</div>
+            <h4>Financial Report Generation</h4>
+            <p>Generates real-time P&L statements, Balance Sheets, and cash flow reports ready for export.</p>
+          </div>
+        </div>
+
+        <!-- 5. Domain Terminology & 6. Future Ecosystem Roadmap -->
+        <div class="blueprint-split-grid">
+          <div class="card-glass p-lg">
+            <h3>5. Domain Terminology</h3>
+            <ul class="terminology-list">
+              <li>
+                <strong>OCR (Optical Character Recognition):</strong>
+                <span>System for converting scanned paper receipts and PDFs into editable, machine-readable text and
+                  figures.</span>
+              </li>
+              <li>
+                <strong>LLM (Large Language Model):</strong>
+                <span>Advanced intelligence layer handling accounting logic, context comprehension, and line-item
+                  categorization.</span>
+              </li>
+              <li>
+                <strong>General Ledger:</strong>
+                <span>The centralized master database storing all verified financial transactions permanently.</span>
+              </li>
+              <li>
+                <strong>Reconciliation:</strong>
+                <span>Process of automated cross-verification between internal ledger data and financial institution
+                  statements.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card-glass p-lg">
+            <h3>6. Future Ecosystem Roadmap</h3>
+            <ul class="roadmap-list">
+              <li>
+                <div class="roadmap-badge">PHASE 2</div>
+                <div>
+                  <strong>Mobile Application Integration</strong>
+                  <p>Full feature parity on mobile devices for business owners on the go.</p>
+                </div>
+              </li>
+              <li>
+                <div class="roadmap-badge">PHASE 2</div>
+                <div>
+                  <strong>AI Voice Assistant</strong>
+                  <p>Natural language query engine enabling users to ask voice-based questions regarding company metrics
+                    and financial state.</p>
+                </div>
+              </li>
+              <li>
+                <div class="roadmap-badge">PHASE 3</div>
+                <div>
+                  <strong>Predictive Analytics & Fraud Detection</strong>
+                  <p>Automated predictive cash flow forecasting and AI-driven anomaly/fraud detection models.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 7. CA PROFILE & SYSTEM SETTINGS ================= -->
+      <section class="tab-panel" id="panelProfile">
+        <div class="panel-header">
+          <div>
+            <div class="section-tag">PRACTITIONER PORTAL • CREDENTIALS & SYSTEM INTEGRATIONS</div>
+            <h1 class="panel-title">Chartered Accountant Profile & Settings</h1>
+            <p class="panel-desc">Manage your professional credentials, institutional firm registry, automated API
+              endpoints, and security authentication parameters.</p>
+          </div>
+          <div class="profile-header-actions">
+            <button class="btn-secondary" id="logoutBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              <span>Log Out</span>
+            </button>
+            <button class="btn-primary" id="saveProfileBtn">Save Profile Changes</button>
+          </div>
+        </div>
+
+        <!-- Practitioner Hero Banner Card -->
+        <div class="profile-hero-card card-glass mb-lg">
+          <div class="hero-avatar-wrap">
+            <div class="hero-avatar-ring"></div>
+            <div class="hero-avatar">
+              <div class="hero-avatar-inner">
+                <svg class="hero-avatar-svg" width="48" height="48" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="7.2" r="4.2" fill="url(#heroAvatarGrad)" />
+                  <path d="M4 20.8c0-4.4 3.6-7.8 8-7.8s8 3.4 8 7.8" stroke="url(#heroAvatarGrad)" stroke-width="2.2"
+                    stroke-linecap="round" />
+                </svg>
+                <div class="hero-avatar-shield" title="ICAI Certified Fellow">
+                  <span>CA</span>
+                </div>
+              </div>
+            </div>
+            <span class="avatar-status-dot" title="Authenticated & Online">
+              <span class="status-dot-pulse"></span>
+            </span>
+          </div>
+          <div class="hero-details">
+            <div class="hero-title-row">
+              <h2 id="profHeroName">CA. Aditya Tripathi, FCA</h2>
+              <span class="badge-success">ICAI Fellow Practitioner</span>
+              <span class="badge-soft">Cert of Practice: COP-88192</span>
+            </div>
+            <p class="hero-firm-name" id="profHeroFirm">Senior Managing Partner at Tripathi & Associates Chartered
+              Accountants</p>
+            <div class="hero-tags">
+              <span><strong>ICAI Reg:</strong> CA-ADITYA-7701</span>
+              <span><strong>FRN:</strong> 012938N</span>
+              <span><strong>Digital Signature:</strong> Class 3 DSC (Active)</span>
+              <span><strong>Auditor UID:</strong> AUD-IN-88902</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two-column settings grid -->
+        <div class="settings-grid">
+          <!-- Left Column: Practitioner & Firm Information -->
+          <div class="settings-col">
+            <div class="card-glass p-lg mb-lg">
+              <div class="section-subhead">
+                <h3>Personal & Firm Identity</h3>
+                <small class="text-muted">Information stamped on certified audit sheets</small>
+              </div>
+
+              <div class="form-row-2 mt-md">
+                <div class="form-group">
+                  <label>Chartered Accountant Full Name</label>
+                  <input type="text" id="profInputName" value="CA. Aditya Tripathi, FCA" class="input-field">
+                </div>
+                <div class="form-group">
+                  <label>Official Email Address</label>
+                  <input type="email" id="profInputEmail" value="aditya.tripathi@tripathi-ca.com" class="input-field">
+                </div>
+              </div>
+
+              <div class="form-row-2 mt-md">
+                <div class="form-group">
+                  <label>Accounting Firm / Practice Name</label>
+                  <input type="text" id="profInputFirm" value="Tripathi & Associates Chartered Accountants"
+                    class="input-field">
+                </div>
+                <div class="form-group">
+                  <label>Firm Registration Number (FRN)</label>
+                  <input type="text" id="profInputFrn" value="FRN-012938N" class="input-field font-mono">
+                </div>
+              </div>
+
+              <div class="form-group mt-md">
+                <label>Principal Office Address</label>
+                <input type="text" id="profInputAddress"
+                  value="Suite 902, Nariman Financial Towers, Marine Drive, Mumbai 400021" class="input-field">
+              </div>
+
+              <div class="form-row-2 mt-md">
+                <div class="form-group">
+                  <label>Institutional GSTIN / Tax ID</label>
+                  <input type="text" id="profInputGstin" value="27AAACS8892P1ZF" class="input-field font-mono">
+                </div>
+                <div class="form-group">
+                  <label>Direct Telephone</label>
+                  <input type="text" id="profInputPhone" value="+91 98200 12345" class="input-field">
+                </div>
+              </div>
+            </div>
+
+            <!-- Statutory Credentials -->
+            <div class="card-glass p-lg">
+              <div class="section-subhead">
+                <h3>Statutory Compliance Tokens</h3>
+                <small class="text-muted">Digital signing & automated tax portal integration</small>
+              </div>
+              <div class="credential-cards-list mt-md">
+                <div class="cred-item">
+                  <div class="cred-icon">🔐</div>
+                  <div class="cred-info">
+                    <strong>Class 3 USB Cryptographic e-Token (DSC)</strong>
+                    <small>Serial: ePass2003-88219 • Valid through Nov 28, 2027</small>
+                  </div>
+                  <span class="badge-success">Connected</span>
+                </div>
+                <div class="cred-item">
+                  <div class="cred-icon">📜</div>
+                  <div class="cred-info">
+                    <strong>ICAI Peer Review Certification</strong>
+                    <small>Certificate No: PRB-2024-998 • Status: Active Tier-1</small>
+                  </div>
+                  <span class="badge-success">Verified</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: System Architecture & API Integrations -->
+          <div class="settings-col">
+            <div class="card-glass p-lg mb-lg">
+              <div class="section-subhead">
+                <h3>System Architecture & API Endpoints</h3>
+                <small class="text-muted">Live connections to FastAPI, PostgreSQL, and LLM engines</small>
+              </div>
+
+              <div class="form-group mt-md">
+                <label>FastAPI Backend Processing URL</label>
+                <div class="input-with-badge">
+                  <input type="text" id="cfgBackendUrl" value="http://api.ca-platform.internal/v2"
+                    class="input-field font-mono">
+                  <span class="badge-soft text-emerald">ONLINE (8ms)</span>
+                </div>
+              </div>
+
+              <div class="form-group mt-md">
+                <label>PostgreSQL Relational Storage Instance</label>
+                <div class="input-with-badge">
+                  <input type="text" id="cfgDbInstance"
+                    value="postgres://ca_prod_user@db.finance-core:5432/ca_ledger_master" class="input-field font-mono">
+                  <span class="badge-soft text-emerald">POOLED (16/20)</span>
+                </div>
+              </div>
+
+              <div class="form-group mt-md">
+                <label>LLM Accounting Reasoning Engine</label>
+                <select id="cfgLlmEngine" class="input-field">
+                  <option value="Gemini 1.5 Pro (Financial Rules Tuned)" selected>Gemini 1.5 Pro (Financial Rules Tuned)
+                  </option>
+                  <option value="Anthropic Claude 3.5 Sonnet (Audit Specialist)">Anthropic Claude 3.5 Sonnet (Audit
+                    Specialist)</option>
+                  <option value="OpenAI GPT-4o (General Ledger Mode)">OpenAI GPT-4o (General Ledger Mode)</option>
+                </select>
+              </div>
+
+              <div class="form-group mt-md">
+                <label>Banking API Automated Webhook Gateway</label>
+                <div class="input-with-badge">
+                  <input type="text" id="cfgBankWebhook"
+                    value="https://sync.ca-platform.internal/webhooks/banking/iso20022" class="input-field font-mono"
+                    readonly>
+                  <span class="badge-soft">ISO 20022</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Security & Active Sessions -->
+            <div class="card-glass p-lg">
+              <div class="section-subhead">
+                <h3>Security & Session Oversight</h3>
+                <small class="text-muted">Audit log and multi-factor authorization</small>
+              </div>
+
+              <div class="security-features-list mt-md">
+                <div class="sec-row">
+                  <div>
+                    <strong>Two-Factor Hardware Authentication (FIDO2)</strong>
+                    <p class="text-muted text-sm">Requires physical security key or TOTP on login</p>
+                  </div>
+                  <span class="badge-success">Enabled</span>
+                </div>
+                <div class="sec-row">
+                  <div>
+                    <strong>General Ledger Audit Trail Immutability</strong>
+                    <p class="text-muted text-sm">SHA-256 cryptographic hashing on every posted ledger entry</p>
+                  </div>
+                  <span class="badge-success">Enforced</span>
+                </div>
+                <div class="sec-row">
+                  <div>
+                    <strong>Active Workstation Session</strong>
+                    <p class="text-muted text-sm" id="activeSessionTime">Logged in: Today at 13:42 • Windows Cockpit
+                      Terminal</p>
+                  </div>
+                  <span class="badge-soft">Current</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- AI Voice / Assistant Interactive Modal -->
+  <div class="modal-backdrop" id="aiAssistantModal">
+    <div class="modal-dialog card-glass">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="ai-spark-icon">✨</div>
+          <div>
+            <h3>AI Chartered Accountant Assistant</h3>
+            <small>Natural Language Query Engine & Accounting Logic</small>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="closeAiModalBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="ai-chat-history" id="aiChatHistory">
+          <div class="chat-msg ai-msg">
+            <div class="msg-author">AI CA Engine</div>
+            <div class="msg-bubble">
+              Hello! I am your AI Chartered Accountant. You can ask me to analyze cash flow, verify tax liabilities,
+              inspect reconciliations, or calculate EBITDA margins.
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-quick-queries">
+          <button class="quick-query-btn" data-query="What is our projected net margin for Q3?">Projected Q3 Net
+            Margin?</button>
+          <button class="quick-query-btn" data-query="Are there any unreconciled bank transactions?">Check Bank
+            Reconciliation</button>
+          <button class="quick-query-btn" data-query="Explain our input tax credit balance.">Explain ITC Credit</button>
+        </div>
+
+        <form class="ai-input-form" id="aiQueryForm">
+          <input type="text" id="aiQueryInput" placeholder="Ask any financial or accounting question..."
+            autocomplete="off">
+          <button type="submit" class="btn-primary">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- CA Sign-off Confirmation Modal -->
+  <div class="modal-backdrop" id="caSignOffModal">
+    <div class="modal-dialog card-glass">
+      <div class="modal-header">
+        <h3>Chartered Accountant Professional Sign-off</h3>
+        <button class="modal-close-btn" id="closeSignOffModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="signoff-summary">
+          <p>You are about to certify and digitally stamp the <strong>Q3 FY26 GST & Financial Statement Pack</strong>.
+          </p>
+          <div class="signoff-box">
+            <div><span>Gross Revenue:</span> <strong>$842,950.00</strong></div>
+            <div><span>Net GST Obligation:</span> <strong>$68,340.00</strong></div>
+            <div><span>Reconciliation Rate:</span> <strong>100.0% (Matched)</strong></div>
+          </div>
+          <div class="form-group mt-md">
+            <label>Chartered Accountant Signature / Certificate ID</label>
+            <input type="text" id="caCertId" value="CA-IN-9812-FELLOW" class="input-field font-mono">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelSignOffBtn">Cancel</button>
+        <button class="btn-success" id="confirmSignOffBtn">Certify & Sign Off</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
