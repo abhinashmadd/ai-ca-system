@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: ai-ca-system
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: MONGO_URI
+        value: mongodb://localhost:27017
+      - key: MONGO_DB_NAME
+        value: ca_platform_db
+      - key: SECRET_KEY
+        generateValue: true

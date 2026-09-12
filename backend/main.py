@@ -53,24 +53,24 @@ def health_check():
         "version": "2.0.0"
     }
 
-# Serve the entire project1 frontend directory as static files
+# Serve the entire frontend directory as static files
 FRONTEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Mount static files (css, js, images etc.)
+# Mount static files
 app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
 
-# Serve index.html
 @app.get("/", include_in_schema=False)
 def serve_root():
-    return FileResponse(os.path.join(FRONTEND_DIR, "signin.html"))
+    return FileResponse(os.path.join(FRONTEND_DIR, "dashboard.html"))
 
 @app.get("/signin", include_in_schema=False)
+@app.get("/login", include_in_schema=False)
 def serve_signin():
     return FileResponse(os.path.join(FRONTEND_DIR, "signin.html"))
 
 @app.get("/dashboard", include_in_schema=False)
 def serve_dashboard():
-    return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
+    return FileResponse(os.path.join(FRONTEND_DIR, "dashboard.html"))
 
 @app.get("/documents", include_in_schema=False)
 def serve_documents():
@@ -79,3 +79,22 @@ def serve_documents():
 @app.get("/admin", include_in_schema=False)
 def serve_admin():
     return FileResponse(os.path.join(FRONTEND_DIR, "admin.html"))
+
+# Catch-all route to serve root files (CSS, JS, images, etc.)
+@app.get("/{file_path:path}", include_in_schema=False)
+def serve_static_root(file_path: str):
+    full_path = os.path.join(FRONTEND_DIR, file_path)
+    if os.path.isfile(full_path):
+        return FileResponse(full_path)
+    # Check dist directory for React assets if built
+    dist_path = os.path.join(FRONTEND_DIR, "dist", file_path)
+    if os.path.isfile(dist_path):
+        return FileResponse(dist_path)
+    # Fallback to dashboard
+    return FileResponse(os.path.join(FRONTEND_DIR, "dashboard.html"))
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=port)
+
