@@ -213,7 +213,7 @@
         const full = { ...user, loginTime: new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}), loginDate: new Date().toLocaleDateString() };
         (rememberMe.checked ? localStorage : sessionStorage).setItem("ai_ca_user", JSON.stringify(full));
         showToast("Authentication successful! Welcome, " + user.name);
-        setTimeout(() => window.location.replace("index.html"), 650);
+        setTimeout(() => window.location.replace("dashboard.html"), 650);
       }
 
       /* ---- Sign In Submit ---- */

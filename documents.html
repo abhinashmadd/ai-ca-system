@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Expiry & Auto Renewal — AI Chartered Accountant</title>
+  <meta name="description"
+    content="Autonomous AI Document Expiry Tracking, OCR Statutory Entity Extraction, Multi-Channel Renewal Reminders, and One-Click Auto Renewal Platform.">
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* ==========================================================================
+       LIQUID GLASS UI & DOCUMENT EXPIRY PLATFORM STYLES
+       ========================================================================== */
+    :root {
+      --glass-bg: rgba(18, 12, 34, 0.72);
+      --glass-card: rgba(22, 14, 42, 0.68);
+      --glass-card-hover: rgba(32, 20, 58, 0.82);
+      --glass-border: rgba(216, 180, 254, 0.16);
+      --glass-border-hover: rgba(232, 121, 249, 0.45);
+      --glass-glow: 0 20px 50px -10px rgba(0, 0, 0, 0.75), 0 0 25px rgba(192, 132, 252, 0.15);
+      
+      --glow-crimson: rgba(244, 63, 94, 0.35);
+      --glow-amber: rgba(245, 158, 11, 0.35);
+      --glow-emerald: rgba(16, 185, 129, 0.35);
+      --glow-purple: rgba(168, 85, 247, 0.35);
+      --glow-cyan: rgba(6, 182, 212, 0.35);
+    }
+
+    body {
+      background-color: #06030e;
+      background-image: 
+        radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.22) 0%, transparent 60%),
+        radial-gradient(circle at 85% 80%, rgba(147, 51, 234, 0.16) 0%, transparent 50%),
+        radial-gradient(circle at 10% 40%, rgba(236, 72, 153, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, rgba(7, 5, 14, 0.88) 0%, rgba(11, 7, 22, 0.82) 45%, rgba(5, 3, 10, 0.94) 100%),
+        url('purple-leaves-bg.jpg');
+      background-size: cover;
+      background-position: center center;
+      background-attachment: fixed;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Liquid Animated Blobs */
+    .liquid-glass-background {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .liquid-blob {
+      position: absolute;
+      border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+      filter: blur(80px);
+      opacity: 0.65;
+      mix-blend-mode: screen;
+      will-change: transform;
+      animation: morphBlob 20s ease-in-out infinite alternate;
+    }
+
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      top: -80px;
+      left: 10%;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.7) 0%, rgba(124, 58, 237, 0.3) 50%, transparent 75%);
+    }
+
+    .blob-2 {
+      width: 460px;
+      height: 460px;
+      bottom: 5%;
+      right: 8%;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.6) 0%, rgba(192, 132, 252, 0.25) 50%, transparent 75%);
+    }
+
+    .blob-3 {
+      width: 400px;
+      height: 400px;
+      top: 40%;
+      right: 35%;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.45) 0%, rgba(99, 102, 241, 0.2) 50%, transparent 75%);
+    }
+
+    @keyframes morphBlob {
+      0% { border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; transform: translate(0, 0) rotate(0deg); }
+      50% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: translate(30px, 20px) rotate(90deg); }
+      100% { border-radius: 35% 65% 60% 40% / 45% 55% 45% 55%; transform: translate(-20px, 15px) rotate(180deg); }
+    }
+
+    /* Container */
+    .doc-page-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 32px 80px 32px;
+    }
+
+    /* Top Navigation Bar */
+    .doc-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 24px;
+      background: rgba(18, 12, 34, 0.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      margin-bottom: 28px;
+    }
+
+    .doc-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .doc-brand-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid rgba(232, 121, 249, 0.4);
+      box-shadow: 0 0 15px rgba(192, 132, 252, 0.4);
+    }
+
+    .doc-brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .doc-brand-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 9px;
+      border-radius: 100px;
+      background: linear-gradient(135deg, rgba(232, 121, 249, 0.2), rgba(168, 85, 247, 0.3));
+      border: 1px solid rgba(232, 121, 249, 0.4);
+      color: #f5d0fe;
+      letter-spacing: 0.05em;
+    }
+
+    .doc-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .glass-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .glass-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--glass-border-hover);
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(192, 132, 252, 0.25);
+    }
+
+    .glass-btn-primary {
+      background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+      border-color: rgba(232, 121, 249, 0.5);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(147, 51, 234, 0.4);
+    }
+
+    .glass-btn-primary:hover {
+      background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%);
+      box-shadow: 0 6px 22px rgba(168, 85, 247, 0.55);
+      transform: translateY(-2px);
+    }
+
+    .scheduler-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #6ee7b7;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulseGlow 1.8s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 14px #34d399; }
+      100% { opacity: 0.4; transform: scale(0.9); }
+    }
+
+    /* Hero Header */
+    .hero-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+      padding: 4px 4px;
+    }
+
+    .hero-title-group h1 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #ffffff 30%, #e879f9 70%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .hero-subtitle {
+      font-size: 0.92rem;
+      color: #cbd5e1;
+      max-width: 700px;
+      line-height: 1.5;
+    }
+
+    /* KPI Cards Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .kpi-card {
+      background: var(--glass-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: var(--glass-glow);
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: transparent;
+      transition: all 0.25s;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--glass-border-hover);
+      background: var(--glass-card-hover);
+    }
+
+    .kpi-card.active-filter {
+      border-color: #c084fc;
+      box-shadow: 0 0 25px rgba(192, 132, 252, 0.35);
+      background: rgba(35, 20, 60, 0.85);
+    }
+
+    .kpi-card.kpi-total::before { background: linear-gradient(90deg, #a855f7, #c084fc); }
+    .kpi-card.kpi-active::before { background: linear-gradient(90deg, #10b981, #34d399); }
+    .kpi-card.kpi-90d::before { background: linear-gradient(90deg, #818cf8, #a78bfa); }
+    .kpi-card.kpi-30d::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .kpi-card.kpi-7d::before { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+    .kpi-card.kpi-expired::before { background: linear-gradient(90deg, #e11d48, #991b1b); }
+
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .kpi-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+    }
+
+    .kpi-icon {
+      font-size: 1.25rem;
+      padding: 6px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .kpi-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .kpi-footnote {
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Main Section: Upload & Content */
+    .dashboard-split {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* Upload Panel */
+    .upload-card {
+      background: var(--glass-card);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--glass-glow);
+    }
+
+    .card-heading {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .card-subheading {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      margin-bottom: 18px;
+    }
+
+    /* Dropzone */
+    .dropzone {
+      border: 2px dashed rgba(216, 180, 254, 0.25);
+      border-radius: 16px;
+      padding: 30px 20px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dropzone:hover, .dropzone.drag-over {
+      border-color: #c084fc;
+      background: rgba(192, 132, 252, 0.08);
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+    }
+
+    .dropzone-icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      display: inline-block;
+      animation: floatIcon 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatIcon {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-6px); }
+    }
+
+    .dropzone-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .dropzone-formats {
+      font-size: 0.74rem;
+      color: #94a3b8;
+      margin-top: 8px;
+    }
+
+    .format-badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin: 2px;
+      font-weight: 600;
+      color: #c084fc;
+    }
+
+    /* Scanning beam animation for OCR */
+    .scanning-active {
+      pointer-events: none;
+    }
+
+    .scan-beam {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #e879f9, #c084fc, transparent);
+      box-shadow: 0 0 15px #e879f9;
+      animation: scanSweep 2s ease-in-out infinite;
+      display: none;
+    }
+
+    @keyframes scanSweep {
+      0% { top: 0; opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    /* Upload Progress Box */
+    .upload-status-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: none;
+    }
+
+    .ocr-step-list {
+      list-style: none;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      margin-top: 8px;
+    }
+
+    .ocr-step-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+    }
+
+    .ocr-step-list li.done {
+      color: #34d399;
+    }
+
+    .ocr-step-list li.processing {
+      color: #e879f9;
+      font-weight: 600;
+    }
+
+    /* OCR Quick Result Banner */
+    .ocr-result-preview {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(22, 14, 42, 0.8);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      display: none;
+    }
+
+    .ocr-preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .confidence-badge {
+      padding: 3px 8px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .confidence-high {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+
+    .confidence-medium {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+    }
+
+    .confidence-low {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: #fb7185;
+    }
+
+    .ocr-field-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .ocr-field-label {
+      color: #94a3b8;
+    }
+
+    .ocr-field-val {
+      color: #f1f5f9;
+      font-weight: 600;
+      max-width: 170px;
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Right Main Panel: Toolbar & Table */
+    .docs-main-panel {
+      background: var(--glass-card);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--glass-glow);
+    }
+
+    /* Filter & Search Toolbar */
+    .filter-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 20px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+      max-width: 360px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      font-size: 0.85rem;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      color: #fff;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: #c084fc;
+      box-shadow: 0 0 16px rgba(192, 132, 252, 0.3);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 0.95rem;
+      pointer-events: none;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      padding: 9px 14px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #e2e8f0;
+      background: rgba(18, 12, 34, 0.85);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-select:hover, .filter-select:focus {
+      border-color: #c084fc;
+      box-shadow: 0 0 12px rgba(192, 132, 252, 0.25);
+    }
+
+    .filter-select option {
+      background: #180f2d;
+      color: #fff;
+    }
+
+    .toggle-missing-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      color: #cbd5e1;
+      transition: all 0.2s;
+    }
+
+    .toggle-missing-btn.active {
+      background: rgba(244, 63, 94, 0.18);
+      border-color: rgba(244, 63, 94, 0.5);
+      color: #fb7185;
+      box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
+    }
+
+    /* Table Container */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .doc-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.84rem;
+    }
+
+    .doc-table th {
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #94a3b8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .doc-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: middle;
+      color: #e2e8f0;
+    }
+
+    .doc-table tbody tr {
+      transition: background 0.18s ease;
+    }
+
+    .doc-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    /* Urgency Status Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .status-expired {
+      background: rgba(225, 29, 72, 0.18);
+      border: 1px solid rgba(225, 29, 72, 0.45);
+      color: #fda4af;
+      box-shadow: 0 0 12px rgba(225, 29, 72, 0.25);
+    }
+
+    .status-7d {
+      background: rgba(244, 63, 94, 0.18);
+      border: 1px solid rgba(244, 63, 94, 0.45);
+      color: #fb7185;
+      box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+    }
+
+    .status-30d {
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: #fcd34d;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+    }
+
+    .status-90d {
+      background: rgba(129, 140, 248, 0.18);
+      border: 1px solid rgba(129, 140, 248, 0.45);
+      color: #c7d2fe;
+    }
+
+    .status-active {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+    }
+
+    .status-pending {
+      background: rgba(168, 85, 247, 0.18);
+      border: 1px solid rgba(168, 85, 247, 0.45);
+      color: #e9d5ff;
+    }
+
+    /* Days Counter Tag */
+    .days-pill {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 7px;
+      border-radius: 6px;
+      margin-left: 6px;
+    }
+
+    .days-pill-expired {
+      background: rgba(225, 29, 72, 0.3);
+      color: #ffe4e6;
+    }
+
+    .days-pill-warn {
+      background: rgba(245, 158, 11, 0.3);
+      color: #fef3c7;
+    }
+
+    .days-pill-safe {
+      background: rgba(16, 185, 129, 0.2);
+      color: #d1fae5;
+    }
+
+    /* Action Buttons in Row */
+    .row-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-action-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      color: #cbd5e1;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .btn-action-icon:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .btn-action-renew {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(124, 58, 237, 0.35));
+      border-color: rgba(232, 121, 249, 0.4);
+      color: #f5d0fe;
+    }
+
+    .btn-action-renew:hover {
+      background: linear-gradient(135deg, #a855f7, #7c3aed);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.45);
+    }
+
+    .btn-action-verify {
+      border-color: rgba(6, 182, 212, 0.35);
+      color: #67e8f9;
+    }
+
+    .btn-action-verify:hover {
+      background: rgba(6, 182, 212, 0.2);
+      color: #a5f3fc;
+    }
+
+    .btn-action-remind {
+      border-color: rgba(245, 158, 11, 0.35);
+      color: #fcd34d;
+    }
+
+    .btn-action-remind:hover {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fef08a;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(4, 2, 8, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+      animation: modalFadeIn 0.25s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-dialog {
+      background: #140c26;
+      border: 1px solid rgba(232, 121, 249, 0.3);
+      border-radius: 22px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8), 0 0 40px rgba(168, 85, 247, 0.25);
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px 32px;
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: #94a3b8;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .form-group-full {
+      grid-column: span 2;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 0.86rem;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      border-color: #c084fc;
+      box-shadow: 0 0 15px rgba(192, 132, 252, 0.3);
+    }
+
+    /* Checklist in Renewal Modal */
+    .renewal-checklist {
+      list-style: none;
+      margin: 14px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .renewal-check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+    }
+
+    .renewal-check-item input[type="checkbox"] {
+      margin-top: 3px;
+      accent-color: #a855f7;
+    }
+
+    /* Compliance Stamp Box */
+    .stamp-box {
+      border: 2px dashed rgba(168, 85, 247, 0.4);
+      background: rgba(168, 85, 247, 0.06);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #e9d5ff;
+      margin: 16px 0;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: #19102e;
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      border-radius: 14px;
+      padding: 14px 20px;
+      color: #fff;
+      font-size: 0.85rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(168, 85, 247, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: toastSlideIn 0.3s ease;
+      max-width: 380px;
+    }
+
+    @keyframes toastSlideIn {
+      from { transform: translateX(50px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+      .dashboard-split { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .doc-page-container { padding: 14px; }
+      .doc-nav { flex-direction: column; align-items: flex-start; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .hero-banner { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .filter-toolbar { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Ambient Liquid Glass Fluid Layers -->
+  <div class="liquid-glass-background">
+    <div class="liquid-blob blob-1"></div>
+    <div class="liquid-blob blob-2"></div>
+    <div class="liquid-blob blob-3"></div>
+  </div>
+
+  <div class="doc-page-container">
+
+    <!-- Top Navigation -->
+    <header class="doc-nav">
+      <div class="doc-nav-left">
+        <img src="logo.png" alt="AI Chartered Accountant" class="doc-brand-logo">
+        <div>
+          <div class="doc-brand-title">
+            AI Chartered Accountant
+            <span class="doc-brand-badge">AUTONOMOUS EXPIRY V2.4</span>
+          </div>
+          <div style="font-size: 0.75rem; color: #cbd5e1; margin-top: 2px;">
+            Statutory Document Management & Automated Renewal System
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-nav-actions">
+        <div class="scheduler-pill" id="schedulerStatusPill" title="Daily Autonomous Compliance Engine">
+          <span class="pulse-dot"></span>
+          <span id="schedulerStatusText">Daily Scheduler: Active</span>
+        </div>
+
+        <button class="glass-btn" id="btnRunScheduler" title="Trigger immediate expiry evaluation">
+          <span>🔄</span>
+          <span>Run Check Now</span>
+        </button>
+
+        <a href="dashboard.html" class="glass-btn">
+          <span>📊</span>
+          <span>Live Analytics</span>
+        </a>
+
+        <a href="dashboard.html#tabAuthority" class="glass-btn">
+          <span>🏛️</span>
+          <span>Authority Section</span>
+        </a>
+
+        <button class="glass-btn" id="btnViewNotifLogs" title="View Dispatched Reminder Logs">
+          <span>🔔</span>
+          <span>Logs</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Title Group -->
+    <div class="hero-banner">
+      <div class="hero-title-group">
+        <h1>Document Expiry & Auto Renewal</h1>
+        <p class="hero-subtitle">
+          Autonomous AI-powered statutory document vault. Automatically detects document types, parses legal expiry dates, evaluates renewal horizons, and executes one-click compliance renewals.
+        </p>
+      </div>
+      <div>
+        <button class="glass-btn glass-btn-primary" id="btnQuickUploadTrigger">
+          <span>📤</span>
+          <span>Upload Document</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 6 KPI Expiry Dashboard Metric Cards -->
+    <div class="kpi-grid" id="kpiDashboardGrid">
+      
+      <!-- Total Documents -->
+      <div class="kpi-card kpi-total active-filter" data-filter="all" id="kpiCardTotal">
+        <div class="kpi-header">
+          <span class="kpi-label">Total Documents</span>
+          <span class="kpi-icon">📁</span>
+        </div>
+        <div class="kpi-value" id="statTotalDocs">--</div>
+        <div class="kpi-footnote">All statutory records</div>
+      </div>
+
+      <!-- Active Documents -->
+      <div class="kpi-card kpi-active" data-filter="Active" id="kpiCardActive">
+        <div class="kpi-header">
+          <span class="kpi-label">Active</span>
+          <span class="kpi-icon">🛡️</span>
+        </div>
+        <div class="kpi-value" id="statActiveDocs" style="color: #34d399;">--</div>
+        <div class="kpi-footnote">> 90 days validity</div>
+      </div>
+
+      <!-- Expiring in 90 Days -->
+      <div class="kpi-card kpi-90d" data-filter="expiring90" id="kpiCard90d">
+        <div class="kpi-header">
+          <span class="kpi-label">Expiring in 90D</span>
+          <span class="kpi-icon">📅</span>
+        </div>
+        <div class="kpi-value" id="statExpiring90" style="color: #a78bfa;">--</div>
+        <div class="kpi-footnote">Advisory Horizon</div>
+      </div>
+
+      <!-- Expiring in 30 Days -->
+      <div class="kpi-card kpi-30d" data-filter="expiring30" id="kpiCard30d">
+        <div class="kpi-header">
+          <span class="kpi-label">Expiring in 30D</span>
+          <span class="kpi-icon">⚠️</span>
+        </div>
+        <div class="kpi-value" id="statExpiring30" style="color: #fbbf24;">--</div>
+        <div class="kpi-footnote">Statutory Priority</div>
+      </div>
+
+      <!-- Expiring in 7 Days -->
+      <div class="kpi-card kpi-7d" data-filter="expiring7" id="kpiCard7d">
+        <div class="kpi-header">
+          <span class="kpi-label">Expiring in 7D</span>
+          <span class="kpi-icon">🚨</span>
+        </div>
+        <div class="kpi-value" id="statExpiring7" style="color: #fb7185;">--</div>
+        <div class="kpi-footnote">Urgent Action Required</div>
+      </div>
+
+      <!-- Expired Documents -->
+      <div class="kpi-card kpi-expired" data-filter="Expired" id="kpiCardExpired">
+        <div class="kpi-header">
+          <span class="kpi-label">Expired</span>
+          <span class="kpi-icon">🛑</span>
+        </div>
+        <div class="kpi-value" id="statExpired" style="color: #f43f5e;">--</div>
+        <div class="kpi-footnote">Past legal validity</div>
+      </div>
+
+    </div>
+
+    <!-- Main Workspace Split -->
+    <div class="dashboard-split">
+
+      <!-- Left Column: Upload & OCR Inspection -->
+      <div class="upload-card">
+        <div class="card-heading">
+          <span>⚡</span>
+          <span>AI OCR Document Ingestion</span>
+        </div>
+        <div class="card-subheading">
+          Upload certificates or licenses in PDF, JPG, PNG, or DOCX. AI will automatically extract holder, dates, registration IDs, and confidence score.
+        </div>
+
+        <!-- Interactive Drag & Drop Box -->
+        <div class="dropzone" id="fileDropzone">
+          <div class="scan-beam" id="scanBeam"></div>
+          <input type="file" id="fileInput" accept=".pdf,.docx,.jpg,.jpeg,.png" style="display: none;">
+          <div class="dropzone-icon">📄</div>
+          <div class="dropzone-title">Drag & Drop Document Here</div>
+          <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 4px;">or click to browse local files</div>
+          <div class="dropzone-formats">
+            <span class="format-badge">PDF</span>
+            <span class="format-badge">DOCX</span>
+            <span class="format-badge">JPG</span>
+            <span class="format-badge">PNG</span>
+          </div>
+        </div>
+
+        <!-- Optional Holder Override -->
+        <div style="margin-top: 14px;">
+          <label class="form-label" for="inputHolderOverride">Corporate Entity / Holder (Optional)</label>
+          <input type="text" id="inputHolderOverride" class="form-input" placeholder="e.g. Apex Global Technologies Pvt Ltd">
+        </div>
+
+        <!-- Upload Progress & OCR Steps Box -->
+        <div class="upload-status-box" id="uploadStatusBox">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 700; font-size: 0.82rem; color: #fff;" id="uploadStatusTitle">Processing OCR...</span>
+            <span style="font-size: 0.74rem; color: #c084fc;" id="uploadStatusPct">0%</span>
+          </div>
+          <ul class="ocr-step-list">
+            <li id="ocrStep1"><span>•</span> Receiving file payload & validating binary</li>
+            <li id="ocrStep2"><span>•</span> Executing neural text extraction (OCR engine)</li>
+            <li id="ocrStep3"><span>•</span> Entity recognition: Dates, IDs, Issuing Authority</li>
+            <li id="ocrStep4"><span>•</span> Evaluating confidence & storing record</li>
+          </ul>
+        </div>
+
+        <!-- OCR Extracted Quick Preview Card -->
+        <div class="ocr-result-preview" id="ocrPreviewCard">
+          <div class="ocr-preview-header">
+            <span style="font-size: 0.82rem; font-weight: 700; color: #fff;">Extracted Entity Summary</span>
+            <span class="confidence-badge confidence-high" id="ocrConfidenceBadge">95.0% Confidence</span>
+          </div>
+          <div class="ocr-field-row">
+            <span class="ocr-field-label">Document:</span>
+            <span class="ocr-field-val" id="previewDocName">--</span>
+          </div>
+          <div class="ocr-field-row">
+            <span class="ocr-field-label">Type:</span>
+            <span class="ocr-field-val" id="previewDocType">--</span>
+          </div>
+          <div class="ocr-field-row">
+            <span class="ocr-field-label">Registration ID:</span>
+            <span class="ocr-field-val" id="previewDocNum">--</span>
+          </div>
+          <div class="ocr-field-row">
+            <span class="ocr-field-label">Expiry Date:</span>
+            <span class="ocr-field-val" id="previewExpiryDate">--</span>
+          </div>
+          <div class="ocr-field-row">
+            <span class="ocr-field-label">Authority:</span>
+            <span class="ocr-field-val" id="previewAuthority">--</span>
+          </div>
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <button class="glass-btn glass-btn-primary" id="btnPreviewVerify" style="flex: 1; justify-content: center; font-size: 0.78rem; padding: 6px 12px;">
+              <span>✏️</span> Verify & Edit
+            </button>
+            <button class="glass-btn" id="btnPreviewDismiss" style="font-size: 0.78rem; padding: 6px 12px;">
+              Dismiss
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick AI Assistant Banner -->
+        <div style="margin-top: 20px; padding: 14px; border-radius: 14px; background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.2);">
+          <div style="font-size: 0.82rem; font-weight: 700; color: #f5d0fe; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <span>🤖</span> AI Statutory Renewal Advisor
+          </div>
+          <div style="font-size: 0.76rem; color: #cbd5e1; line-height: 1.4;">
+            The scheduler runs 24/7. When licenses enter the 90-day window, compliance checklists and automated filing payloads are generated automatically.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Document Vault & Filter Toolbar -->
+      <div class="docs-main-panel">
+        
+        <!-- Toolbar -->
+        <div class="filter-toolbar">
+          
+          <!-- Search Box -->
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by name, holder, ID, or authority...">
+          </div>
+
+          <!-- Filters -->
+          <div class="filter-group">
+            
+            <!-- Type Filter -->
+            <select id="filterType" class="filter-select" aria-label="Filter by Document Type">
+              <option value="">All Document Types</option>
+              <option value="Statutory License">Statutory License</option>
+              <option value="Trade Permit">Trade Permit</option>
+              <option value="Insurance Policy">Insurance Policy</option>
+              <option value="Identity / KYC">Identity / KYC</option>
+              <option value="Lease & Contract">Lease & Contract</option>
+              <option value="Tax & Compliance">Tax & Compliance</option>
+              <option value="Vehicle / Logistics">Vehicle / Logistics</option>
+            </select>
+
+            <!-- Status Filter -->
+            <select id="filterStatus" class="filter-select" aria-label="Filter by Status">
+              <option value="">All Statuses</option>
+              <option value="Active">Active</option>
+              <option value="Expiring Soon">Expiring Soon (<= 90D)</option>
+              <option value="Expired">Expired</option>
+              <option value="Renewal Pending">Renewal Pending</option>
+              <option value="Renewal Completed">Renewal Completed</option>
+            </select>
+
+            <!-- Month Filter -->
+            <input type="month" id="filterMonth" class="filter-select" title="Filter by Expiry Month" style="min-width: 140px;">
+
+            <!-- Missing Expiry Filter Button -->
+            <button class="toggle-missing-btn" id="btnFilterMissing" title="Filter documents with missing or unparsed expiry dates">
+              <span>⚠️</span>
+              <span>Missing Expiry (<span id="countMissingBadge">0</span>)</span>
+            </button>
+
+            <!-- Reset Filters -->
+            <button class="glass-btn" id="btnResetFilters" title="Clear all filters">
+              <span>↺</span>
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- Document Table -->
+        <div class="table-responsive">
+          <table class="doc-table" id="documentsTable">
+            <thead>
+              <tr>
+                <th>Document & ID</th>
+                <th>Category & Authority</th>
+                <th>Holder Name</th>
+                <th>Expiry Date & Urgency</th>
+                <th>AI Confidence</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="documentsTableBody">
+              <!-- Rendered via documents.js -->
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 40px; color: #94a3b8;">
+                  Loading statutory documents vault...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Footer / Count -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; font-size: 0.78rem; color: #94a3b8;">
+          <span id="displayCountText">Showing 0 documents</span>
+          <div style="display: flex; gap: 8px;">
+            <button class="glass-btn" id="btnExportCSV" style="font-size: 0.74rem; padding: 6px 12px;">
+              <span>📥</span> Export Audit Ledger (CSV)
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- 1. AI Verification & Correction Modal -->
+  <div class="modal-backdrop" id="modalVerification">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🔍</span>
+          <span>AI Entity Verification & Correction</span>
+        </div>
+        <button class="modal-close" data-close="modalVerification">&times;</button>
+      </div>
+
+      <div id="verifyAlertBox" style="display: none; padding: 10px 14px; border-radius: 10px; margin-bottom: 16px; font-size: 0.8rem;"></div>
+
+      <form id="formVerification">
+        <input type="hidden" id="verifyDocId">
+
+        <div class="form-grid">
+          <div class="form-group-full">
+            <label class="form-label" for="verifyDocName">Document Name</label>
+            <input type="text" id="verifyDocName" class="form-input" required>
+          </div>
+
+          <div>
+            <label class="form-label" for="verifyDocType">Document Type</label>
+            <select id="verifyDocType" class="form-input">
+              <option value="Statutory License">Statutory License</option>
+              <option value="Trade Permit">Trade Permit</option>
+              <option value="Insurance Policy">Insurance Policy</option>
+              <option value="Identity / KYC">Identity / KYC</option>
+              <option value="Lease & Contract">Lease & Contract</option>
+              <option value="Tax & Compliance">Tax & Compliance</option>
+              <option value="Vehicle / Logistics">Vehicle / Logistics</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label" for="verifyDocNumber">Registration / Certificate ID</label>
+            <input type="text" id="verifyDocNumber" class="form-input" required>
+          </div>
+
+          <div class="form-group-full">
+            <label class="form-label" for="verifyHolderName">Holder / Company Name</label>
+            <input type="text" id="verifyHolderName" class="form-input" required>
+          </div>
+
+          <div>
+            <label class="form-label" for="verifyIssueDate">Issue Date</label>
+            <input type="date" id="verifyIssueDate" class="form-input">
+          </div>
+
+          <div>
+            <label class="form-label" for="verifyExpiryDate">Legal Expiry Date</label>
+            <input type="date" id="verifyExpiryDate" class="form-input">
+            <div style="margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+              <input type="checkbox" id="verifyIsPerpetual">
+              <label for="verifyIsPerpetual" style="font-size: 0.74rem; color: #cbd5e1; cursor: pointer;">
+                Perpetual (No Expiry Date)
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group-full">
+            <label class="form-label" for="verifyAuthority">Issuing Authority</label>
+            <input type="text" id="verifyAuthority" class="form-input">
+          </div>
+
+          <div class="form-group-full">
+            <label class="form-label" for="verifyNotes">Verification Audit Notes</label>
+            <input type="text" id="verifyNotes" class="form-input" placeholder="Verified by Practitioner / CA Authorized Signatory">
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="glass-btn" data-close="modalVerification">Cancel</button>
+          <button type="submit" class="glass-btn glass-btn-primary">
+            <span>🛡️</span> Save & Mark Verified
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. AI Renewal Assistant & One-Click Renewal Modal -->
+  <div class="modal-backdrop" id="modalRenewal">
+    <div class="modal-dialog" style="max-width: 700px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>⚡</span>
+          <span>AI Statutory Auto Renewal Assistant</span>
+        </div>
+        <button class="modal-close" data-close="modalRenewal">&times;</button>
+      </div>
+
+      <input type="hidden" id="renewalDocId">
+
+      <div style="padding: 16px; border-radius: 14px; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #fff;" id="renewalDocTitle">--</div>
+            <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 3px;" id="renewalDocMeta">--</div>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 0.72rem; color: #94a3b8; text-transform: uppercase;">Estimated Govt Fee</span>
+            <div style="font-size: 1.3rem; font-weight: 800; color: #e879f9; font-family: 'JetBrains Mono', monospace;" id="renewalEstFee">--</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 0.85rem; font-weight: 700; color: #f5d0fe; margin-bottom: 6px;">
+          Statutory Regulatory Portal:
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(0, 0, 0, 0.3); border-radius: 10px; border: 1px solid var(--glass-border); margin-bottom: 16px;">
+          <div>
+            <span style="font-size: 0.82rem; font-weight: 600; color: #fff;" id="renewalPortalName">--</span>
+            <div style="font-size: 0.74rem; color: #94a3b8;" id="renewalProcessOverview">--</div>
+          </div>
+          <a href="#" id="renewalPortalLink" target="_blank" class="glass-btn" style="font-size: 0.75rem; padding: 5px 12px; white-space: nowrap;">
+            <span>🌐</span> Open Portal
+          </a>
+        </div>
+      </div>
+
+      <!-- Statutory Checklist -->
+      <div>
+        <div style="font-size: 0.85rem; font-weight: 700; color: #f5d0fe; margin-bottom: 4px;">
+          AI Pre-Renewal Statutory Checklist:
+        </div>
+        <ul class="renewal-checklist" id="renewalChecklistContainer">
+          <!-- Filled dynamically -->
+        </ul>
+      </div>
+
+      <!-- New Extension Date Input -->
+      <div class="form-grid" style="margin-top: 16px;">
+        <div>
+          <label class="form-label" for="renewalNewExpiryDate">New Extended Expiry Date</label>
+          <input type="date" id="renewalNewExpiryDate" class="form-input" required>
+        </div>
+        <div>
+          <label class="form-label" for="renewalChallan">Filing / Payment Token (Challan Ref)</label>
+          <input type="text" id="renewalChallan" class="form-input" placeholder="e.g. CIN-2026-89412A">
+        </div>
+      </div>
+
+      <div class="stamp-box">
+        <div style="font-weight: 700; color: #f5d0fe;">🏛️ Statutory CA Certification Seal</div>
+        <div style="font-size: 0.74rem; color: #cbd5e1; margin-top: 2px;">
+          Authorized by AI Chartered Accountant Platform Engine & Verified Practitioner Credentials
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+        <button type="button" class="glass-btn" data-close="modalRenewal">Cancel</button>
+        <button type="button" class="glass-btn glass-btn-primary" id="btnConfirmRenewal">
+          <span>⚡</span> Execute One-Click Auto Renewal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Multi-Channel Reminder Dispatcher Modal -->
+  <div class="modal-backdrop" id="modalReminder">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🔔</span>
+          <span>Dispatch Statutory Renewal Notice</span>
+        </div>
+        <button class="modal-close" data-close="modalReminder">&times;</button>
+      </div>
+
+      <input type="hidden" id="reminderDocId">
+
+      <div style="margin-bottom: 16px; padding: 12px; border-radius: 10px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border);">
+        <div style="font-weight: 700; color: #fff;" id="reminderDocTitle">--</div>
+        <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 2px;" id="reminderDocUrgency">--</div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label class="form-label">Notification Channels</label>
+        <div style="display: flex; gap: 14px; margin-top: 6px;">
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 0.84rem; color: #e2e8f0; cursor: pointer;">
+            <input type="checkbox" id="chkRemindEmail" checked accent-color="#a855f7">
+            <span>📧 Email</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 0.84rem; color: #e2e8f0; cursor: pointer;">
+            <input type="checkbox" id="chkRemindWhatsapp" checked accent-color="#10b981">
+            <span>💬 WhatsApp</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 0.84rem; color: #e2e8f0; cursor: pointer;">
+            <input type="checkbox" id="chkRemindInApp" checked accent-color="#06b6d4">
+            <span>🔔 In-App System</span>
+          </label>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label class="form-label" for="reminderCustomMessage">Notice Content Preview</label>
+        <textarea id="reminderCustomMessage" class="form-input" rows="4" style="resize: vertical; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;"></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="glass-btn" data-close="modalReminder">Cancel</button>
+        <button type="button" class="glass-btn glass-btn-primary" id="btnSendReminderConfirm">
+          <span>🚀</span> Dispatch Statutory Reminders
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Notification & Audit Trail Drawer Modal -->
+  <div class="modal-backdrop" id="modalNotifLogs">
+    <div class="modal-dialog" style="max-width: 760px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>📜</span>
+          <span>Statutory Reminders & Audit Log Trail</span>
+        </div>
+        <button class="modal-close" data-close="modalNotifLogs">&times;</button>
+      </div>
+
+      <div class="table-responsive" style="max-height: 480px;">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Document</th>
+              <th>Channel</th>
+              <th>Recipient</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="notifLogsTableBody">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+        <button type="button" class="glass-btn" data-close="modalNotifLogs">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Platform Logic -->
+  <script src="documents.js"></script>
+</body>
+
+</html>

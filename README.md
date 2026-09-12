@@ -233,11 +233,76 @@ All files for this project are located in:
 
 ---
 
-## 7. How to Run & Verify
+## 8. 📁 Module 8: Document Expiry & Auto Renewal (`documents.html`)
 
-1. **Direct Browser Execution:**
-   - Double-click [`login.html`](file:///C:/Users/absma/OneDrive/Desktop/project1/login.html) to view the authentication screen and test the 1-Click Demo Login.
-   - Double-click [`index.html`](file:///C:/Users/absma/OneDrive/Desktop/project1/index.html) to open the cockpit directly.
-2. **Local HTTP Server (Port 8080):**
-   - Active URL: `http://localhost:8080/index.html`
-   - Active Login URL: `http://localhost:8080/login.html`
+### Overview
+An autonomous, AI-driven statutory document tracking, OCR entity extraction, expiry evaluation, and multi-channel renewal automation suite.
+
+### Architecture & Capabilities:
+1. **Multi-Format Document Ingestion:**
+   - Supports **PDF**, **DOCX**, **JPG**, and **PNG** uploads via drag-and-drop or file picker.
+   - Built-in multi-page parsing with `pypdf`, structured paragraph/table parsing with `python-docx`, and image metadata analysis with `Pillow`.
+2. **AI OCR & Entity Extraction Engine (`backend/services/ocr_service.py`):**
+   - Extracts 6 core statutory entities:
+     - **Document Name** (e.g. FSSAI Food Safety License, Trade Permit, Corporate Insurance, GSTIN Certificate)
+     - **Document Type** (Statutory License, Trade Permit, Insurance Policy, Identity / KYC, Lease & Contract, Tax & Compliance, Vehicle / Logistics)
+     - **Holder / Corporate Name** (e.g. Apex Global Technologies Pvt Ltd)
+     - **Document / Registration ID** (e.g. FSSAI-2024-88410, MCGM-TL-2024-99120)
+     - **Issue Date & Legal Expiry Date**
+     - **Issuing Authority** (e.g. Food Safety and Standards Authority of India, Municipal Corporation, Parivahan)
+   - Evaluates **AI Confidence Score** (0-100%). Scores below 80% or records with missing expiry dates trigger immediate visual warnings for manual verification.
+3. **Expiry Horizon Dashboard (6 Live KPI Cards):**
+   - **Total Documents:** Total statutory assets vaulted.
+   - **Active Documents:** > 90 days legal validity remaining.
+   - **Expiring in 90 Days:** Early advisory horizon.
+   - **Expiring in 30 Days:** Statutory priority horizon.
+   - **Expiring in 7 Days:** Urgent crimson action horizon.
+   - **Expired Documents:** Past legal validity alert.
+   - **Missing Expiry Date Badge:** Instant filter for documents needing verification.
+4. **Automated Daily Compliance Scheduler (`backend/services/scheduler_service.py`):**
+   - Daemon thread running every 24 hours (or on-demand via `POST /api/documents/run-scheduler`).
+   - Automatically computes `daysRemaining`, reclassifies urgency status (`Active`, `Expiring Soon`, `Expired`, `Renewal Pending`), and triggers automated statutory notices.
+5. **Multi-Channel Notification Dispatcher:**
+   - Dispatches automated compliance reminders across **Email**, **WhatsApp**, and **In-App Alerts**.
+   - Maintains an immutable audit trail (`notifications` collection / log) with delivery timestamps.
+6. **AI Renewal Assistant & 1-Click Auto Renewal (`backend/services/renewal_service.py`):**
+   - Tailored renewal guides by document category:
+     - Official Government Regulatory Portal URL and filing process.
+     - Interactive pre-renewal compliance checklists.
+     - Auto-calculated suggested new expiry date (+1 yr, +2 yrs, +3 yrs, etc.).
+     - Estimated government renewal fee & digital challan token generator.
+     - 1-click execution extending legal expiry date with CA certification stamp.
+
+---
+
+## 9. Backend API Specifications (`backend/routes/document_routes.py`)
+
+| Method | Endpoint | Description | Request / Query | Response |
+| :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/api/documents/dashboard` | Returns aggregate KPI stats | None | `{total, active, expiring90, expiring30, expiring7, expired, missingExpiryCount, complianceRate}` |
+| `GET` | `/api/documents` | List & filter documents | `?type=&status=&month=&search=` | `{documents: [...], count: int}` |
+| `POST` | `/api/documents/upload` | Upload & OCR process document | `Multipart: file, holder_override` | `{success: true, document: {...}, ocrMeta: {...}}` |
+| `GET` | `/api/documents/{id}` | Single document details | `doc_id` | Document Object |
+| `PUT` | `/api/documents/{id}` | Manual verification & field update | `DocumentUpdatePayload` | `{success: true, document: {...}}` |
+| `DELETE`| `/api/documents/{id}` | Delete document record | `doc_id` | `{success: true, message: str}` |
+| `GET` | `/api/documents/{id}/renewal-guide` | AI renewal checklist & portal guide | `doc_id` | `{portalName, checklist, suggestedNewExpiry, estimatedFee}` |
+| `POST` | `/api/documents/{id}/renew` | Execute 1-click auto-renewal | `{newExpiryDate, feePaid, notes}` | `{success: true, document: {...}}` |
+| `POST` | `/api/documents/{id}/remind` | Dispatch multi-channel reminder | `{channels: [...], message: str}` | `{success: true, dispatches: [...]}` |
+| `POST` | `/api/documents/run-scheduler` | Run immediate daily expiry scan | None | `{success: true, totalScanned, updatedCount, remindersDispatched}` |
+| `GET` | `/api/documents/notifications` | Dispatched notification logs | `?limit=50` | `{notifications: [...], count: int}` |
+
+---
+
+## 10. How to Run & Verify
+
+1. **Start Full Backend Server:**
+   ```bash
+   uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+   ```
+   Or run the included batch script: `start_backend.bat`
+2. **Access Web Interfaces:**
+   - **Document Management & Auto Renewal:** `http://127.0.0.1:8000/documents` (or direct [`documents.html`](file:///C:/Users/absma/OneDrive/Desktop/frontened/documents.html))
+   - **Main Financial Cockpit:** `http://127.0.0.1:8000/dashboard` (or [`dashboard.html`](file:///C:/Users/absma/OneDrive/Desktop/frontened/dashboard.html))
+   - **Landing Page:** `http://127.0.0.1:8000/` (or [`index.html`](file:///C:/Users/absma/OneDrive/Desktop/frontened/index.html))
+   - **Interactive API Swagger Docs:** `http://127.0.0.1:8000/api/docs`
+

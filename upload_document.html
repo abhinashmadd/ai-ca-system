@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ingest Documents & Folders | AI Chartered Accountant Platform</title>
+  <meta name="description"
+    content="Upload financial records, invoices, bank statements, and entire client folders via Drag & Drop to initialize your autonomous AI Chartered Accountant workspace.">
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* ==========================================================================
+       LIQUID GLASS ONBOARDING THEME
+       ========================================================================== */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      background-color: #06030e;
+      background-image: radial-gradient(circle at 50% 0%, #170b2e 0%, #080312 60%, #030107 100%);
+      color: #f8fafc;
+      font-family: var(--font-main, 'Plus Jakarta Sans', sans-serif);
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Ambient Liquid Glass Animation Layer */
+    .liquid-glass-background {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .liquid-blob {
+      position: absolute;
+      border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+      filter: blur(80px);
+      opacity: 0.7;
+      mix-blend-mode: screen;
+      animation-iteration-count: infinite;
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .blob-1 {
+      width: 520px;
+      height: 520px;
+      top: -100px;
+      left: 10%;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.8) 0%, rgba(124, 58, 237, 0.35) 50%, transparent 75%);
+      animation: morphBlob1 18s ease-in-out infinite alternate;
+    }
+
+    .blob-2 {
+      width: 480px;
+      height: 480px;
+      bottom: -80px;
+      right: 15%;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.7) 0%, rgba(192, 132, 252, 0.3) 50%, transparent 75%);
+      animation: morphBlob2 16s ease-in-out infinite alternate;
+    }
+
+    .blob-3 {
+      width: 420px;
+      height: 420px;
+      top: 40%;
+      right: 25%;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.55) 0%, rgba(99, 102, 241, 0.25) 50%, transparent 75%);
+      animation: morphBlob3 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes morphBlob1 {
+      0% { border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; }
+      50% { border-radius: 70% 30% 46% 54% / 30% 60% 40% 70%; }
+      100% { border-radius: 35% 65% 60% 40% / 45% 55% 45% 55%; }
+    }
+
+    @keyframes morphBlob2 {
+      0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+      100% { border-radius: 50% 50% 50% 50% / 40% 60% 40% 60%; }
+    }
+
+    @keyframes morphBlob3 {
+      0% { border-radius: 50% 50% 40% 60% / 40% 50% 50% 60%; }
+      100% { border-radius: 40% 60% 50% 50% / 45% 55% 45% 55%; }
+    }
+
+    /* Top Navbar in Liquid Glass */
+    .onboarding-navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 3rem;
+      background: rgba(12, 7, 26, 0.65);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      z-index: 50;
+    }
+
+    .brand-mini-link {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-logo-icon {
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 5px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.35);
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .onboarding-container {
+      max-width: 960px;
+      margin: 2.5rem auto 4rem;
+      padding: 0 1.5rem;
+      flex-grow: 1;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Stepper Tracker */
+    .stepper-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2.2rem;
+      flex-wrap: wrap;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+
+    .step-item.completed {
+      color: #34d399;
+    }
+
+    .step-item.active {
+      color: #e879f9;
+    }
+
+    .step-badge {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .step-item.completed .step-badge {
+      background: #10b981;
+      color: #fff;
+      border-color: #10b981;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .step-item.active .step-badge {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      color: #fff;
+      box-shadow: 0 0 18px rgba(168, 85, 247, 0.5);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .step-line {
+      width: 45px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .step-line.completed {
+      background: #10b981;
+    }
+
+    /* Main Liquid Glass Upload Card */
+    .upload-main-card {
+      background: rgba(255, 255, 255, 0.035);
+      backdrop-filter: blur(36px) saturate(210%);
+      -webkit-backdrop-filter: blur(36px) saturate(210%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 32px;
+      padding: 3.2rem 2.8rem;
+      box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.75), 0 0 60px rgba(168, 85, 247, 0.15);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-main-card::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: -20%;
+      width: 140%;
+      height: 50%;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Upload Mode Toggle (Files vs Folder) */
+    .upload-mode-toggle {
+      display: inline-flex;
+      background: rgba(18, 11, 34, 0.85);
+      padding: 5px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      margin-bottom: 1.8rem;
+      gap: 6px;
+    }
+
+    .mode-tab-btn {
+      padding: 0.65rem 1.4rem;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.22s ease;
+    }
+
+    .mode-tab-btn.active {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.85) 0%, rgba(236, 72, 153, 0.85) 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+    }
+
+    .mode-tab-btn:hover:not(.active) {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Large Liquid Glass Drag & Drop Zone */
+    .dropzone-box {
+      border: 2px dashed rgba(192, 132, 252, 0.4);
+      border-radius: 24px;
+      padding: 3rem 2rem;
+      margin: 1.5rem 0 2rem;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(16px);
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .dropzone-box:hover, .dropzone-box.drag-over {
+      border-color: #e879f9;
+      background: rgba(168, 85, 247, 0.08);
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 16px 45px rgba(168, 85, 247, 0.35), inset 0 0 25px rgba(192, 132, 252, 0.15);
+    }
+
+    .upload-icon-pulse {
+      width: 76px;
+      height: 76px;
+      border-radius: 22px;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-top: 1px solid rgba(255, 255, 255, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.3rem;
+      color: #f5d0fe;
+      box-shadow: 0 10px 30px rgba(168, 85, 247, 0.35);
+      animation: pulseGlow 2.8s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(168, 85, 247, 0.35); }
+      50% { transform: scale(1.06); box-shadow: 0 14px 40px rgba(236, 72, 153, 0.55); }
+    }
+
+    /* Action Buttons within Dropzone */
+    .drop-btn-cluster {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-browse {
+      padding: 0.75rem 1.6rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      transition: all 0.22s ease;
+    }
+
+    .btn-browse-file {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-top: 1px solid rgba(255, 255, 255, 0.45);
+    }
+
+    .btn-browse-file:hover {
+      background: rgba(255, 255, 255, 0.16);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-browse-folder {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.9) 0%, rgba(236, 72, 153, 0.9) 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-top: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+    }
+
+    .btn-browse-folder:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 10px 30px rgba(236, 72, 153, 0.55);
+      filter: brightness(1.1);
+    }
+
+    /* Selected Folder / Files Staging Card */
+    .staged-payload-box {
+      display: none;
+      margin: 1.5rem 0;
+      padding: 1.5rem;
+      background: rgba(19, 12, 36, 0.8);
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      border-radius: 18px;
+      text-align: left;
+    }
+
+    .staged-file-list {
+      max-height: 180px;
+      overflow-y: auto;
+      margin: 1rem 0;
+      padding-right: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .file-chip-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.55rem 0.9rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      font-size: 0.84rem;
+    }
+
+    /* Ready Sample Triggers Grid */
+    .sample-triggers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+
+    .sample-doc-btn {
+      padding: 1.1rem;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-top: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      text-align: left;
+    }
+
+    .sample-doc-btn:hover {
+      border-color: rgba(192, 132, 252, 0.6);
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(168, 85, 247, 0.25);
+    }
+
+    /* Scanning Overlay */
+    .scanning-overlay {
+      display: none;
+      margin-top: 2rem;
+      padding: 2.2rem;
+      background: rgba(14, 8, 28, 0.9);
+      border-radius: 20px;
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      backdrop-filter: blur(20px);
+    }
+
+    .scan-laser-line {
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, transparent 0%, #e879f9 50%, transparent 100%);
+      box-shadow: 0 0 20px #e879f9;
+      border-radius: 2px;
+      animation: laserSweep 1.8s infinite ease-in-out;
+    }
+
+    @keyframes laserSweep {
+      0% { transform: translateY(0); opacity: 0.4; }
+      50% { transform: translateY(35px); opacity: 1; }
+      100% { transform: translateY(0); opacity: 0.4; }
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 1.3rem 0 0.8rem;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #a855f7 0%, #ec4899 50%, #06b6d4 100%);
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    /* Success Box */
+    .success-box {
+      display: none;
+      margin-top: 2rem;
+      padding: 2.5rem;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      border-radius: 22px;
+      backdrop-filter: blur(20px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-cta-dashboard {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1.1rem 2.5rem;
+      font-size: 1.05rem;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      color: #ffffff;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.45);
+      transition: all 0.25s ease;
+    }
+
+    .btn-cta-dashboard:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px rgba(16, 185, 129, 0.6);
+      filter: brightness(1.1);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Ambient Liquid Glass Background -->
+  <div class="liquid-glass-background">
+    <div class="liquid-blob blob-1"></div>
+    <div class="liquid-blob blob-2"></div>
+    <div class="liquid-blob blob-3"></div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="onboarding-navbar">
+    <a href="index.html" class="brand-mini-link">
+      <div class="brand-logo-icon">
+        <img src="logo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
+      </div>
+      <div>
+        <div style="font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; color: #ffffff;">AI Chartered Accountant</div>
+        <div style="font-size: 0.7rem; color: #c084fc; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">
+          Workspace Ingestion Portal
+        </div>
+      </div>
+    </a>
+
+    <a href="dashboard.html" style="font-size: 0.85rem; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s;">
+      <span>Skip to Dashboard</span> &rarr;
+    </a>
+  </header>
+
+  <!-- Container -->
+  <div class="onboarding-container">
+    <!-- Stepper Tracker -->
+    <div class="stepper-header">
+      <div class="step-item completed">
+        <div class="step-badge">&#10003;</div>
+        <span>1. Practice Account Created</span>
+      </div>
+      <div class="step-line completed"></div>
+      <div class="step-item active">
+        <div class="step-badge">2</div>
+        <span>2. Ingest Files or Entire Folder</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item">
+        <div class="step-badge">3</div>
+        <span>3. Live Ledger Cockpit</span>
+      </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="upload-main-card">
+      <h1 style="font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; margin-bottom: 0.6rem; letter-spacing: -0.02em;">
+        Upload Financial Documents or Entire Folders
+      </h1>
+      <p style="color: #cbd5e1; max-width: 660px; margin: 0 auto 1.8rem; font-size: 0.95rem; line-height: 1.6;">
+        Drag & drop individual tax invoices, GSTR registers, or <strong>entire client accounting folders</strong>. Our Neural OCR will automatically parse all sub-files and populate your live ledger.
+      </p>
+
+      <!-- Upload Mode Switcher -->
+      <div class="upload-mode-toggle">
+        <button type="button" class="mode-tab-btn active" id="tabFilesMode" onclick="setUploadMode('files')">
+          <span>📄 Individual Documents</span>
+        </button>
+        <button type="button" class="mode-tab-btn" id="tabFolderMode" onclick="setUploadMode('folder')">
+          <span>📁 Entire Folder (Bulk Ingestion)</span>
+        </button>
+      </div>
+
+      <!-- Drag & Drop Zone -->
+      <div class="dropzone-box" id="dropzoneBox">
+        <!-- Hidden file input for individual files -->
+        <input type="file" id="fileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.csv,.xlsx,.xml,.zip" style="display: none;" onchange="handleFilesSelected(event)">
+        
+        <!-- Hidden file input for entire directory / folder upload -->
+        <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;" onchange="handleFolderSelected(event)">
+
+        <div class="upload-icon-pulse" id="zoneIcon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            <line x1="12" y1="11" x2="12" y2="17"></line>
+            <polyline points="9 14 12 11 15 14"></polyline>
+          </svg>
+        </div>
+
+        <h3 id="dropzoneTitle" style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.4rem; color: #ffffff;">
+          Drag & Drop Files or Entire Folders Here
+        </h3>
+        <p id="dropzoneSubtext" style="color: #94a3b8; font-size: 0.88rem; max-width: 520px; margin: 0 auto 1.2rem;">
+          Drop any folder from your computer to automatically ingest all sub-invoices, bank statements (.pdf), and Excel spreadsheets (.xlsx).
+        </p>
+
+        <!-- Two distinct Browse buttons -->
+        <div class="drop-btn-cluster" onclick="event.stopPropagation()">
+          <button type="button" class="btn-browse btn-browse-file" onclick="document.getElementById('fileInput').click()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <span>Browse Files</span>
+          </button>
+
+          <button type="button" class="btn-browse btn-browse-folder" onclick="document.getElementById('folderInput').click()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Browse Entire Folder</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Staged Files / Folder Confirmation Box -->
+      <div class="staged-payload-box" id="stagedBox">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h4 id="stagedHeading" style="font-size: 1.1rem; font-weight: 700; color: #f5d0fe; margin: 0 0 0.2rem;">
+              📁 Ready for Processing
+            </h4>
+            <p id="stagedCount" style="font-size: 0.825rem; color: #94a3b8; margin: 0;">0 items queued</p>
+          </div>
+          <button type="button" class="btn-browse btn-browse-folder" style="padding: 0.65rem 1.4rem;" onclick="startStagedIngestion()">
+            <span>⚡ Start AI Processing</span> &rarr;
+          </button>
+        </div>
+
+        <div class="staged-file-list" id="stagedList"></div>
+      </div>
+
+      <!-- Quick 1-Click Samples for Testing -->
+      <div id="sampleDocsSection">
+        <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.8rem;">
+          Or Select a Ready Document / Folder to Test
+        </div>
+
+        <div class="sample-triggers-grid">
+          <!-- Folder Demo Trigger -->
+          <button type="button" class="sample-doc-btn" onclick="simulateFolderUpload('Apex_Holdings_Q3_Accounting_Folder', 24)">
+            <span style="font-size: 1.7rem;">📁</span>
+            <div>
+              <div style="color: #f5d0fe; font-weight: 700;">Client FY25 Accounting Folder</div>
+              <small style="color: #94a3b8;">Full Folder • 24 Invoices & GSTR-2B</small>
+            </div>
+          </button>
+
+          <!-- Single Invoices -->
+          <button type="button" class="sample-doc-btn" onclick="simulateUpload('Apex_Tax_Invoice_INV-8912.pdf', '$142,500.00 • 18% GST', 1)">
+            <span style="font-size: 1.5rem;">📄</span>
+            <div>
+              <div>Corporate GST Invoice</div>
+              <small style="color: #94a3b8;">Single PDF • 18% GST Applicable</small>
+            </div>
+          </button>
+
+          <button type="button" class="sample-doc-btn" onclick="simulateUpload('HDFC_Current_Account_Aug2026.pdf', '142 Transactions • $842,950', 1)">
+            <span style="font-size: 1.5rem;">🏦</span>
+            <div>
+              <div>Bank Current Statement</div>
+              <small style="color: #94a3b8;">PDF • 142 Debits/Credits</small>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Scanning Simulation Box -->
+      <div class="scanning-overlay" id="scanningBox">
+        <div class="scan-laser-line"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.2rem; font-size: 0.95rem;">
+          <span id="scanStatusText" style="font-weight: 700; color: #e879f9;">
+            Initializing Folder Pipeline...
+          </span>
+          <span id="scanPercentText" style="font-family: var(--font-mono); font-weight: 700; color: #38bdf8;">
+            0%
+          </span>
+        </div>
+
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div id="scanLogItem" style="font-size: 0.775rem; color: #94a3b8; text-align: left; margin-top: 0.6rem; font-family: var(--font-mono); line-height: 1.5;">
+          [INIT] Initializing Tesseract & Gemini AI Financial Vision Pipeline...
+        </div>
+      </div>
+
+      <!-- Success & Dashboard Redirect Card -->
+      <div class="success-box" id="successBox">
+        <div style="font-size: 2.8rem; margin-bottom: 0.5rem;">🎉</div>
+        <h3 id="successHeading" style="font-size: 1.45rem; font-weight: 800; color: #34d399; margin-bottom: 0.4rem;">
+          Folder Processed & Ingested Successfully!
+        </h3>
+        <p id="successDesc" style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 1.6rem; line-height: 1.6;">
+          Processed <strong>all documents</strong> in folder • Extracted 100% GSTR-2B Verified Items • Balanced with General Ledger.
+        </p>
+
+        <a href="dashboard.html" class="btn-cta-dashboard">
+          <span>Enter Live Dashboard Cockpit Now</span> &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentMode = 'files';
+    let stagedFiles = [];
+    let stagedFolderName = '';
+
+    function setUploadMode(mode) {
+      currentMode = mode;
+      document.getElementById('tabFilesMode').classList.toggle('active', mode === 'files');
+      document.getElementById('tabFolderMode').classList.toggle('active', mode === 'folder');
+
+      const title = document.getElementById('dropzoneTitle');
+      const sub = document.getElementById('dropzoneSubtext');
+      const icon = document.getElementById('zoneIcon');
+
+      if (mode === 'folder') {
+        title.textContent = "Drag & Drop Entire Folder Here";
+        sub.textContent = "Select or drop an entire accounting folder from your computer. All sub-folders and accounting files will be parsed.";
+        icon.innerHTML = `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>`;
+      } else {
+        title.textContent = "Drag & Drop Financial Documents Here";
+        sub.textContent = "Drop tax invoices (.pdf), bank statements, or Excel spreadsheets (.xlsx) to parse.";
+        icon.innerHTML = `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><polyline points="9 15 12 12 15 15"></polyline></svg>`;
+      }
+    }
+
+    // Handle Individual Files Selected via Input
+    function handleFilesSelected(e) {
+      const files = Array.from(e.target.files);
+      if (files.length > 0) {
+        stageSelectedItems(files, "");
+      }
+    }
+
+    // Handle Folder Selected via webkitdirectory input
+    function handleFolderSelected(e) {
+      const files = Array.from(e.target.files);
+      if (files.length > 0) {
+        // Extract folder name from the first file's webkitRelativePath
+        const firstPath = files[0].webkitRelativePath || "";
+        const folderName = firstPath ? firstPath.split('/')[0] : "Uploaded_Folder";
+        stageSelectedItems(files, folderName);
+      }
+    }
+
+    // Stage items and show confirmation preview
+    function stageSelectedItems(files, folderName) {
+      stagedFiles = files;
+      stagedFolderName = folderName;
+
+      const stagedBox = document.getElementById('stagedBox');
+      const stagedHeading = document.getElementById('stagedHeading');
+      const stagedCount = document.getElementById('stagedCount');
+      const stagedList = document.getElementById('stagedList');
+
+      stagedList.innerHTML = '';
+      if (folderName) {
+        stagedHeading.innerHTML = `📁 Folder: <strong>${folderName}</strong>`;
+        stagedCount.textContent = `${files.length} document(s) detected in folder`;
+      } else {
+        stagedHeading.innerHTML = `📄 <strong>${files.length} Document(s) Selected</strong>`;
+        stagedCount.textContent = `Ready for OCR ingestion`;
+      }
+
+      files.slice(0, 10).forEach(f => {
+        const div = document.createElement('div');
+        div.className = 'file-chip-item';
+        div.innerHTML = `
+          <span>📄 ${f.webkitRelativePath || f.name}</span>
+          <span style="color: #94a3b8; font-size: 0.75rem;">${(f.size / 1024).toFixed(1)} KB</span>
+        `;
+        stagedList.appendChild(div);
+      });
+
+      if (files.length > 10) {
+        const more = document.createElement('div');
+        more.style.fontSize = '0.8rem';
+        more.style.color = '#c084fc';
+        more.style.textAlign = 'center';
+        more.textContent = `+ ${files.length - 10} more files in folder`;
+        stagedList.appendChild(more);
+      }
+
+      stagedBox.style.display = 'block';
+    }
+
+    function startStagedIngestion() {
+      if (stagedFiles.length > 0) {
+        simulateUpload(stagedFolderName || stagedFiles[0].name, "Batch Ingestion", stagedFiles.length);
+      }
+    }
+
+    // Drag and Drop Visual Feedback & Traversal
+    const dropzone = document.getElementById("dropzoneBox");
+    ['dragenter', 'dragover'].forEach(name => {
+      dropzone.addEventListener(name, (e) => {
+        e.preventDefault();
+        dropzone.classList.add("drag-over");
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(name => {
+      dropzone.addEventListener(name, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove("drag-over");
+      });
+    });
+
+    // Drop Event: handles both individual files and folder traversal
+    dropzone.addEventListener('drop', async (e) => {
+      const items = e.dataTransfer.items;
+      if (!items || items.length === 0) {
+        const files = Array.from(e.dataTransfer.files);
+        if (files.length > 0) stageSelectedItems(files, "");
+        return;
+      }
+
+      const filesCollected = [];
+      let detectedFolder = "";
+
+      const traverseFileTree = async (item, path = "") => {
+        if (item.isFile) {
+          return new Promise(resolve => {
+            item.file(file => {
+              file.customPath = path + file.name;
+              filesCollected.push(file);
+              resolve();
+            });
+          });
+        } else if (item.isDirectory) {
+          if (!detectedFolder) detectedFolder = item.name;
+          const dirReader = item.createReader();
+          return new Promise(resolve => {
+            dirReader.readEntries(async entries => {
+              for (const entry of entries) {
+                await traverseFileTree(entry, path + item.name + "/");
+              }
+              resolve();
+            });
+          });
+        }
+      };
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i].webkitGetAsEntry ? items[i].webkitGetAsEntry() : null;
+        if (item) {
+          await traverseFileTree(item);
+        }
+      }
+
+      if (filesCollected.length > 0) {
+        stageSelectedItems(filesCollected, detectedFolder);
+      } else if (e.dataTransfer.files.length > 0) {
+        stageSelectedItems(Array.from(e.dataTransfer.files), "");
+      }
+    });
+
+    // 1-Click Folder Simulation for instant demonstration
+    function simulateFolderUpload(folderName, fileCount) {
+      simulateUpload(folderName, "Full Folder Batch Scan", fileCount);
+    }
+
+    // Upload & Neural OCR Simulator
+    function simulateUpload(title, subtext, count = 1) {
+      const scanningBox = document.getElementById("scanningBox");
+      const successBox = document.getElementById("successBox");
+      const dropzone = document.getElementById("dropzoneBox");
+      const stagedBox = document.getElementById("stagedBox");
+      const sampleDocs = document.getElementById("sampleDocsSection");
+      const progressFill = document.getElementById("progressFill");
+      const scanStatusText = document.getElementById("scanStatusText");
+      const scanPercentText = document.getElementById("scanPercentText");
+      const scanLogItem = document.getElementById("scanLogItem");
+      const successHeading = document.getElementById("successHeading");
+      const successDesc = document.getElementById("successDesc");
+
+      dropzone.style.display = "none";
+      if (stagedBox) stagedBox.style.display = "none";
+      if (sampleDocs) sampleDocs.style.display = "none";
+      scanningBox.style.display = "block";
+      successBox.style.display = "none";
+
+      const isFolder = count > 1 || title.includes("Folder");
+
+      const stages = isFolder ? [
+        { pct: 15, text: `Indexing folder "${title}" (${count} documents)...`, log: `[FOLDER] Found ${count} sub-files. Unpacking invoice batches & spreadsheets...` },
+        { pct: 35, text: `Batch OCR Optical Processing on ${count} files...`, log: `[OCR-BATCH] Extracted 78 line items across 4 vendors. HSN codes matched.` },
+        { pct: 60, text: `Cross-checking GSTIN & GSTR-2B against GSTN Portal...`, log: `[TAX-RECON] 100% ITC verified. Matching invoice numbers to GSTN cache.` },
+        { pct: 85, text: `Batch posting double-entries to General Ledger...`, log: `[LEDGER] Generated 24 journal entries. Debits & credits in balance.` },
+        { pct: 100, text: `Complete! Folder synchronized with Live Ledger.`, log: `[SUCCESS] Trial Balance strictly balanced (variance = 0.00). Redirecting...` }
+      ] : [
+        { pct: 20, text: "Extracting optical text & line items...", log: `[OCR] Ingested: ${title}. Reading bounding boxes...` },
+        { pct: 45, text: "Verifying GSTIN & Tax Slabs against GSTN...", log: `[TAX] Matching HSN 998313. CGST 9% + SGST 9% verified.` },
+        { pct: 75, text: "Mapping transactions to General Ledger Codes...", log: `[LEDGER] Balancing debit to Account 5210 with credit to AP.` },
+        { pct: 100, text: "Synchronizing Trial Balance...", log: `[SUCCESS] Ingestion complete. Ready for live cockpit.` }
+      ];
+
+      let currentStep = 0;
+      const interval = setInterval(() => {
+        if (currentStep < stages.length) {
+          const s = stages[currentStep];
+          progressFill.style.width = s.pct + "%";
+          scanPercentText.textContent = s.pct + "%";
+          scanStatusText.textContent = s.text;
+          scanLogItem.textContent = s.log;
+          currentStep++;
+        } else {
+          clearInterval(interval);
+          setTimeout(() => {
+            scanningBox.style.display = "none";
+            successBox.style.display = "block";
+
+            if (isFolder) {
+              successHeading.textContent = `Folder "${title}" Ingested Successfully!`;
+              successDesc.innerHTML = `Successfully parsed <strong>${count} documents</strong> inside folder • GSTR-2B reconciled • Double-entry ledger fully posted.`;
+            } else {
+              successHeading.textContent = `Document Processed Successfully!`;
+              successDesc.innerHTML = `Extracted <strong>14 Line Items</strong> • 100% GSTR-2B Verified • Posted to General Ledger.`;
+            }
+
+            // Automatically open dashboard after 1.8s
+            setTimeout(() => {
+              window.location.href = "dashboard.html";
+            }, 1800);
+          }, 400);
+        }
+      }, 500);
+    }
+  </script>
+</body>
+
+</html>

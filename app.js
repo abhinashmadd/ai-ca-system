@@ -174,19 +174,317 @@ const sampleInvoices = {
 // Global Chart References
 let cashFlowChartInstance = null;
 let pnlChartInstance = null;
+let currentLoadedDoc = null;
+let currentReportType = "pnl";
+
+// ==========================================================================
+// CENTRAL CURRENCY & FOREX CONVERSION ENGINE
+// ==========================================================================
+const CurrencyEngine = {
+  currentCurrency: localStorage.getItem("ai_ca_currency") || "INR",
+
+  rates: {
+    USD: 1.0,
+    INR: 83.5,
+    EUR: 0.92,
+    GBP: 0.79,
+    JPY: 155.0,
+    CNY: 7.23,
+    KRW: 1380.0,
+    RUB: 92.0,
+    CAD: 1.36,
+    AUD: 1.52,
+    CHF: 0.90,
+    SGD: 1.35,
+    AED: 3.67,
+    SAR: 3.75,
+    QAR: 3.64,
+    THB: 36.5,
+    MYR: 4.72,
+    IDR: 16200.0,
+    NPR: 133.6,
+    BDT: 117.2,
+    PKR: 278.5,
+    ZAR: 18.5,
+    BRL: 5.25,
+    MXN: 17.1,
+    TRY: 32.5,
+    AFN: 71.2,
+    ARS: 890.0,
+    EGP: 47.8,
+    ILS: 3.72,
+    NZD: 1.64,
+    PHP: 58.2,
+    VND: 25400.0,
+    LKR: 302.0,
+    SEK: 10.6,
+    NOK: 10.8,
+    DKK: 6.9,
+    PLN: 3.98,
+    CZK: 23.2,
+    UAH: 40.5,
+    KWD: 0.31,
+    BHD: 0.38,
+    OMR: 0.38,
+    JOD: 0.71,
+    IQD: 1310.0,
+    IRR: 42000.0,
+    BTC: 0.000015,
+    ETH: 0.00028
+  },
+
+  symbols: {
+    USD: "$",
+    INR: "₹",
+    EUR: "€",
+    GBP: "£",
+    JPY: "¥",
+    CNY: "¥",
+    KRW: "₩",
+    RUB: "₽",
+    CAD: "C$",
+    AUD: "A$",
+    CHF: "CHF ",
+    SGD: "S$",
+    AED: "د.إ ",
+    SAR: "﷼ ",
+    QAR: "﷼ ",
+    THB: "฿",
+    MYR: "RM ",
+    IDR: "Rp ",
+    NPR: "NRs ",
+    BDT: "৳",
+    PKR: "₨ ",
+    ZAR: "R ",
+    BRL: "R$ ",
+    MXN: "$",
+    TRY: "₺",
+    AFN: "؋",
+    ARS: "ARS$ ",
+    EGP: "E£ ",
+    ILS: "₪",
+    NZD: "NZ$",
+    PHP: "₱",
+    VND: "₫",
+    LKR: "Rs ",
+    SEK: " kr",
+    NOK: " kr",
+    DKK: " kr",
+    PLN: " zł",
+    CZK: " Kč",
+    UAH: "₴",
+    KWD: "KD ",
+    BHD: "BD ",
+    OMR: "OMR ",
+    JOD: "JD ",
+    IQD: "IQD ",
+    IRR: "﷼ ",
+    BTC: "₿",
+    ETH: "Ξ"
+  },
+
+  getRate() {
+    return this.rates[this.currentCurrency] || 1.0;
+  },
+
+  getSymbol() {
+    return this.symbols[this.currentCurrency] || (this.currentCurrency + " ");
+  },
+
+  format(baseUsdAmount, decimals = 2) {
+    if (typeof baseUsdAmount !== "number" || isNaN(baseUsdAmount)) {
+      baseUsdAmount = parseFloat(String(baseUsdAmount).replace(/[^0-9.-]+/g, '')) || 0;
+    }
+    const converted = baseUsdAmount * this.getRate();
+    const sym = this.getSymbol();
+    const isCrypto = this.currentCurrency === "BTC" || this.currentCurrency === "ETH";
+    const dec = isCrypto ? 4 : decimals;
+
+    const locale = this.currentCurrency === "INR" ? "en-IN" : "en-US";
+    const formatted = converted.toLocaleString(locale, {
+      minimumFractionDigits: dec,
+      maximumFractionDigits: dec
+    });
+
+    return `${sym}${formatted}`;
+  },
+
+  formatCompact(baseUsdAmount) {
+    const converted = baseUsdAmount * this.getRate();
+    const sym = this.getSymbol();
+    if (this.currentCurrency === "INR") {
+      if (Math.abs(converted) >= 1e7) return `${sym}${(converted / 1e7).toFixed(2)} Cr`;
+      if (Math.abs(converted) >= 1e5) return `${sym}${(converted / 1e5).toFixed(2)} L`;
+    }
+    if (Math.abs(converted) >= 1e6) return `${sym}${(converted / 1e6).toFixed(1)}M`;
+    if (Math.abs(converted) >= 1e3) return `${sym}${(converted / 1e3).toFixed(0)}k`;
+    return `${sym}${converted.toFixed(0)}`;
+  },
+
+  setCurrency(code) {
+    if (!this.rates[code] && !this.symbols[code]) return;
+    this.currentCurrency = code;
+    localStorage.setItem("ai_ca_currency", code);
+
+    // Sync all dropdown elements in the DOM
+    const navSelect = document.getElementById("navCurrencySelect");
+    if (navSelect && navSelect.value !== code) navSelect.value = code;
+    const altSelect = document.getElementById("currencySelect");
+    if (altSelect && altSelect.value !== code) altSelect.value = code;
+
+    // Refresh all UI elements
+    this.updateAll();
+    showToast(`Currency updated to ${code} (${this.getSymbol().trim()})`);
+  },
+
+  updateAll() {
+    updateKPIs();
+    renderLedgerTable(ledgerData);
+    updateChartsCurrency();
+    updateOverviewBalanceSheet();
+    updateDocQueueAmounts();
+    updateLedgerHeaders();
+    updateComplianceValues();
+    updateSignOffModalValues();
+    if (typeof previewReport === "function") {
+      previewReport(currentReportType);
+    }
+    if (currentLoadedDoc && typeof loadInvoiceData === "function") {
+      loadInvoiceData(currentLoadedDoc);
+    }
+  }
+};
+
+const kpiBaseValues = {
+  MTD: { rev: 284150, exp: 104200, cash: 179950, tax: 24190, itc: 8500 },
+  Q3: { rev: 842950, exp: 318420, cash: 524530, tax: 68340, itc: 24190 },
+  YTD: { rev: 2480000, exp: 960400, cash: 1519600, tax: 184500, itc: 65000 }
+};
+let currentTimeframe = "Q3";
+
+const baseCashFlowData = [320000, 395000, 440000, 485000, 524530, 560000, 610000, 675000];
+const baseBaselineData = [250000, 250000, 250000, 250000, 250000, 250000, 250000, 250000];
+const basePnlData = [580000, 262950, -145000, -98420, -75000];
+
+function updateKPIs() {
+  const data = kpiBaseValues[currentTimeframe] || kpiBaseValues.Q3;
+  const revEl = document.getElementById("kpiRevenue");
+  const expEl = document.getElementById("kpiExpenses");
+  const cashEl = document.getElementById("kpiCashFlow");
+  const taxEl = document.getElementById("kpiTax");
+  const itcSubEl = document.querySelector("#kpiTax + .kpi-subtext") || document.querySelector("#kpiTax ~ .kpi-subtext");
+
+  if (revEl) revEl.textContent = CurrencyEngine.format(data.rev, 0);
+  if (expEl) expEl.textContent = CurrencyEngine.format(data.exp, 0);
+  if (cashEl) cashEl.textContent = CurrencyEngine.format(data.cash, 0);
+  if (taxEl) taxEl.textContent = CurrencyEngine.format(data.tax, 0);
+  if (itcSubEl) itcSubEl.textContent = `Eligible ITC Deductions: ${CurrencyEngine.format(data.itc, 0)}`;
+}
+
+function updateOverviewBalanceSheet() {
+  const map = {
+    bsAssetsTotal: 1240800,
+    bsCashBank: 682400,
+    bsAr: 398400,
+    bsItc: 160000,
+    bsLiabTotal: 385200,
+    bsAp: 214300,
+    bsTaxPayable: 68340,
+    bsAccruals: 102560,
+    bsEquityTotal: 855600,
+    bsRetainedEarnings: 524530,
+    bsReserves: 331070
+  };
+
+  for (const [id, baseVal] of Object.entries(map)) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = CurrencyEngine.format(baseVal, 0);
+  }
+}
+
+function updateDocQueueAmounts() {
+  const q1 = document.getElementById("queueAmt1");
+  const q2 = document.getElementById("queueAmt2");
+  const q3 = document.getElementById("queueAmt3");
+  if (q1) q1.textContent = CurrencyEngine.format(12450.00, 2);
+  if (q2) q2.textContent = CurrencyEngine.format(4280.00, 2);
+  if (q3) q3.textContent = CurrencyEngine.format(8500.00, 2);
+}
+
+function updateLedgerHeaders() {
+  const sym = CurrencyEngine.getSymbol().trim();
+  document.querySelectorAll(".currency-symbol").forEach(el => {
+    el.textContent = sym;
+  });
+}
+
+function updateComplianceValues() {
+  const outTax = document.getElementById("valOutputTax");
+  const itc = document.getElementById("valItcCredit");
+  const netPay = document.getElementById("valNetTaxPayable");
+  const cgst = document.getElementById("valCgstAmt");
+  const sgst = document.getElementById("valSgstAmt");
+  const igst = document.getElementById("valIgstAmt");
+  const totOut = document.getElementById("valTotalOutputAmt");
+  const checkBal = document.getElementById("valBalancingCheck");
+
+  if (outTax) outTax.textContent = CurrencyEngine.format(92530, 2);
+  if (itc) itc.textContent = "-" + CurrencyEngine.format(24190, 2);
+  if (netPay) netPay.textContent = CurrencyEngine.format(68340, 2);
+  if (cgst) cgst.textContent = CurrencyEngine.format(34170, 2);
+  if (sgst) sgst.textContent = CurrencyEngine.format(34170, 2);
+  if (igst) igst.textContent = CurrencyEngine.format(24190, 2);
+  if (totOut) totOut.textContent = CurrencyEngine.format(92530, 2);
+  if (checkBal) {
+    const deb = CurrencyEngine.format(1161370, 0);
+    const cr = CurrencyEngine.format(1161370, 0);
+    checkBal.textContent = `Total Debits (${deb}) strictly match Total Credits (${cr}).`;
+  }
+}
+
+function updateSignOffModalValues() {
+  const rev = document.getElementById("signOffGrossRevenue");
+  const gst = document.getElementById("signOffNetGst");
+  if (rev) rev.textContent = CurrencyEngine.format(842950, 2);
+  if (gst) gst.textContent = CurrencyEngine.format(68340, 2);
+}
+
+function setupCurrencySelector() {
+  const navSelect = document.getElementById("navCurrencySelect");
+  const altSelect = document.getElementById("currencySelect");
+
+  const sync = (val) => {
+    CurrencyEngine.setCurrency(val);
+  };
+
+  if (navSelect) {
+    navSelect.value = CurrencyEngine.currentCurrency;
+    navSelect.addEventListener("change", (e) => sync(e.target.value));
+  }
+
+  if (altSelect) {
+    altSelect.value = CurrencyEngine.currentCurrency;
+    altSelect.addEventListener("change", (e) => sync(e.target.value));
+  }
+}
 
 // Initialize on DOM Ready
 document.addEventListener("DOMContentLoaded", () => {
   setupNavigation();
+  setupCurrencySelector();
   initCharts();
   renderLedgerTable(ledgerData);
   setupLedgerFilters();
   setupDocumentPortal();
   setupComplianceSection();
   setupReportCenter();
+  setupAuthoritySection();
   setupAiModal();
   setupToastSystem();
   setupUserProfile();
+
+  // Initial application of current currency across entire UI
+  CurrencyEngine.updateAll();
 });
 
 /* ================= 1. NAVIGATION ================= */
@@ -248,14 +546,17 @@ function initCharts() {
     gradient.addColorStop(0, "rgba(56, 189, 248, 0.35)");
     gradient.addColorStop(1, "rgba(56, 189, 248, 0.0)");
 
+    const sym = CurrencyEngine.getSymbol().trim();
+    const rate = CurrencyEngine.getRate();
+
     cashFlowChartInstance = new Chart(cfCtx, {
       type: "line",
       data: {
         labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep (Est)", "Oct (Proj)", "Nov (Proj)"],
         datasets: [
           {
-            label: "Operating Cash Flow ($)",
-            data: [320000, 395000, 440000, 485000, 524530, 560000, 610000, 675000],
+            label: `Operating Cash Flow (${sym})`,
+            data: baseCashFlowData.map(v => Math.round(v * rate)),
             borderColor: "#38bdf8",
             borderWidth: 2.5,
             backgroundColor: gradient,
@@ -269,7 +570,7 @@ function initCharts() {
           },
           {
             label: "Baseline Reserve Target",
-            data: [250000, 250000, 250000, 250000, 250000, 250000, 250000, 250000],
+            data: baseBaselineData.map(v => Math.round(v * rate)),
             borderColor: "rgba(255, 255, 255, 0.2)",
             borderWidth: 1.5,
             borderDash: [5, 5],
@@ -294,7 +595,10 @@ function initCharts() {
             borderColor: "rgba(56, 189, 248, 0.3)",
             borderWidth: 1,
             padding: 10,
-            displayColors: false
+            displayColors: false,
+            callbacks: {
+              label: item => ` Cash Flow: ${CurrencyEngine.format(item.raw / rate)}`
+            }
           }
         },
         scales: {
@@ -307,7 +611,7 @@ function initCharts() {
             ticks: {
               color: "#64748b",
               font: chartFont,
-              callback: val => "$" + (val / 1000) + "k"
+              callback: val => CurrencyEngine.formatCompact(val / rate)
             }
           }
         }
@@ -318,14 +622,17 @@ function initCharts() {
   // Profit & Loss Breakdown Chart
   const pnlCtx = document.getElementById("pnlChart");
   if (pnlCtx) {
+    const sym = CurrencyEngine.getSymbol().trim();
+    const rate = CurrencyEngine.getRate();
+
     pnlChartInstance = new Chart(pnlCtx, {
       type: "bar",
       data: {
         labels: ["SaaS Recurring", "Advisory Services", "Operating COGS", "Hosting & Infra", "Tax & Facilities"],
         datasets: [
           {
-            label: "Amount ($)",
-            data: [580000, 262950, -145000, -98420, -75000],
+            label: `Amount (${sym})`,
+            data: basePnlData.map(v => Math.round(v * rate)),
             backgroundColor: [
               "#10b981",
               "#34d399",
@@ -349,7 +656,7 @@ function initCharts() {
             borderColor: "rgba(255, 255, 255, 0.1)",
             borderWidth: 1,
             callbacks: {
-              label: item => " Amount: $" + Math.abs(item.raw).toLocaleString()
+              label: item => ` Amount: ${CurrencyEngine.format(Math.abs(item.raw) / rate)}`
             }
           }
         },
@@ -363,7 +670,7 @@ function initCharts() {
             ticks: {
               color: "#64748b",
               font: chartFont,
-              callback: val => (val < 0 ? "-$" : "$") + (Math.abs(val) / 1000) + "k"
+              callback: val => CurrencyEngine.formatCompact(val / rate)
             }
           }
         }
@@ -372,24 +679,30 @@ function initCharts() {
   }
 }
 
-function updateAnalyticsTimeframe(period) {
-  const revEl = document.getElementById("kpiRevenue");
-  const expEl = document.getElementById("kpiExpenses");
-  const cashEl = document.getElementById("kpiCashFlow");
+function updateChartsCurrency() {
+  const sym = CurrencyEngine.getSymbol().trim();
+  const rate = CurrencyEngine.getRate();
 
-  if (period === "MTD") {
-    revEl.textContent = "$284,150";
-    expEl.textContent = "$104,200";
-    cashEl.textContent = "$179,950";
-  } else if (period === "Q3") {
-    revEl.textContent = "$842,950";
-    expEl.textContent = "$318,420";
-    cashEl.textContent = "$524,530";
-  } else if (period === "YTD") {
-    revEl.textContent = "$2,480,000";
-    expEl.textContent = "$960,400";
-    cashEl.textContent = "$1,519,600";
+  if (cashFlowChartInstance) {
+    cashFlowChartInstance.data.datasets[0].label = `Operating Cash Flow (${sym})`;
+    cashFlowChartInstance.data.datasets[0].data = baseCashFlowData.map(v => Math.round(v * rate));
+    cashFlowChartInstance.data.datasets[1].data = baseBaselineData.map(v => Math.round(v * rate));
+    cashFlowChartInstance.options.scales.y.ticks.callback = val => CurrencyEngine.formatCompact(val / rate);
+    cashFlowChartInstance.update();
   }
+
+  if (pnlChartInstance) {
+    pnlChartInstance.data.datasets[0].label = `Amount (${sym})`;
+    pnlChartInstance.data.datasets[0].data = basePnlData.map(v => Math.round(v * rate));
+    pnlChartInstance.options.plugins.tooltip.callbacks.label = item => ` Amount: ${CurrencyEngine.format(Math.abs(item.raw) / rate)}`;
+    pnlChartInstance.options.scales.y.ticks.callback = val => CurrencyEngine.formatCompact(val / rate);
+    pnlChartInstance.update();
+  }
+}
+
+function updateAnalyticsTimeframe(period) {
+  currentTimeframe = period;
+  updateKPIs();
   showToast(`Updated analytics parameters to ${period}`);
 }
 
@@ -464,6 +777,12 @@ function setupDocumentPortal() {
 }
 
 function loadInvoiceData(data) {
+  currentLoadedDoc = data;
+  const rate = CurrencyEngine.getRate();
+  const subEl = document.getElementById("extractedSubtotal");
+  const taxEl = document.getElementById("extractedTaxAmt");
+  const totEl = document.getElementById("extractedTotal");
+
   document.getElementById("currentDocFilename").textContent = `Viewing: ${data.filename}`;
   document.getElementById("docConfidenceBadge").querySelector("strong").textContent = data.confidence;
   document.getElementById("extractedVendor").value = data.vendor;
@@ -471,9 +790,9 @@ function loadInvoiceData(data) {
   document.getElementById("extractedType").value = data.type;
   document.getElementById("extractedInvoiceNo").value = data.invoiceNo;
   document.getElementById("extractedDate").value = data.date;
-  document.getElementById("extractedSubtotal").value = data.subtotal;
-  document.getElementById("extractedTaxAmt").value = data.taxAmt;
-  document.getElementById("extractedTotal").value = data.total;
+  if (subEl) subEl.value = (data.subtotal * rate).toFixed(2);
+  if (taxEl) taxEl.value = (data.taxAmt * rate).toFixed(2);
+  if (totEl) totEl.value = (data.total * rate).toFixed(2);
   document.getElementById("extractedCategory").value = data.category;
   document.getElementById("extractedItcStatus").value = data.itc;
 }
@@ -526,9 +845,10 @@ function postExtractedDocumentToLedger() {
   const vendor = document.getElementById("extractedVendor").value;
   const invoiceNo = document.getElementById("extractedInvoiceNo").value;
   const date = document.getElementById("extractedDate").value;
-  const total = parseFloat(document.getElementById("extractedTotal").value) || 0;
+  const totalEntered = parseFloat(document.getElementById("extractedTotal").value) || 0;
   const category = document.getElementById("extractedCategory").value;
   const conf = document.getElementById("docConfidenceBadge").querySelector("strong").textContent;
+  const baseTotal = totalEntered / CurrencyEngine.getRate();
 
   const newTx = {
     id: `TX-2026-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -537,7 +857,7 @@ function postExtractedDocumentToLedger() {
     head: category,
     code: "5210",
     class: "EXPENSE",
-    debit: total,
+    debit: baseTotal,
     credit: 0,
     aiRule: `OCR Ingestion (${invoiceNo})`,
     confidence: conf,
@@ -549,11 +869,10 @@ function postExtractedDocumentToLedger() {
   renderLedgerTable(ledgerData);
 
   // Update KPI
-  const currentExp = parseFloat(document.getElementById("kpiExpenses").textContent.replace(/[$,]/g, "")) || 0;
-  const updatedExp = currentExp + total;
-  document.getElementById("kpiExpenses").textContent = "$" + updatedExp.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  kpiBaseValues.Q3.exp += baseTotal;
+  CurrencyEngine.updateKPIs();
 
-  showToast(`Posted ${invoiceNo} ($${total.toLocaleString()}) to General Ledger!`);
+  showToast(`Posted ${invoiceNo} (${CurrencyEngine.format(baseTotal)}) to General Ledger!`);
 
   // Switch to Ledger Tab smoothly
   setTimeout(() => {
@@ -578,8 +897,8 @@ function renderLedgerTable(data) {
   data.forEach(tx => {
     const tr = document.createElement("tr");
 
-    const debitDisplay = tx.debit > 0 ? `<span class="amt-debit">$${tx.debit.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>` : '<span style="color: var(--text-dim);">-</span>';
-    const creditDisplay = tx.credit > 0 ? `<span class="amt-credit">$${tx.credit.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>` : '<span style="color: var(--text-dim);">-</span>';
+    const debitDisplay = tx.debit > 0 ? `<span class="amt-debit">${CurrencyEngine.format(tx.debit)}</span>` : '<span style="color: var(--text-dim);">-</span>';
+    const creditDisplay = tx.credit > 0 ? `<span class="amt-credit">${CurrencyEngine.format(tx.credit)}</span>` : '<span style="color: var(--text-dim);">-</span>';
     const classBadge = `<span class="tx-badge ${tx.class.toLowerCase()}">${tx.class}</span>`;
 
     tr.innerHTML = `
@@ -742,105 +1061,107 @@ function setupReportCenter() {
 }
 
 function previewReport(type) {
+  currentReportType = type;
   const titleEl = document.getElementById("previewSheetTitle");
   const contentEl = document.getElementById("previewSheetContent");
+  const cur = CurrencyEngine.currentCurrency;
 
   if (type === "pnl") {
-    titleEl.textContent = "Comprehensive Profit & Loss Statement (Q3 FY26)";
+    titleEl.textContent = `Comprehensive Profit & Loss Statement (Q3 FY26 — ${cur})`;
     contentEl.innerHTML = `
 ------------------------------------------------------------------------------------------------
-AI CHARTERED ACCOUNTANT AUTOMATION SYSTEM — AUDITED STATEMENT
+AI CHARTERED ACCOUNTANT AUTOMATION SYSTEM — AUDITED STATEMENT (${cur})
 Statement of Profit and Loss for Period Ending August 31, 2026
 ------------------------------------------------------------------------------------------------
 
 1. GROSS REVENUE FROM OPERATIONS:
-   - Enterprise Cloud & SaaS Recurring Invoicing:             $580,000.00
-   - Professional Technology Advisory Services:              $262,950.00
+   - Enterprise Cloud & SaaS Recurring Invoicing:             ${CurrencyEngine.format(580000, 2)}
+   - Professional Technology Advisory Services:              ${CurrencyEngine.format(262950, 2)}
    ------------------------------------------------------------------------
-   TOTAL REVENUE (A):                                        $842,950.00
+   TOTAL REVENUE (A):                                        ${CurrencyEngine.format(842950, 2)}
 
 2. OPERATING EXPENSES (LLM CATEGORIZED):
-   - Direct Cloud Infrastructure & Data Centers:             $98,420.00
-   - Operational Subscriptions & Tooling:                     $45,000.00
-   - Facilities, Leases & Office Infrastructure:              $38,500.00
-   - Statutory Audit, Legal & Compliance Retainers:          $34,200.00
-   - General & Administrative Overheads:                     $102,300.00
+   - Direct Cloud Infrastructure & Data Centers:             ${CurrencyEngine.format(98420, 2)}
+   - Operational Subscriptions & Tooling:                     ${CurrencyEngine.format(45000, 2)}
+   - Facilities, Leases & Office Infrastructure:              ${CurrencyEngine.format(38500, 2)}
+   - Statutory Audit, Legal & Compliance Retainers:          ${CurrencyEngine.format(34200, 2)}
+   - General & Administrative Overheads:                     ${CurrencyEngine.format(102300, 2)}
    ------------------------------------------------------------------------
-   TOTAL OPERATING OVERHEADS (B):                            $318,420.00
+   TOTAL OPERATING OVERHEADS (B):                            ${CurrencyEngine.format(318420, 2)}
 
-3. OPERATING PROFIT / EBITDA (A - B):                        $524,530.00  (62.2% Net Margin)
-   - Provision for Accrued Net GST Obligations:             -$68,340.00
+3. OPERATING PROFIT / EBITDA (A - B):                        ${CurrencyEngine.format(524530, 2)}  (62.2% Net Margin)
+   - Provision for Accrued Net GST Obligations:             -${CurrencyEngine.format(68340, 2)}
    ------------------------------------------------------------------------
-   NET RETAINED SURPLUS:                                     $456,190.00
+   NET RETAINED SURPLUS:                                     ${CurrencyEngine.format(456190, 2)}
 
-Audit Certification: 100% Reconciled against Banking Feeds and Verified Counterparty Tax IDs.
+Audit Certification: 100% Reconciled against Banking Feeds and Verified Counterparty Tax IDs in ${cur}.
     `;
   } else if (type === "balancesheet") {
-    titleEl.textContent = "Certified Balance Sheet Statement of Financial Position";
+    titleEl.textContent = `Certified Balance Sheet Statement of Financial Position (${cur})`;
     contentEl.innerHTML = `
 ------------------------------------------------------------------------------------------------
-STATEMENT OF FINANCIAL POSITION (BALANCE SHEET) — DOUBLE-ENTRY VERIFIED
+STATEMENT OF FINANCIAL POSITION (BALANCE SHEET) — DOUBLE-ENTRY VERIFIED (${cur})
 ------------------------------------------------------------------------------------------------
 ASSETS:
   Current Assets:
-    - Cash & Liquid Operational Bank Balances:               $682,400.00
-    - Trade Accounts Receivable (Automated Invoicing):       $398,400.00
-    - Input Tax Credit (ITC) Available in Electronic Ledger: $160,000.00
+    - Cash & Liquid Operational Bank Balances:               ${CurrencyEngine.format(682400, 2)}
+    - Trade Accounts Receivable (Automated Invoicing):       ${CurrencyEngine.format(398400, 2)}
+    - Input Tax Credit (ITC) Available in Electronic Ledger: ${CurrencyEngine.format(160000, 2)}
   Non-Current Assets:
-    - Office Hardware, Servers & Network Equipment:          $85,000.00
+    - Office Hardware, Servers & Network Equipment:          ${CurrencyEngine.format(85000, 2)}
   ------------------------------------------------------------------------
-  TOTAL ASSETS:                                              $1,325,800.00
+  TOTAL ASSETS:                                              ${CurrencyEngine.format(1325800, 2)}
 
 LIABILITIES & SHAREHOLDERS' EQUITY:
   Current Liabilities:
-    - Accounts Payable (OCR Extracted & Approved):           $214,300.00
-    - Net Statutory GST / Tax Obligations:                   $68,340.00
-    - Short-term Accrued Employee Liabilities:               $187,560.00
-  Total Liabilities:                                         $470,200.00
+    - Accounts Payable (OCR Extracted & Approved):           ${CurrencyEngine.format(214300, 2)}
+    - Net Statutory GST / Tax Obligations:                   ${CurrencyEngine.format(68340, 2)}
+    - Short-term Accrued Employee Liabilities:               ${CurrencyEngine.format(187560, 2)}
+  Total Liabilities:                                         ${CurrencyEngine.format(470200, 2)}
 
   Shareholders' Net Worth:
-    - Capital Reserves:                                      $331,070.00
-    - Cumulative Retained Earnings:                          $524,530.00
+    - Capital Reserves:                                      ${CurrencyEngine.format(331070, 2)}
+    - Cumulative Retained Earnings:                          ${CurrencyEngine.format(524530, 2)}
   ------------------------------------------------------------------------
-  TOTAL LIABILITIES & EQUITY:                                $1,325,800.00 (Balanced Trial)
+  TOTAL LIABILITIES & EQUITY:                                ${CurrencyEngine.format(1325800, 2)} (Balanced Trial)
     `;
   } else if (type === "gst") {
-    titleEl.textContent = "GST & Tax Compliance Audit Workbook (GSTR-1 / 3B / 2B)";
+    titleEl.textContent = `GST & Tax Compliance Audit Workbook (GSTR-1 / 3B / 2B — ${cur})`;
     contentEl.innerHTML = `
 ------------------------------------------------------------------------------------------------
-GOODS & SERVICES TAX COMPLIANCE & INPUT TAX CREDIT RECONCILIATION
+GOODS & SERVICES TAX COMPLIANCE & INPUT TAX CREDIT RECONCILIATION (${cur})
 ------------------------------------------------------------------------------------------------
 Tax Period: August 2026 | Filing Status: Ready for CA Electronic Stamp
 
 OUTPUT LIABILITY BREAKDOWN:
-  - CGST (Central Goods & Service Tax 9%):                   $34,170.00
-  - SGST (State Goods & Service Tax 9%):                     $34,170.00
-  - IGST (Inter-State Integrated Tax 18%):                   $24,190.00
-  Total Gross Tax Payable:                                   $92,530.00
+  - CGST (Central Goods & Service Tax 9%):                   ${CurrencyEngine.format(34170, 2)}
+  - SGST (State Goods & Service Tax 9%):                     ${CurrencyEngine.format(34170, 2)}
+  - IGST (Inter-State Integrated Tax 18%):                   ${CurrencyEngine.format(24190, 2)}
+  Total Gross Tax Payable:                                   ${CurrencyEngine.format(92530, 2)}
 
 ELIGIBLE INPUT TAX CREDIT (ITC DEDUCTION):
-  - Invoices Reconciled on GSTR-2B:                         -$24,190.00
-  - Ineligible ITC Isolated (Sec 17(5)):                     $0.00 (Segregated)
+  - Invoices Reconciled on GSTR-2B:                         -${CurrencyEngine.format(24190, 2)}
+  - Ineligible ITC Isolated (Sec 17(5)):                     ${CurrencyEngine.format(0, 2)} (Segregated)
   ------------------------------------------------------------------------
-  NET CASH PAYABLE TO GOVERNMENT:                            $68,340.00
+  NET CASH PAYABLE TO GOVERNMENT:                            ${CurrencyEngine.format(68340, 2)}
 
 Compliance Verification Status: Zero discrepancies identified. Ready for one-click submission.
     `;
   } else if (type === "reconciliation") {
-    titleEl.textContent = "Automated Bank Reconciliation Cross-Verification Log";
+    titleEl.textContent = `Automated Bank Reconciliation Cross-Verification Log (${cur})`;
     contentEl.innerHTML = `
 ------------------------------------------------------------------------------------------------
-BANK RECONCILIATION CROSS-VERIFICATION AUDIT LOG
+BANK RECONCILIATION CROSS-VERIFICATION AUDIT LOG (${cur})
 ------------------------------------------------------------------------------------------------
 API Endpoint: Fast-Banking Webhook Gateway (Secure ISO20022 Standard)
-Reconciliation Rate: 100% Matched | Variance: $0.00
+Reconciliation Rate: 100% Matched | Variance: ${CurrencyEngine.format(0, 2)}
 
 Sample Matched Transactions:
-  [MATCHED] Ref: TX-2026-8801 | Bank Date: 2026-08-30 | Amount: +$125,000.00 | Wire From: Apex Corp
-  [MATCHED] Ref: TX-2026-8802 | Bank Date: 2026-08-29 | Amount: -$12,450.00   | Debit: AWS EMEA
-  [MATCHED] Ref: TX-2026-8803 | Bank Date: 2026-08-27 | Amount: +$84,500.00  | Wire: Global Retainer
-  [MATCHED] Ref: TX-2026-8804 | Bank Date: 2026-08-25 | Amount: -$8,500.00    | Debit: WeWork Global
-  [MATCHED] Ref: TX-2026-8807 | Bank Date: 2026-08-15 | Amount: +$95,400.00  | Settlement: Stripe Online
+  [MATCHED] Ref: TX-2026-8801 | Bank Date: 2026-08-30 | Amount: +${CurrencyEngine.format(125000, 2)} | Wire From: Apex Corp
+  [MATCHED] Ref: TX-2026-8802 | Bank Date: 2026-08-29 | Amount: -${CurrencyEngine.format(12450, 2)}   | Debit: AWS EMEA
+  [MATCHED] Ref: TX-2026-8803 | Bank Date: 2026-08-27 | Amount: +${CurrencyEngine.format(84500, 2)}  | Wire: Global Retainer
+  [MATCHED] Ref: TX-2026-8804 | Bank Date: 2026-08-25 | Amount: -${CurrencyEngine.format(8500, 2)}    | Debit: WeWork Global
+  [MATCHED] Ref: TX-2026-8807 | Bank Date: 2026-08-15 | Amount: +${CurrencyEngine.format(95400, 2)}  | Settlement: Stripe Online
 
 Automated Bank Confirmation: All balances synchronized with zero human intervention.
     `;
@@ -905,15 +1226,30 @@ function setupAiModal() {
     setTimeout(() => {
       let reply = "";
       const lower = query.toLowerCase();
+      const code = CurrencyEngine.currentCurrency;
+      const sym = CurrencyEngine.getSymbol().trim();
 
-      if (lower.includes("margin") || lower.includes("profit") || lower.includes("projected")) {
-        reply = "Based on our current Q3 data: Realized revenue is $842,950 against operating expenses of $318,420, giving an EBITDA of $524,530 (a healthy 62.2% operating margin). Projected Q4 revenue indicates +14% continuation.";
+      if (lower.includes("inr") || lower.includes("rupee") || lower.includes("dollar") || lower.includes("currency") || lower.includes("forex")) {
+        if (lower.includes("inr") || lower.includes("rupee")) {
+          CurrencyEngine.setCurrency("INR");
+        } else if (lower.includes("dollar") || lower.includes("usd")) {
+          CurrencyEngine.setCurrency("USD");
+        } else if (lower.includes("euro") || lower.includes("eur")) {
+          CurrencyEngine.setCurrency("EUR");
+        } else if (lower.includes("pound") || lower.includes("gbp")) {
+          CurrencyEngine.setCurrency("GBP");
+        }
+        reply = `Active reporting currency is now set to ${CurrencyEngine.currentCurrency} (${CurrencyEngine.getSymbol().trim()}). All financial statements, general ledger postings, GST liabilities, and real-time analytical metrics have been recalculated at the official exchange rate of 1 USD = ${CurrencyEngine.getRate()} ${CurrencyEngine.currentCurrency}.`;
+      } else if (lower.includes("margin") || lower.includes("profit") || lower.includes("projected")) {
+        reply = `Based on our current Q3 data (${code}): Realized gross revenue is ${CurrencyEngine.format(842950, 2)} against operating overheads of ${CurrencyEngine.format(318420, 2)}, yielding an EBITDA operating surplus of ${CurrencyEngine.format(524530, 2)} (a healthy 62.2% net operating margin). Projected Q4 revenue indicates a strong +14.2% annualized continuation.`;
       } else if (lower.includes("bank") || lower.includes("reconcil")) {
-        reply = "Automated Bank Reconciliation Engine reports 100% matched transactions across all active business accounts. There are 0 unresolved ledger variances as of today.";
+        reply = `Automated Bank Reconciliation Engine reports 100% matched transactions across all active treasury accounts in ${code}. There are exactly 0 unresolved ledger variances (${CurrencyEngine.format(0, 2)}) across 8 corporate bank feeds as of today.`;
       } else if (lower.includes("tax") || lower.includes("gst") || lower.includes("itc")) {
-        reply = "Your current Gross GST liability is $92,530.00. Thanks to automated OCR invoice tagging, you have $24,190.00 in eligible Input Tax Credits (ITC), bringing net payable obligation down to $68,340.00.";
+        reply = `Your current Gross GST liability in ${code} is ${CurrencyEngine.format(92530, 2)}. With automated OCR invoice parsing and GSTR-2B reconciliation, you have ${CurrencyEngine.format(24190, 2)} in verified Input Tax Credits (ITC), bringing the net payable obligation down to ${CurrencyEngine.format(68340, 2)}.`;
+      } else if (lower.includes("document") || lower.includes("authority") || lower.includes("license") || lower.includes("cin") || lower.includes("pan") || lower.includes("gstin")) {
+        reply = `All 12 mandatory statutory corporate documents (including Certificate of Incorporation, PAN, TAN, GST REG-06, and MSME/Udyam) are securely cataloged in the Authority & Documentation Vault. Current regulatory compliance health score is 98.4% with CA verification stamped.`;
       } else {
-        reply = `I have analyzed the General Ledger and financial models for "${query}". All parameters align with standard accounting standards (AS-1 / Ind AS / IFRS) with 99.6% model confidence.`;
+        reply = `I have analyzed the General Ledger and financial models for "${query}". Total ledger volume is ${CurrencyEngine.format(1161370, 2)} across verified entries. All statutory parameters comply with ICAI / MCA / CBDT and Ind AS / IFRS frameworks in ${code} (${sym}) with 99.7% model confidence.`;
       }
 
       appendMessage("ai", reply);
@@ -1073,4 +1409,493 @@ function applyUserProfileToUI(user) {
   }
 }
 
+/* ================= 10. AUTHORITY & STATUTORY DOCUMENTATION SYSTEM ================= */
+const defaultAuthorityDocs = [
+  {
+    key: "coi",
+    category: "corporate",
+    badge: "MCA",
+    name: "Certificate of Incorporation (CIN)",
+    authority: "Ministry of Corporate Affairs (MCA), Govt. of India",
+    docId: "U72900MH2024PTC123456",
+    status: "active",
+    issueDate: "2024-02-14",
+    expiryDate: "Perpetual",
+    isPerpetual: true,
+    verifyDate: "2026-08-10",
+    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    purpose: "Mandatory statutory corporate birth certificate and legal operational existence proof under Companies Act, 2013.",
+    notes: "Verified against MCA Master Data API with active status and zero pending show-cause notices."
+  },
+  {
+    key: "moa_aoa",
+    category: "corporate",
+    badge: "MCA / ROC",
+    name: "Memorandum & Articles of Association (MOA & AOA)",
+    authority: "Registrar of Companies (RoC - Mumbai)",
+    docId: "ROC-MUM-MOA-88219",
+    status: "active",
+    issueDate: "2024-02-14",
+    expiryDate: "Perpetual",
+    isPerpetual: true,
+    verifyDate: "2026-08-10",
+    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    purpose: "Constitutional corporate charter establishing commercial objects, share capital boundaries, and statutory bylaws.",
+    notes: "Stamped physical and digital charter verified. Authorized equity share capital: ₹50,00,000."
+  },
+  {
+    key: "pan",
+    category: "tax",
+    badge: "CBDT / ITD",
+    name: "Company Permanent Account Number (PAN Card)",
+    authority: "Income Tax Department / Central Board of Direct Taxes",
+    docId: "AAACR1234F",
+    status: "active",
+    issueDate: "2024-02-20",
+    expiryDate: "Perpetual",
+    isPerpetual: true,
+    verifyDate: "2026-08-12",
+    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    purpose: "Mandatory corporate tax identity required for all direct tax assessments, bank accounts, and statutory returns.",
+    notes: "Cross-verified with NSDL / ITD e-Filing database. KYC: Active & Operational."
+  },
+  {
+    key: "tan",
+    category: "tax",
+    badge: "CBDT / TRACES",
+    name: "Tax Deduction and Collection Account Number (TAN)",
+    authority: "Income Tax Department / NSDL",
+    docId: "MUMA12345E",
+    status: "active",
+    issueDate: "2024-03-01",
+    expiryDate: "Perpetual",
+    isPerpetual: true,
+    verifyDate: "2026-08-12",
+    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    purpose: "Statutory mandatory account for withholding tax (TDS / TCS) remittances and quarterly Form 24Q / 26Q returns.",
+    notes: "TRACES portal verified. All quarterly withholding challans reconciled against General Ledger."
+  },
+  {
+    key: "gstin",
+    category: "tax",
+    badge: "CBIC / GSTN",
+    name: "GST Registration Certificate (Form GST REG-06)",
+    authority: "Central Board of Indirect Taxes and Customs (CBIC)",
+    docId: "27AAACA1234F1Z8",
+    status: "active",
+    issueDate: "2024-03-10",
+    expiryDate: "Perpetual",
+    isPerpetual: true,
+    verifyDate: "2026-08-25",
+    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    purpose: "Principal indirect tax statutory license for intra-state and inter-state supply of technology services and products.",
+    notes: "Active status on GSTN API. Zero ITC mismatches reported in current financial quarter."
+  },
+  {
+    key: "udyam",
+    category: "trade",
+    badge: "MINISTRY OF MSME",
+    name: "MSME / Udyam Registration Certificate",
+    authority: "Ministry of Micro, Small & Medium Enterprises",
+    docId: "UDYAM-MH-01-0098765",
+    status: "active",
+    issueDate: "2024-04-05",
+    expiryDate: "Perpetual",
+    isPerpetual: true,
+    verifyDate: "2026-08-15",
+    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    purpose: "Statutory enterprise status ensuring 45-day payment protections under Section 43B(h) and MSMED Act, 2006.",
+    notes: "Classified as Medium Tech Enterprise under audited investment and turnover criteria."
+  },
+  {
+    key: "shop_act",
+    category: "labor",
+    badge: "MUNICIPAL / LABOUR",
+    name: "Shop & Commercial Establishment Act License",
+    authority: "Municipal Corporation / State Labour Department",
+    docId: "MCGM/SHOP/2024/77102",
+    status: "expiring",
+    issueDate: "2024-05-10",
+    expiryDate: "2026-10-31",
+    isPerpetual: false,
+    verifyDate: "2026-08-01",
+    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    purpose: "Mandatory municipal license governing corporate commercial offices, employee working conditions, and safety.",
+    notes: "Renewal application drafted. Statutory renewal fee queued for execution prior to 31 Oct 2026."
+  },
+  {
+    key: "pt",
+    category: "tax",
+    badge: "STATE COMMERCIAL TAX",
+    name: "Professional Tax Registration (PTRC & PTEC)",
+    authority: "State Commercial Tax Department (Maharashtra)",
+    docId: "PTRC-27001928374-E",
+    status: "active",
+    issueDate: "2024-03-15",
+    expiryDate: "Perpetual",
+    isPerpetual: true,
+    verifyDate: "2026-08-18",
+    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    purpose: "Statutory enrollment and deduction license for corporate entity tax and monthly employee payroll PT deductions.",
+    notes: "Monthly Form III-B electronic return synchronized with general ledger payroll debits."
+  },
+  {
+    key: "iec",
+    category: "trade",
+    badge: "DGFT / COMMERCE",
+    name: "Import Export Code (IEC Authorization)",
+    authority: "Directorate General of Foreign Trade (DGFT), Ministry of Commerce",
+    docId: "0324991823",
+    status: "active",
+    issueDate: "2024-06-01",
+    expiryDate: "Perpetual",
+    isPerpetual: true,
+    verifyDate: "2026-08-20",
+    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    purpose: "Mandatory 10-digit authorization for overseas commercial transactions, cross-border SaaS billings, and forex receipts.",
+    notes: "Annual DGFT e-Verification confirmed. Inward wire remittances matching FIRC documentation."
+  },
+  {
+    key: "epfo",
+    category: "labor",
+    badge: "EPFO / LABOUR",
+    name: "EPFO Establishment Code (Provident Fund)",
+    authority: "Employees' Provident Fund Organisation (Ministry of Labour)",
+    docId: "MH/BAN/0048192/000",
+    status: "active",
+    issueDate: "2024-04-12",
+    expiryDate: "Perpetual",
+    isPerpetual: true,
+    verifyDate: "2026-08-22",
+    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    purpose: "Mandatory corporate social security coverage under EPF & MP Act, 1952 for employee retirement welfare.",
+    notes: "Unified Shram Suvidha API synchronized. Monthly electronic challan returns (ECR) paid on schedule."
+  },
+  {
+    key: "esic",
+    category: "labor",
+    badge: "ESIC / LABOUR",
+    name: "ESIC Registration Code (State Insurance)",
+    authority: "Employees' State Insurance Corporation",
+    docId: "31000981720000999",
+    status: "active",
+    issueDate: "2024-04-15",
+    expiryDate: "Perpetual",
+    isPerpetual: true,
+    verifyDate: "2026-08-22",
+    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    purpose: "Statutory health and disability insurance coverage for workforce under the Employees' State Insurance Act, 1948.",
+    notes: "Bi-annual statutory audit completed with full contribution ledger reconciliation."
+  },
+  {
+    key: "trademark",
+    category: "trade",
+    badge: "CGPDTM / IP INDIA",
+    name: "Registered Trademark Certificate (Class 9 & 42)",
+    authority: "Controller General of Patents, Designs and Trade Marks",
+    docId: "TM-IN-5918204",
+    status: "pending",
+    issueDate: "2024-07-20",
+    expiryDate: "2034-07-19",
+    isPerpetual: false,
+    verifyDate: "2026-08-05",
+    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    purpose: "Statutory brand and intellectual property asset protection under the Trade Marks Act, 1999.",
+    notes: "Opposition window successfully cleared. Final certificate issuance stamp underway."
+  }
+];
+
+let authorityDocuments = [];
+
+function loadAuthorityDocs() {
+  const stored = localStorage.getItem("ai_ca_authority_docs");
+  if (stored) {
+    try {
+      authorityDocuments = JSON.parse(stored);
+      return;
+    } catch (e) {
+      console.warn("Failed to parse stored authority docs, fallback to default", e);
+    }
+  }
+  authorityDocuments = [...defaultAuthorityDocs];
+}
+
+function saveAuthorityDocs() {
+  localStorage.setItem("ai_ca_authority_docs", JSON.stringify(authorityDocuments));
+}
+
+function renderAuthorityCards(filter = "all", search = "") {
+  const container = document.getElementById("authDocGrid");
+  if (!container) return;
+
+  const q = search.trim().toLowerCase();
+  const filtered = authorityDocuments.filter(doc => {
+    const matchesFilter = filter === "all" || doc.category === filter;
+    const matchesSearch = !q ||
+      doc.name.toLowerCase().includes(q) ||
+      doc.authority.toLowerCase().includes(q) ||
+      doc.docId.toLowerCase().includes(q) ||
+      doc.purpose.toLowerCase().includes(q);
+    return matchesFilter && matchesSearch;
+  });
+
+  updateAuthorityStats();
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 3.5rem 1rem; color: var(--text-muted);">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📁</div>
+        <h3>No Statutory Records Found</h3>
+        <p style="font-size: 0.85rem; margin-top: 0.3rem;">No documents match your current filter or search criteria.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(doc => {
+    let statusClass = "active";
+    let statusText = "✓ Verified & Active";
+    if (doc.status === "pending") {
+      statusClass = "pending";
+      statusText = "⏳ Pending Verification";
+    } else if (doc.status === "expiring") {
+      statusClass = "expiring";
+      statusText = "⚠️ Renewal Due Soon";
+    }
+
+    const validityDisplay = doc.isPerpetual ? "Perpetual (No Expiry Required)" : (doc.expiryDate || "Not Set");
+
+    return `
+      <div class="auth-doc-card" data-key="${doc.key}" onclick="openVerificationModal('${doc.key}')">
+        <div>
+          <div class="auth-doc-top">
+            <span class="auth-badge-tag">${doc.badge || "LEGAL"}</span>
+            <span class="auth-status-tag ${statusClass}">${statusText}</span>
+          </div>
+          <div class="auth-doc-name">${doc.name}</div>
+          <div class="auth-doc-purpose">${doc.purpose}</div>
+
+          <div class="auth-meta-list">
+            <div class="auth-meta-row">
+              <span class="auth-meta-label">Document / License ID:</span>
+              <span class="auth-meta-value mono">${doc.docId}</span>
+            </div>
+            <div class="auth-meta-row">
+              <span class="auth-meta-label">Issuing Authority:</span>
+              <span class="auth-meta-value" style="font-size:0.78rem;">${doc.authority}</span>
+            </div>
+            <div class="auth-meta-row">
+              <span class="auth-meta-label">Issuance Date:</span>
+              <span class="auth-meta-value">${doc.issueDate || "—"}</span>
+            </div>
+            <div class="auth-meta-row">
+              <span class="auth-meta-label">Validity / Expiry:</span>
+              <span class="auth-meta-value" style="${doc.isPerpetual ? 'color: #38bdf8;' : ''}">${validityDisplay}</span>
+            </div>
+            <div class="auth-meta-row">
+              <span class="auth-meta-label">Verification Date:</span>
+              <span class="auth-meta-value" style="color: #34d399;">${doc.verifyDate || "—"}</span>
+            </div>
+            <div class="auth-meta-row">
+              <span class="auth-meta-label">Verified By:</span>
+              <span class="auth-meta-value" style="font-size:0.78rem;">${doc.verifier || "CA Practitioner"}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-doc-footer-actions">
+          <button class="btn-auth-verify" onclick="event.stopPropagation(); openVerificationModal('${doc.key}')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            <span>Verify & Edit Details</span>
+          </button>
+          <button class="btn-auth-view" title="View / Inspect Statutory Certificate" onclick="event.stopPropagation(); viewDocCertificate('${doc.name}', '${doc.docId}')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function updateAuthorityStats() {
+  const total = authorityDocuments.length;
+  const verified = authorityDocuments.filter(d => d.status === "active").length;
+  const pending = authorityDocuments.filter(d => d.status !== "active").length;
+  const score = total > 0 ? ((verified / total) * 100).toFixed(1) + "%" : "100%";
+
+  const totEl = document.getElementById("authTotalDocs");
+  const verEl = document.getElementById("authVerifiedDocs");
+  const penEl = document.getElementById("authPendingDocs");
+  const scoEl = document.getElementById("authComplianceScore");
+
+  if (totEl) totEl.textContent = total;
+  if (verEl) verEl.textContent = verified;
+  if (penEl) penEl.textContent = pending;
+  if (scoEl) scoEl.textContent = score;
+}
+
+function viewDocCertificate(name, id) {
+  showToast(`Statutory certificate for ${name} (${id}) verified in secure vault.`);
+}
+
+function openVerificationModal(docKey) {
+  const modal = document.getElementById("docVerificationModal");
+  if (!modal) return;
+
+  const doc = authorityDocuments.find(d => d.key === docKey);
+  const isNew = !doc;
+
+  document.getElementById("mvDocKey").value = isNew ? "" : doc.key;
+  document.getElementById("mvDocName").value = isNew ? "" : doc.name;
+  document.getElementById("mvAuthority").value = isNew ? "" : doc.authority;
+  document.getElementById("mvDocId").value = isNew ? "" : doc.docId;
+  document.getElementById("mvStatus").value = isNew ? "active" : doc.status;
+  document.getElementById("mvIssueDate").value = isNew ? new Date().toISOString().slice(0, 10) : (doc.issueDate || "");
+
+  const perpetualCb = document.getElementById("mvPerpetualCheck");
+  const expiryInput = document.getElementById("mvExpiryDate");
+  const isPerp = isNew ? false : !!doc.isPerpetual;
+  perpetualCb.checked = isPerp;
+  expiryInput.disabled = isPerp;
+  expiryInput.value = isPerp ? "" : (doc.expiryDate || "");
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  document.getElementById("mvVerifyDate").value = (!isNew && doc.verifyDate) ? doc.verifyDate : todayStr;
+  document.getElementById("mvVerifier").value = (!isNew && doc.verifier) ? doc.verifier : "CA. Abhinash Maddheshiya (FCA)";
+  document.getElementById("mvNotes").value = (!isNew && doc.notes) ? doc.notes : "";
+
+  document.getElementById("mvModalTitle").textContent = isNew ? "Add New Statutory Corporate Document" : `Verify & Update: ${doc.name}`;
+  document.getElementById("mvModalSubtitle").textContent = isNew ? "Register mandatory company license or regulatory permit" : `Issuing Authority: ${doc.authority}`;
+
+  modal.classList.add("open");
+}
+
+function closeVerificationModal() {
+  const modal = document.getElementById("docVerificationModal");
+  if (modal) modal.classList.remove("open");
+}
+
+function setupAuthoritySection() {
+  loadAuthorityDocs();
+  renderAuthorityCards("all", "");
+
+  // Filter tabs
+  const filterTabs = document.querySelectorAll(".auth-filter-btn");
+  let currentFilter = "all";
+  let currentSearch = "";
+
+  filterTabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterTabs.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentFilter = btn.getAttribute("data-filter") || "all";
+      renderAuthorityCards(currentFilter, currentSearch);
+    });
+  });
+
+  // Search input
+  const searchInput = document.getElementById("authSearchInput");
+  if (searchInput) {
+    searchInput.addEventListener("input", e => {
+      currentSearch = e.target.value;
+      renderAuthorityCards(currentFilter, currentSearch);
+    });
+  }
+
+  // Add new doc button
+  const addBtn = document.getElementById("addNewDocBtn");
+  if (addBtn) {
+    addBtn.addEventListener("click", () => openVerificationModal(null));
+  }
+
+  // Close modal buttons
+  const closeBtn = document.getElementById("closeVerificationModalBtn");
+  const cancelBtn = document.getElementById("cancelVerificationBtn");
+  const modal = document.getElementById("docVerificationModal");
+
+  if (closeBtn) closeBtn.addEventListener("click", closeVerificationModal);
+  if (cancelBtn) cancelBtn.addEventListener("click", closeVerificationModal);
+  if (modal) {
+    modal.addEventListener("click", e => {
+      if (e.target === modal) closeVerificationModal();
+    });
+  }
+
+  // Perpetual checkbox toggle
+  const perpetualCb = document.getElementById("mvPerpetualCheck");
+  const expiryInput = document.getElementById("mvExpiryDate");
+  if (perpetualCb && expiryInput) {
+    perpetualCb.addEventListener("change", () => {
+      expiryInput.disabled = perpetualCb.checked;
+      if (perpetualCb.checked) expiryInput.value = "";
+    });
+  }
+
+  // Modal form submission
+  const form = document.getElementById("docVerificationForm");
+  if (form) {
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+
+      const docKey = document.getElementById("mvDocKey").value.trim();
+      const docName = document.getElementById("mvDocName").value.trim();
+      const authority = document.getElementById("mvAuthority").value.trim();
+      const docId = document.getElementById("mvDocId").value.trim();
+      const status = document.getElementById("mvStatus").value;
+      const issueDate = document.getElementById("mvIssueDate").value;
+      const isPerpetual = document.getElementById("mvPerpetualCheck").checked;
+      const expiryDate = isPerpetual ? "Perpetual" : document.getElementById("mvExpiryDate").value;
+      const verifyDate = document.getElementById("mvVerifyDate").value;
+      const verifier = document.getElementById("mvVerifier").value.trim();
+      const notes = document.getElementById("mvNotes").value.trim();
+
+      if (docKey) {
+        // Update existing
+        const existing = authorityDocuments.find(d => d.key === docKey);
+        if (existing) {
+          existing.name = docName;
+          existing.authority = authority;
+          existing.docId = docId;
+          existing.status = status;
+          existing.issueDate = issueDate;
+          existing.isPerpetual = isPerpetual;
+          existing.expiryDate = expiryDate;
+          existing.verifyDate = verifyDate;
+          existing.verifier = verifier;
+          existing.notes = notes;
+        }
+      } else {
+        // Create new
+        const newKey = "doc_" + Date.now();
+        authorityDocuments.unshift({
+          key: newKey,
+          category: "corporate",
+          badge: "STATUTORY",
+          name: docName,
+          authority: authority,
+          docId: docId,
+          status: status,
+          issueDate: issueDate,
+          isPerpetual: isPerpetual,
+          expiryDate: expiryDate,
+          verifyDate: verifyDate,
+          verifier: verifier,
+          purpose: "Statutory mandatory corporate authority documentation record.",
+          notes: notes
+        });
+      }
+
+      saveAuthorityDocs();
+      renderAuthorityCards(currentFilter, currentSearch);
+      closeVerificationModal();
+      showToast(`Statutory record for "${docName}" verified & updated successfully!`);
+    });
+  }
+}
 
