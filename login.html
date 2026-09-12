@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In | AI Chartered Accountant Platform</title>
+  <meta name="description" content="Secure Sign In - AI Chartered Accountant Automation Platform. Access your ledger cockpit, tax portals, and real-time financial statements.">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-body">
+  <!-- Ambient Background -->
+  <div class="ambient-background">
+    <div class="glow-orb orb-primary"></div>
+    <div class="glow-orb orb-secondary"></div>
+    <div class="blueprint-grid"></div>
+  </div>
+
+  <div class="auth-container">
+    <!-- Brand -->
+    <div class="auth-brand">
+      <div class="brand-logo-icon">
+        <img src="logo.png" alt="AI Chartered Accountant Logo" class="brand-logo-img">
+      </div>
+      <h2>AI Chartered Accountant</h2>
+      <p class="auth-subtitle">Autonomous Financial Intelligence &amp; Multi-Tier Audit Infrastructure</p>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="auth-card card-glass">
+      <!-- Role Tabs -->
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="tabRoleCa"><span>Chartered Accountant</span></button>
+        <button type="button" class="auth-tab" id="tabRoleClient"><span>Enterprise Client</span></button>
+        <button type="button" class="auth-tab" id="tabRoleAuditor"><span>Auditor / Reviewer</span></button>
+      </div>
+
+      <div class="auth-header-text">
+        <h3 id="authTitle">Practitioner Sign In</h3>
+        <p id="authDesc">Enter your institutional credentials or license ID to access your ledger cockpit.</p>
+      </div>
+
+      <!-- Error Banner -->
+      <div class="auth-error-message" id="authErrorBanner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span id="authErrorText">Please enter both your username and password.</span>
+      </div>
+
+      <!-- Form -->
+      <form id="signInForm" class="auth-form" novalidate>
+        <div class="form-group">
+          <label for="usernameInput" id="lblUsername">Username / CA Membership No. or Email</label>
+          <div class="input-with-icon">
+            <svg class="input-prefix-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <input type="text" id="usernameInput" name="username" class="input-field"
+              placeholder="e.g. aditya tripathi" autocomplete="username" required value="aditya tripathi">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-split">
+            <label for="passwordInput">Password / Security PIN</label>
+            <a href="#" class="forgot-link" id="forgotPassLink">Forgot PIN/Password?</a>
+          </div>
+          <div class="input-with-icon">
+            <svg class="input-prefix-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input type="password" id="passwordInput" name="password" class="input-field font-mono"
+              placeholder="••••••••" autocomplete="current-password" required value="12345678">
+            <button type="button" class="toggle-password-btn" id="togglePasswordBtn" aria-label="Toggle Password Visibility">
+              <svg id="eyeIconOpen" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg id="eyeIconClosed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="auth-checkbox-row">
+          <label class="check-container">
+            <input type="checkbox" id="rememberMe" checked>
+            <span>Keep session active for 30 days</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-primary auth-submit-btn" id="submitLoginBtn">
+          <span id="btnText">Authorize &amp; Enter Cockpit</span>
+          <svg id="btnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+
+        <div class="auth-divider"><span>OR 1-CLICK QUICK ACCESS</span></div>
+
+        <div class="demo-login-grid">
+          <button type="button" class="demo-login-btn" id="demoCaBtn">
+            <span style="color:var(--cyan-primary);">&#9889;</span><span>Partner CA</span>
+          </button>
+          <button type="button" class="demo-login-btn" id="demoClientBtn">
+            <span style="color:var(--emerald);">🏢</span><span>Client CFO</span>
+          </button>
+          <button type="button" class="demo-login-btn" id="demoAuditorBtn">
+            <span style="color:var(--amber);">&#9878;&#65039;</span><span>Auditor</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="auth-trust-footer">
+        <div class="trust-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span>256-Bit SSL Financial Encryption • ICAI Standards Compliant</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== OTP FORGOT PASSWORD MODAL ===== -->
+  <div id="otpModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(4,8,18,0.88); backdrop-filter:blur(7px); z-index:500; align-items:center; justify-content:center; padding:1.5rem;">
+    <div style="background:rgba(12,17,30,0.98); border:1px solid rgba(56,189,248,0.2); border-radius:16px; padding:2rem; width:100%; max-width:460px; box-shadow:0 30px 80px -15px rgba(0,0,0,0.9); animation:authFadeIn 0.28s ease forwards; max-height:90vh; overflow-y:auto;">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.4rem;">
+        <div>
+          <h3 id="otpModalTitle" style="font-size:1.05rem; font-weight:700; color:#fff;">Reset Password</h3>
+          <p id="otpModalSubtitle" style="font-size:0.8rem; color:var(--text-muted); margin-top:0.2rem;">Verify your identity to set a new password</p>
+        </div>
+        <button id="otpCloseBtn" style="width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text-muted);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div id="otpModalBody"><!-- Rendered by JS --></div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    const API = "http://localhost:8000";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      /* ---- DOM refs ---- */
+      const form = document.getElementById("signInForm");
+      const userInput = document.getElementById("usernameInput");
+      const passInput = document.getElementById("passwordInput");
+      const submitBtn = document.getElementById("submitLoginBtn");
+      const btnText = document.getElementById("btnText");
+      const errBanner = document.getElementById("authErrorBanner");
+      const errText = document.getElementById("authErrorText");
+      const rememberMe = document.getElementById("rememberMe");
+
+      const tabCa = document.getElementById("tabRoleCa");
+      const tabClient = document.getElementById("tabRoleClient");
+      const tabAuditor = document.getElementById("tabRoleAuditor");
+      const authTitle = document.getElementById("authTitle");
+      const authDesc = document.getElementById("authDesc");
+      const lbl = document.getElementById("lblUsername");
+
+      const eyeOpen = document.getElementById("eyeIconOpen");
+      const eyeClosed = document.getElementById("eyeIconClosed");
+
+      let currentRole = "CA";
+
+      /* ---- Password toggle ---- */
+      document.getElementById("togglePasswordBtn").addEventListener("click", () => {
+        const show = passInput.type === "password";
+        passInput.type = show ? "text" : "password";
+        eyeOpen.style.display = show ? "none" : "block";
+        eyeClosed.style.display = show ? "block" : "none";
+      });
+
+      /* ---- Role tabs ---- */
+      tabCa.addEventListener("click", () => setRole("CA"));
+      tabClient.addEventListener("click", () => setRole("Client"));
+      tabAuditor.addEventListener("click", () => setRole("Auditor"));
+
+      function setRole(role) {
+        currentRole = role; hideErr();
+        [tabCa, tabClient, tabAuditor].forEach(t => t.classList.remove("active"));
+        const map = {
+          CA:      { tab: tabCa,      title: "Practitioner Sign In",         desc: "Enter your institutional credentials or license ID to access your ledger cockpit.", label: "Username / CA Membership No. or Email", user: "aditya tripathi",    pass: "12345678" },
+          Client:  { tab: tabClient,  title: "Enterprise Client Sign In",     desc: "Access real-time business financial statements, tax estimates, and invoice portals.",   label: "Username / Corporate GSTIN or Email",   user: "finance@apexcorp.com", pass: "clientPass2026" },
+          Auditor: { tab: tabAuditor, title: "Statutory Auditor Sign In",     desc: "Secure audit trail inspection, double-entry verification, and ledger compliance.",      label: "Auditor ID / Registration Key or Email",user: "AUD-IN-88902",     pass: "auditSecure99" }
+        };
+        const m = map[role];
+        m.tab.classList.add("active");
+        authTitle.textContent = m.title;
+        authDesc.textContent = m.desc;
+        lbl.textContent = m.label;
+        userInput.placeholder = m.user;
+        userInput.value = m.user;
+        passInput.value = m.pass;
+      }
+
+      function showErr(msg) { errText.textContent = msg; errBanner.classList.remove("show"); void errBanner.offsetWidth; errBanner.classList.add("show"); }
+      function hideErr() { errBanner.classList.remove("show"); }
+
+      /* ---- Auth success ---- */
+      function finishAuth(user) {
+        submitBtn.classList.add("loading"); btnText.textContent = "Authorizing...";
+        const full = { ...user, loginTime: new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}), loginDate: new Date().toLocaleDateString() };
+        (rememberMe.checked ? localStorage : sessionStorage).setItem("ai_ca_user", JSON.stringify(full));
+        showToast("Authentication successful! Welcome, " + user.name);
+        setTimeout(() => window.location.replace("index.html"), 650);
+      }
+
+      /* ---- Sign In Submit ---- */
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const u = userInput.value.trim(), p = passInput.value.trim();
+        if (!u) { showErr("Please enter your Username or Email."); return; }
+        if (!p) { showErr("Please enter your Password or PIN."); return; }
+        if (p.length < 4) { showErr("Password must be at least 4 characters."); return; }
+        hideErr(); submitBtn.disabled = true; btnText.textContent = "Authorizing...";
+
+        try {
+          const res = await fetch(API + "/api/auth/login", {
+            method: "POST", headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({username:u, password:p, role:currentRole}),
+            signal: AbortSignal.timeout(4000)
+          });
+          const data = await res.json();
+          if (!res.ok) { showErr(data.detail || "Incorrect credentials."); submitBtn.disabled=false; btnText.textContent="Authorize & Enter Cockpit"; return; }
+          finishAuth(data.user);
+        } catch {
+          // Offline fallback — still allow demo to work
+          const n = u.toLowerCase().includes("tripathi") ? "CA. Aditya Tripathi, FCA"
+            : currentRole==="Client" ? "Alex Mercer (CFO)" : currentRole==="Auditor" ? "Audit Director" : "CA. " + u;
+          finishAuth({role: currentRole==="CA"?"Senior Partner CA":currentRole==="Client"?"Enterprise CFO":"Statutory Lead Auditor",
+            name:n, username:u, membershipId:u, email:u.includes("@")?u:u+"@tripathi-ca.com",
+            firm:"Tripathi & Associates Chartered Accountants", frn:"FRN-012938N", cop:"COP-88192", dscStatus:"Class 3 DSC Active"});
+        }
+      });
+
+      /* ---- Quick Demo Buttons ---- */
+      const demos = {
+        demoCaBtn:     {role:"Senior Partner CA",       name:"CA. Aditya Tripathi, FCA",         username:"aditya tripathi",    membershipId:"CA-ADITYA-7701", email:"aditya.tripathi@tripathi-ca.com", firm:"Tripathi & Associates Chartered Accountants", frn:"FRN-012938N", cop:"COP-88192", dscStatus:"Class 3 DSC Active (Nov 2027)"},
+        demoClientBtn: {role:"Enterprise CFO",          name:"Alex Mercer (CFO)",                username:"finance@apexcorp.com",membershipId:"CLIENT-APEX-901",email:"alex.mercer@apexcorp.com",        firm:"Apex Global Technologies Corp",               frn:"FRN-CORP-4491",cop:"COP-CLIENT-01",dscStatus:"Corporate e-Sign Verified"},
+        demoAuditorBtn:{role:"Statutory Lead Auditor",  name:"Audit Director (Ernst & Young LLP)",username:"AUD-IN-88902",      membershipId:"AUD-IN-88902",   email:"statutory.audit@ey-firm.com",     firm:"Ernst & Young Statutory Audit LLP",            frn:"FRN-001928A",  cop:"COP-AUD-882",dscStatus:"Peer Review Certified Tier-1"}
+      };
+      Object.entries(demos).forEach(([id, user]) => {
+        document.getElementById(id).addEventListener("click", () => finishAuth(user));
+      });
+
+      /* ===== FORGOT PASSWORD / OTP FLOW ===== */
+      let otpStep = 1, pendingId = "";
+      const overlay = document.getElementById("otpModalOverlay");
+
+      document.getElementById("forgotPassLink").addEventListener("click", e => { e.preventDefault(); otpStep=1; pendingId=""; renderOtp(); overlay.style.display="flex"; });
+      document.getElementById("otpCloseBtn").addEventListener("click", () => overlay.style.display="none");
+      overlay.addEventListener("click", e => { if (e.target === overlay) overlay.style.display="none"; });
+
+      function renderOtp() {
+        const body = document.getElementById("otpModalBody");
+        if (otpStep === 1) {
+          body.innerHTML = `
+            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:1rem;">Enter your username, email or Membership ID to receive a 6-digit OTP.</p>
+            <div class="form-group" style="margin-bottom:1rem;">
+              <label style="font-size:0.78rem;font-weight:600;color:var(--text-secondary);">Username / Email / Membership ID</label>
+              <div class="input-with-icon" style="margin-top:0.35rem;">
+                <svg class="input-prefix-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input type="text" id="otpIdInput" class="input-field" value="${userInput.value}" placeholder="e.g. aditya tripathi">
+              </div>
+            </div>
+            <div id="otpErr" class="auth-error-message" style="margin-bottom:0.75rem;"><span id="otpErrTxt"></span></div>
+            <button class="btn-primary auth-submit-btn" onclick="handleRequestOtp()" style="height:42px;">Send 6-Digit OTP</button>`;
+        } else {
+          body.innerHTML = `
+            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.85rem;">OTP sent to your registered email. Enter it along with your new password.</p>
+            <div style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.25);border-radius:8px;padding:0.65rem 0.85rem;margin-bottom:1rem;">
+              <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.2rem;">DEMO OTP (normally emailed)</div>
+              <div id="demoOtpVal" style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;letter-spacing:0.2em;color:#38bdf8;">------</div>
+            </div>
+            <div class="form-group" style="margin-bottom:0.85rem;">
+              <label style="font-size:0.78rem;font-weight:600;color:var(--text-secondary);">6-Digit OTP</label>
+              <input type="text" id="otpCodeVal" class="input-field" maxlength="6" placeholder="Enter OTP" style="font-family:var(--font-mono);font-size:1.3rem;letter-spacing:0.2em;text-align:center;margin-top:0.35rem;" oninput="this.value=this.value.replace(/\D/g,'')">
+            </div>
+            <div class="form-group" style="margin-bottom:0.85rem;">
+              <label style="font-size:0.78rem;font-weight:600;color:var(--text-secondary);">New Password</label>
+              <input type="password" id="newPw" class="input-field" placeholder="Min 4 characters" style="margin-top:0.35rem;">
+            </div>
+            <div class="form-group" style="margin-bottom:1rem;">
+              <label style="font-size:0.78rem;font-weight:600;color:var(--text-secondary);">Confirm Password</label>
+              <input type="password" id="confirmPw" class="input-field" placeholder="Re-enter password" style="margin-top:0.35rem;">
+            </div>
+            <div id="otpErr" class="auth-error-message" style="margin-bottom:0.75rem;"><span id="otpErrTxt"></span></div>
+            <button class="btn-primary auth-submit-btn" onclick="handleResetPw()" style="height:42px;">Reset Password</button>
+            <button type="button" onclick="otpStep=1;renderOtp();" style="width:100%;margin-top:0.6rem;background:transparent;border:none;color:var(--text-muted);font-size:0.78rem;cursor:pointer;">&#8592; Resend OTP</button>`;
+        }
+        // expose renderOtp to window so onclick inline references work
+        window.renderOtp = renderOtp;
+      }
+
+      function showOtpErr(msg) {
+        const el = document.getElementById("otpErr");
+        document.getElementById("otpErrTxt").textContent = msg;
+        el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
+      }
+
+      window.handleRequestOtp = async function() {
+        const id = (document.getElementById("otpIdInput")||{}).value?.trim();
+        if (!id) { showOtpErr("Please enter your username or email."); return; }
+        const btn = event.target; btn.disabled=true; btn.textContent="Sending...";
+        try {
+          const res = await fetch(API+"/api/auth/forgot-password/request-otp", {
+            method:"POST", headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({identifier:id}), signal:AbortSignal.timeout(5000)
+          });
+          const data = await res.json();
+          if (!res.ok) { showOtpErr(data.detail||"User not found."); btn.disabled=false; btn.textContent="Send 6-Digit OTP"; return; }
+          pendingId = id; otpStep = 2; renderOtp();
+          if (data.demo_otp) document.getElementById("demoOtpVal").textContent = data.demo_otp;
+        } catch(e) { showOtpErr("Backend offline: " + e.message); btn.disabled=false; btn.textContent="Send 6-Digit OTP"; }
+      };
+
+      window.handleResetPw = async function() {
+        const otp = (document.getElementById("otpCodeVal")||{}).value?.trim();
+        const np = (document.getElementById("newPw")||{}).value;
+        const cp = (document.getElementById("confirmPw")||{}).value;
+        if (!otp || otp.length!==6) { showOtpErr("Enter the 6-digit OTP."); return; }
+        if (!np || np.length<4) { showOtpErr("Password must be at least 4 characters."); return; }
+        if (np !== cp) { showOtpErr("Passwords do not match."); return; }
+        const btn = event.target; btn.disabled=true; btn.textContent="Resetting...";
+        try {
+          const res = await fetch(API+"/api/auth/forgot-password/reset", {
+            method:"POST", headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({identifier:pendingId, otp, new_password:np}), signal:AbortSignal.timeout(5000)
+          });
+          const data = await res.json();
+          if (!res.ok) { showOtpErr(data.detail||"OTP invalid or expired."); btn.disabled=false; btn.textContent="Reset Password"; return; }
+          overlay.style.display="none";
+          showToast("Password reset! Sign in with your new credentials.");
+          passInput.value = "";
+        } catch(e) { showOtpErr("Backend offline: " + e.message); btn.disabled=false; btn.textContent="Reset Password"; }
+      };
+
+      // expose renderOtp for inline onclicks
+      window.renderOtp = renderOtp;
+
+      /* ---- Toast ---- */
+      function showToast(msg) {
+        const c = document.getElementById("toastContainer");
+        const t = document.createElement("div");
+        t.className="toast";
+        t.innerHTML=`<span style="color:var(--cyan-primary);">&#9889;</span><span>${msg}</span>`;
+        c.appendChild(t);
+        setTimeout(()=>{ t.style.opacity="0"; t.style.transform="translateX(40px)"; t.style.transition="all 0.3s ease"; setTimeout(()=>t.remove(),300); }, 3500);
+      }
+    });
+  </script>
+</body>
+</html>
