@@ -60,8 +60,10 @@ FRONTEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
 
 @app.get("/", include_in_schema=False)
+@app.get("/index", include_in_schema=False)
+@app.get("/landing", include_in_schema=False)
 def serve_root():
-    return FileResponse(os.path.join(FRONTEND_DIR, "dashboard.html"))
+    return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
 @app.get("/signin", include_in_schema=False)
 @app.get("/login", include_in_schema=False)
@@ -71,6 +73,11 @@ def serve_signin():
 @app.get("/dashboard", include_in_schema=False)
 def serve_dashboard():
     return FileResponse(os.path.join(FRONTEND_DIR, "dashboard.html"))
+
+@app.get("/upload", include_in_schema=False)
+@app.get("/upload_document", include_in_schema=False)
+def serve_upload():
+    return FileResponse(os.path.join(FRONTEND_DIR, "upload_document.html"))
 
 @app.get("/documents", include_in_schema=False)
 def serve_documents():
