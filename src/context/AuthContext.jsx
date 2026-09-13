@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
 
     const mockUser = {
       id: "USR-" + Math.floor(1000 + Math.random() * 9000),
-      name: email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) || "Abhinash Maddheshiya",
+      name: email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) || "Ashish Vaiswani",
       email: email,
       role: "Senior Chartered Accountant",
       firmName: "Maddheshiya & Associates CA",

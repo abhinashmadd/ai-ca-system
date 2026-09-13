@@ -216,7 +216,7 @@ export const COMPLIANCE_DEADLINES = [
 export const PAYROLL_EMPLOYEES = [
   {
     id: "EMP-01",
-    name: "Abhinash Maddheshiya",
+    name: "Ashish Vaiswani",
     role: "Senior Financial Analyst & Lead Auditor",
     department: "Corporate Taxation",
     pan: "BXCPM4918Q",

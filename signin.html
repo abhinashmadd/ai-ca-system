@@ -77,10 +77,10 @@
               id="usernameInput" 
               name="username"
               class="input-field" 
-              placeholder="e.g. aditya tripathi or partner@ca-firm.com" 
+              placeholder="e.g. ashish vaiswani or partner@ca-firm.com"
               autocomplete="username" 
               required 
-              value="aditya tripathi"
+              value="ashish vaiswani"
             >
           </div>
         </div>
@@ -225,8 +225,8 @@
           authTitle.textContent = "Practitioner Sign In";
           authDesc.textContent = "Enter your institutional credentials or license ID to access your ledger cockpit.";
           lblUsername.textContent = "Username / CA Membership No. or Email";
-          usernameInput.placeholder = "e.g. aditya tripathi or partner@ca-firm.com";
-          usernameInput.value = "aditya tripathi";
+          usernameInput.placeholder = "e.g. ashish vaiswani or partner@ca-firm.com";
+          usernameInput.value = "ashish vaiswani";
           passwordInput.value = "12345678";
         } else if (role === "Client") {
           tabClient.classList.add("active");
@@ -311,7 +311,7 @@
 
         if (currentRole === "CA") {
           roleTitle = "Senior Partner CA";
-          displayName = displayName.toLowerCase().includes("tripathi") ? "CA. Aditya Tripathi, FCA" : `CA. ${displayName}, FCA`;
+          displayName = displayName.toLowerCase().includes("vaiswani") ? "CA. Ashish Vaiswani, FCA" : `CA. ${displayName}, FCA`;
         } else if (currentRole === "Client") {
           roleTitle = "Enterprise CFO";
           displayName = `${displayName} (CFO)`;
@@ -344,8 +344,8 @@
         selectRole("CA");
         const userObj = {
           role: "Senior Partner CA",
-          name: "CA. Aditya Tripathi, FCA",
-          username: "aditya tripathi",
+          name: "CA. Ashish Vaiswani, FCA",
+          username: "ashish vaiswani",
           membershipId: "CA-ADITYA-7701",
           email: "aditya.tripathi@tripathi-ca.com",
           firm: "Tripathi & Associates Chartered Accountants",

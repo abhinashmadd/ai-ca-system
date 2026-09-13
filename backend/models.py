@@ -99,7 +99,7 @@ class DocumentVerifyRequest(BaseModel):
     issueDate: Optional[str] = ""
     expiryDate: Optional[str] = ""
     issuingAuthority: str
-    verifiedBy: Optional[str] = "CA. Abhinash Maddheshiya (FCA)"
+    verifiedBy: Optional[str] = "CA. Ashish Vaiswani (FCA)"
     notes: Optional[str] = ""
 
 class DocumentResponse(DocumentBase):

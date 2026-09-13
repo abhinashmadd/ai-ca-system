@@ -112,7 +112,7 @@ class DocumentOCREngine:
             doc_type = "Identity / KYC"
             doc_name = "Director International Passport"
             authority = "Ministry of External Affairs, Govt. of India"
-            holder_name = "Aditya R. Tripathi"
+            holder_name = "Ashish R. Vaiswani"
             pass_match = re.search(r'[A-Z]{1}[0-9]{7,8}', text)
             doc_num = pass_match.group(0) if pass_match else "Z9814022"
             issue_date = "2017-06-15"

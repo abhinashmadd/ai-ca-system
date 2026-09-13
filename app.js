@@ -1423,7 +1423,7 @@ const defaultAuthorityDocs = [
     expiryDate: "Perpetual",
     isPerpetual: true,
     verifyDate: "2026-08-10",
-    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    verifier: "CA. Ashish Vaiswani (FCA)",
     purpose: "Mandatory statutory corporate birth certificate and legal operational existence proof under Companies Act, 2013.",
     notes: "Verified against MCA Master Data API with active status and zero pending show-cause notices."
   },
@@ -1439,7 +1439,7 @@ const defaultAuthorityDocs = [
     expiryDate: "Perpetual",
     isPerpetual: true,
     verifyDate: "2026-08-10",
-    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    verifier: "CA. Ashish Vaiswani (FCA)",
     purpose: "Constitutional corporate charter establishing commercial objects, share capital boundaries, and statutory bylaws.",
     notes: "Stamped physical and digital charter verified. Authorized equity share capital: ₹50,00,000."
   },
@@ -1455,7 +1455,7 @@ const defaultAuthorityDocs = [
     expiryDate: "Perpetual",
     isPerpetual: true,
     verifyDate: "2026-08-12",
-    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    verifier: "CA. Ashish Vaiswani (FCA)",
     purpose: "Mandatory corporate tax identity required for all direct tax assessments, bank accounts, and statutory returns.",
     notes: "Cross-verified with NSDL / ITD e-Filing database. KYC: Active & Operational."
   },
@@ -1471,7 +1471,7 @@ const defaultAuthorityDocs = [
     expiryDate: "Perpetual",
     isPerpetual: true,
     verifyDate: "2026-08-12",
-    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    verifier: "CA. Ashish Vaiswani (FCA)",
     purpose: "Statutory mandatory account for withholding tax (TDS / TCS) remittances and quarterly Form 24Q / 26Q returns.",
     notes: "TRACES portal verified. All quarterly withholding challans reconciled against General Ledger."
   },
@@ -1487,7 +1487,7 @@ const defaultAuthorityDocs = [
     expiryDate: "Perpetual",
     isPerpetual: true,
     verifyDate: "2026-08-25",
-    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    verifier: "CA. Ashish Vaiswani (FCA)",
     purpose: "Principal indirect tax statutory license for intra-state and inter-state supply of technology services and products.",
     notes: "Active status on GSTN API. Zero ITC mismatches reported in current financial quarter."
   },
@@ -1503,7 +1503,7 @@ const defaultAuthorityDocs = [
     expiryDate: "Perpetual",
     isPerpetual: true,
     verifyDate: "2026-08-15",
-    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    verifier: "CA. Ashish Vaiswani (FCA)",
     purpose: "Statutory enterprise status ensuring 45-day payment protections under Section 43B(h) and MSMED Act, 2006.",
     notes: "Classified as Medium Tech Enterprise under audited investment and turnover criteria."
   },
@@ -1519,7 +1519,7 @@ const defaultAuthorityDocs = [
     expiryDate: "2026-10-31",
     isPerpetual: false,
     verifyDate: "2026-08-01",
-    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    verifier: "CA. Ashish Vaiswani (FCA)",
     purpose: "Mandatory municipal license governing corporate commercial offices, employee working conditions, and safety.",
     notes: "Renewal application drafted. Statutory renewal fee queued for execution prior to 31 Oct 2026."
   },
@@ -1535,7 +1535,7 @@ const defaultAuthorityDocs = [
     expiryDate: "Perpetual",
     isPerpetual: true,
     verifyDate: "2026-08-18",
-    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    verifier: "CA. Ashish Vaiswani (FCA)",
     purpose: "Statutory enrollment and deduction license for corporate entity tax and monthly employee payroll PT deductions.",
     notes: "Monthly Form III-B electronic return synchronized with general ledger payroll debits."
   },
@@ -1551,7 +1551,7 @@ const defaultAuthorityDocs = [
     expiryDate: "Perpetual",
     isPerpetual: true,
     verifyDate: "2026-08-20",
-    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    verifier: "CA. Ashish Vaiswani (FCA)",
     purpose: "Mandatory 10-digit authorization for overseas commercial transactions, cross-border SaaS billings, and forex receipts.",
     notes: "Annual DGFT e-Verification confirmed. Inward wire remittances matching FIRC documentation."
   },
@@ -1567,7 +1567,7 @@ const defaultAuthorityDocs = [
     expiryDate: "Perpetual",
     isPerpetual: true,
     verifyDate: "2026-08-22",
-    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    verifier: "CA. Ashish Vaiswani (FCA)",
     purpose: "Mandatory corporate social security coverage under EPF & MP Act, 1952 for employee retirement welfare.",
     notes: "Unified Shram Suvidha API synchronized. Monthly electronic challan returns (ECR) paid on schedule."
   },
@@ -1583,7 +1583,7 @@ const defaultAuthorityDocs = [
     expiryDate: "Perpetual",
     isPerpetual: true,
     verifyDate: "2026-08-22",
-    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    verifier: "CA. Ashish Vaiswani (FCA)",
     purpose: "Statutory health and disability insurance coverage for workforce under the Employees' State Insurance Act, 1948.",
     notes: "Bi-annual statutory audit completed with full contribution ledger reconciliation."
   },
@@ -1599,7 +1599,7 @@ const defaultAuthorityDocs = [
     expiryDate: "2034-07-19",
     isPerpetual: false,
     verifyDate: "2026-08-05",
-    verifier: "CA. Abhinash Maddheshiya (FCA)",
+    verifier: "CA. Ashish Vaiswani (FCA)",
     purpose: "Statutory brand and intellectual property asset protection under the Trade Marks Act, 1999.",
     notes: "Opposition window successfully cleared. Final certificate issuance stamp underway."
   }
@@ -1767,7 +1767,7 @@ function openVerificationModal(docKey) {
 
   const todayStr = new Date().toISOString().slice(0, 10);
   document.getElementById("mvVerifyDate").value = (!isNew && doc.verifyDate) ? doc.verifyDate : todayStr;
-  document.getElementById("mvVerifier").value = (!isNew && doc.verifier) ? doc.verifier : "CA. Abhinash Maddheshiya (FCA)";
+  document.getElementById("mvVerifier").value = (!isNew && doc.verifier) ? doc.verifier : "CA. Ashish Vaiswani (FCA)";
   document.getElementById("mvNotes").value = (!isNew && doc.notes) ? doc.notes : "";
 
   document.getElementById("mvModalTitle").textContent = isNew ? "Add New Statutory Corporate Document" : `Verify & Update: ${doc.name}`;

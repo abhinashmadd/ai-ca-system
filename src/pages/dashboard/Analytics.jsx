@@ -35,9 +35,9 @@ export default function Analytics() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: "0.85rem" }}>
           {[
-            { action: "GSTR-1 JSON Schema Exported", client: "Apex Global Technologies", time: "10 minutes ago", user: "CA Abhinash" },
+            { action: "GSTR-1 JSON Schema Exported", client: "Apex Global Technologies", time: "10 minutes ago", user: "CA Ashish" },
             { action: "Invoice INV-2026-089 marked Paid", client: "Apex Global Technologies", time: "2 hours ago", user: "Billing Desk" },
-            { action: "New Client Onboarded (LLP)", client: "Sharma & Brothers Logistics", time: "5 hours ago", user: "CA Abhinash" },
+            { action: "New Client Onboarded (LLP)", client: "Sharma & Brothers Logistics", time: "5 hours ago", user: "CA Ashish" },
             { action: "Form 3CD Tax Audit Clauses Generated", client: "Zenith Cloud Solutions", time: "1 day ago", user: "AI Assistant" }
           ].map((log, i) => (
             <div

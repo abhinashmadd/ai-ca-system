@@ -19,7 +19,7 @@ export default function Settings() {
   const { theme, toggleTheme, setTheme } = useTheme();
   const [toastMsg, setToastMsg] = useState("");
 
-  const [name, setName] = useState(user?.name || "CA Abhinash Maddheshiya");
+  const [name, setName] = useState(user?.name || "CA Ashish Vaiswani");
   const [firmName, setFirmName] = useState(user?.firmName || "Maddheshiya & Associates CA");
   const [membershipNo, setMembershipNo] = useState(user?.membershipNo || "FCA-849201");
 

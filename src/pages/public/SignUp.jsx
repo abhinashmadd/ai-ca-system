@@ -87,7 +87,7 @@ export default function SignUp() {
                 type="text"
                 className="form-input"
                 style={{ paddingLeft: 40 }}
-                placeholder="e.g. CA Abhinash Maddheshiya"
+                placeholder="e.g. CA Ashish Vaiswani"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required

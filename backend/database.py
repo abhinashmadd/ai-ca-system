@@ -67,9 +67,9 @@ class DatabaseManager:
         seed_users = [
             {
                 "id": "USR-7701",
-                "username": "aditya tripathi",
+                "username": "ashish vaiswani",
                 "password": "12345678",
-                "name": "CA. Aditya Tripathi, FCA",
+                "name": "CA. Ashish Vaiswani, FCA",
                 "role": "Senior Partner CA",
                 "email": "aditya.tripathi@tripathi-ca.com",
                 "firm": "Tripathi & Associates Chartered Accountants",

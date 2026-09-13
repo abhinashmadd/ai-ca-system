@@ -91,7 +91,7 @@ export default function Sidebar({ isOpen, onClose }) {
             {user?.name ? user.name.charAt(0) : "A"}
           </div>
           <div className="user-info-chip">
-            <div className="user-name-chip">{user?.name || "Abhinash CA"}</div>
+            <div className="user-name-chip">{user?.name || "Ashish Vaiswani"}</div>
             <div className="user-role-chip">{user?.role || "FCA Member"}</div>
           </div>
         </div>

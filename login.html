@@ -60,7 +60,7 @@
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
             <input type="text" id="usernameInput" name="username" class="input-field"
-              placeholder="e.g. aditya tripathi" autocomplete="username" required value="aditya tripathi">
+              placeholder="e.g. ashish vaiswani" autocomplete="username" required value="ashish vaiswani">
           </div>
         </div>
 
@@ -192,7 +192,7 @@
         currentRole = role; hideErr();
         [tabCa, tabClient, tabAuditor].forEach(t => t.classList.remove("active"));
         const map = {
-          CA:      { tab: tabCa,      title: "Practitioner Sign In",         desc: "Enter your institutional credentials or license ID to access your ledger cockpit.", label: "Username / CA Membership No. or Email", user: "aditya tripathi",    pass: "12345678" },
+          CA:      { tab: tabCa,      title: "Practitioner Sign In",         desc: "Enter your institutional credentials or license ID to access your ledger cockpit.", label: "Username / CA Membership No. or Email", user: "ashish vaiswani",    pass: "12345678" },
           Client:  { tab: tabClient,  title: "Enterprise Client Sign In",     desc: "Access real-time business financial statements, tax estimates, and invoice portals.",   label: "Username / Corporate GSTIN or Email",   user: "finance@apexcorp.com", pass: "clientPass2026" },
           Auditor: { tab: tabAuditor, title: "Statutory Auditor Sign In",     desc: "Secure audit trail inspection, double-entry verification, and ledger compliance.",      label: "Auditor ID / Registration Key or Email",user: "AUD-IN-88902",     pass: "auditSecure99" }
         };
@@ -238,7 +238,7 @@
           finishAuth(data.user);
         } catch {
           // Offline fallback — still allow demo to work
-          const n = u.toLowerCase().includes("tripathi") ? "CA. Aditya Tripathi, FCA"
+          const n = u.toLowerCase().includes("vaiswani") ? "CA. Ashish Vaiswani, FCA"
             : currentRole==="Client" ? "Alex Mercer (CFO)" : currentRole==="Auditor" ? "Audit Director" : "CA. " + u;
           finishAuth({role: currentRole==="CA"?"Senior Partner CA":currentRole==="Client"?"Enterprise CFO":"Statutory Lead Auditor",
             name:n, username:u, membershipId:u, email:u.includes("@")?u:u+"@tripathi-ca.com",
@@ -248,7 +248,7 @@
 
       /* ---- Quick Demo Buttons ---- */
       const demos = {
-        demoCaBtn:     {role:"Senior Partner CA",       name:"CA. Aditya Tripathi, FCA",         username:"aditya tripathi",    membershipId:"CA-ADITYA-7701", email:"aditya.tripathi@tripathi-ca.com", firm:"Tripathi & Associates Chartered Accountants", frn:"FRN-012938N", cop:"COP-88192", dscStatus:"Class 3 DSC Active (Nov 2027)"},
+        demoCaBtn:     {role:"Senior Partner CA",       name:"CA. Ashish Vaiswani, FCA",         username:"ashish vaiswani",    membershipId:"CA-ADITYA-7701", email:"ashish.vaiswani@tripathi-ca.com", firm:"Tripathi & Associates Chartered Accountants", frn:"FRN-012938N", cop:"COP-88192", dscStatus:"Class 3 DSC Active (Nov 2027)"},
         demoClientBtn: {role:"Enterprise CFO",          name:"Alex Mercer (CFO)",                username:"finance@apexcorp.com",membershipId:"CLIENT-APEX-901",email:"alex.mercer@apexcorp.com",        firm:"Apex Global Technologies Corp",               frn:"FRN-CORP-4491",cop:"COP-CLIENT-01",dscStatus:"Corporate e-Sign Verified"},
         demoAuditorBtn:{role:"Statutory Lead Auditor",  name:"Audit Director (Ernst & Young LLP)",username:"AUD-IN-88902",      membershipId:"AUD-IN-88902",   email:"statutory.audit@ey-firm.com",     firm:"Ernst & Young Statutory Audit LLP",            frn:"FRN-001928A",  cop:"COP-AUD-882",dscStatus:"Peer Review Certified Tier-1"}
       };
@@ -273,7 +273,7 @@
               <label style="font-size:0.78rem;font-weight:600;color:var(--text-secondary);">Username / Email / Membership ID</label>
               <div class="input-with-icon" style="margin-top:0.35rem;">
                 <svg class="input-prefix-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <input type="text" id="otpIdInput" class="input-field" value="${userInput.value}" placeholder="e.g. aditya tripathi">
+                <input type="text" id="otpIdInput" class="input-field" value="${userInput.value}" placeholder="e.g. ashish vaiswani">
               </div>
             </div>
             <div id="otpErr" class="auth-error-message" style="margin-bottom:0.75rem;"><span id="otpErrTxt"></span></div>

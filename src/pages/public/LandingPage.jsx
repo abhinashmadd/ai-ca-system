@@ -493,7 +493,7 @@ export default function LandingPage() {
                 <input
                   type="text"
                   className="form-input"
-                  placeholder="e.g. Abhinash Maddheshiya & Associates"
+                  placeholder="e.g. Ashish Vaiswani & Associates"
                   value={contactForm.name}
                   onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
                 />

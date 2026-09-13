@@ -130,7 +130,7 @@ class AIRenewalAssistant:
                 "applicantName": doc.get("holderName"),
                 "registrationRef": doc.get("documentNumber"),
                 "issuingAuthority": doc.get("issuingAuthority"),
-                "practitionerStamp": "CA. Abhinash Maddheshiya, FCA (Reg: 048912)",
+                "practitionerStamp": "CA. Ashish Vaiswani, FCA (Reg: 048912)",
                 "statutoryFilingDate": datetime.date.today().isoformat()
             }
         }
