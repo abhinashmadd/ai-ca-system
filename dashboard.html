@@ -917,8 +917,8 @@
           <p class="tax-check-desc">
             Missing movements, transfers between accounts and inconsistencies in imported data are automatically detected and resolved.
           </p>
-          <button type="button" class="tax-check-btn" onclick="openTaxFeaturesModal()">
-            <span>View all features</span>
+          <button type="button" class="tax-check-btn" id="viewTaxFeaturesBtn" onclick="openTaxFeaturesModal('data')" title="Click to view all given data checked before tax calculation">
+            <span>View the feature &amp; pre-tax data &rarr;</span>
           </button>
         </div>
 
@@ -1223,14 +1223,88 @@
     }
 
     /* Pre-Tax Calculation Features Modal */
-    function openTaxFeaturesModal() {
+    function openTaxFeaturesModal(tab = 'data') {
       const modal = document.getElementById('taxFeaturesModal');
-      if (modal) modal.classList.add('show');
+      if (modal) {
+        modal.classList.add('show');
+        switchTaxModalTab(tab);
+      }
     }
 
     function closeTaxFeaturesModal() {
       const modal = document.getElementById('taxFeaturesModal');
       if (modal) modal.classList.remove('show');
+    }
+
+    function switchTaxModalTab(tabName) {
+      const tabDataBtn = document.getElementById('taxTabBtnData');
+      const tabFeatBtn = document.getElementById('taxTabBtnFeat');
+      const viewData = document.getElementById('taxModalViewData');
+      const viewFeat = document.getElementById('taxModalViewFeat');
+      if (!tabDataBtn || !tabFeatBtn || !viewData || !viewFeat) return;
+
+      if (tabName === 'data') {
+        tabDataBtn.classList.add('active');
+        tabFeatBtn.classList.remove('active');
+        viewData.style.display = 'block';
+        viewFeat.style.display = 'none';
+      } else {
+        tabFeatBtn.classList.add('active');
+        tabDataBtn.classList.remove('active');
+        viewData.style.display = 'none';
+        viewFeat.style.display = 'block';
+      }
+    }
+
+    function filterPreTaxData(filterType, btn) {
+      const chips = document.querySelectorAll('#preTaxFilterChips button');
+      chips.forEach(c => c.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const rows = document.querySelectorAll('#preTaxTableBody tr');
+      rows.forEach(r => {
+        if (filterType === 'all' || r.getAttribute('data-category') === filterType) {
+          r.style.display = '';
+        } else {
+          r.style.display = 'none';
+        }
+      });
+    }
+
+    function reScanPreTaxData() {
+      showToast("Scanning for missing movements, transfers & inconsistencies...");
+      const btn = document.getElementById('reScanPreTaxBtn');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ Checking 142 raw records...</span>';
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.innerHTML = '<span>⚡ Re-Run Pre-Tax Data Scan</span>';
+          showToast("Data check complete: 0 unresolved errors. Clean ledger ready for tax calculation.");
+        }, 1200);
+      }
+    }
+
+    function exportPreTaxCsv() {
+      showToast("Exporting Pre-Tax Validated Audit Data (.CSV)...");
+      const csvRows = [
+        ["Tx ID", "Date", "Counterparty", "Account", "Raw Amount", "Check Type", "Pre-Tax Status", "Tax Impact"],
+        ["TX-8801", "2026-08-12", "HDFC Current to ICICI Operational", "Inter-Account Transfer", "250000.00", "Transfer Between Accounts", "Auto-Excluded (Contra)", "Non-Taxable Liquidity"],
+        ["TX-8802", "2026-08-11", "Amazon Web Services EMEA", "Cloud Infrastructure", "4200.00", "Missing GSTIN & Cross-Border FX", "Auto-Resolved", "ITC Eligible 18% IGST ($756)"],
+        ["TX-8803", "2026-08-10", "Apex Global Technologies", "Enterprise Advisory Retainer", "2500000.00", "Client GSTIN Matching", "Pre-Tax Verified", "Taxable Supply (18% GST: 450000)"],
+        ["TX-8804", "2026-08-09", "Stripe Payment Gateway Payout", "Chase Treasury", "18400.00", "Gateway Fee & Incomplete Transfer", "Auto-Resolved", "Net Revenue Split & Fee Deductible"],
+        ["TX-8805", "2026-08-08", "Zerodha Securities Liquidation", "Current Account", "580000.00", "Capital Asset vs Trading Revenue", "Auto-Classified", "Capital Gains Pool (Sec 112A)"],
+        ["TX-8806", "2026-08-07", "Microsoft Azure Cloud Hosting", "Software Subscription", "118000.00", "GSTR-2B Inward Credit Reconciliation", "Pre-Tax Verified", "ITC Available (INR 18000)"],
+        ["TX-8807", "2026-08-05", "Share Application / Capital Infusion", "Capital Reserve", "1500000.00", "Equity Infusion vs Revenue", "Auto-Excluded", "INR 0.00 GST (Capital Reserve)"],
+        ["TX-8808", "2026-08-03", "Tripathi & Associates Legal Fee", "Professional Services", "354000.00", "TDS Sec 194J & GST Slab Matching", "Pre-Tax Verified", "GST: 54000 | TDS: 30000"]
+      ];
+      const csvContent = "data:text/csv;charset=utf-8," + csvRows.map(e => e.join(",")).join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "PreTax_Checked_Data_Ledger.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   </script>
 
@@ -1238,11 +1312,231 @@
   <div class="modal-backdrop" id="taxFeaturesModal" onclick="if(event.target===this)closeTaxFeaturesModal()">
     <div class="modal-dialog feat-showcase-dialog" onclick="event.stopPropagation()">
       
-      <!-- Close Button -->
       <button class="modal-close-btn" onclick="closeTaxFeaturesModal()" style="position: absolute; top: 1.5rem; right: 1.8rem; z-index: 20; width: 38px; height: 38px; font-size: 1.6rem; border-radius: 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); color: #cbd5e1; cursor: pointer;">&times;</button>
 
-      <!-- 1. Hero Section: Track, Report & Optimise Investments -->
-      <div class="feat-hero-section">
+      <!-- Tabs Navigation Header -->
+      <div class="pretax-tabs-bar">
+        <button type="button" class="pretax-tab-btn active" id="taxTabBtnData" onclick="switchTaxModalTab('data')">
+          <span>📊 Given Data Checked Before Tax Calculation (142 Records)</span>
+        </button>
+        <button type="button" class="pretax-tab-btn" id="taxTabBtnFeat" onclick="switchTaxModalTab('feat')">
+          <span>✨ Multi-Asset &amp; Tax Features Showcase</span>
+        </button>
+      </div>
+
+      <!-- VIEW 1: GIVEN DATA CHECKED BEFORE TAX CALCULATION -->
+      <div id="taxModalViewData" class="pretax-data-container">
+        <div class="pretax-header-box">
+          <div>
+            <div class="pretax-badge-pill">
+              <span>● Autonomous Pre-Tax Audit</span>
+              <span>100% Reconciled</span>
+            </div>
+            <h2 class="pretax-main-title">Given Data Checked Before Tax Calculation</h2>
+            <p class="pretax-main-desc">
+              All raw imported invoices, bank ledger movements, and payment gateway feeds scanned for missing movements, transfers between accounts, and counterparty inconsistencies before computing tax liabilities.
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn-secondary" id="reScanPreTaxBtn" onclick="reScanPreTaxData()" style="padding: 0.6rem 1rem; font-size: 0.82rem;">
+              <span>⚡ Re-Run Pre-Tax Data Scan</span>
+            </button>
+            <button type="button" class="btn-secondary" onclick="exportPreTaxCsv()" style="padding: 0.6rem 1rem; font-size: 0.82rem;">
+              <span>📥 Export CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI Grid -->
+        <div class="pretax-kpis-grid">
+          <div class="pretax-kpi-card">
+            <span class="pretax-kpi-label">Raw Movements Checked</span>
+            <span class="pretax-kpi-val">142</span>
+            <span class="pretax-kpi-sub">Total evaluated volume: $842,950</span>
+          </div>
+          <div class="pretax-kpi-card" style="border-color: rgba(56,189,248,0.3);">
+            <span class="pretax-kpi-label" style="color: #7dd3fc;">Transfers Between Accounts</span>
+            <span class="pretax-kpi-val" style="color: #38bdf8;">8 Contra</span>
+            <span class="pretax-kpi-sub">$268,400 excluded from taxable turnover</span>
+          </div>
+          <div class="pretax-kpi-card" style="border-color: rgba(245,158,11,0.3);">
+            <span class="pretax-kpi-label" style="color: #fde68a;">Auto-Resolved Inconsistencies</span>
+            <span class="pretax-kpi-val" style="color: #f59e0b;">3 Fixed</span>
+            <span class="pretax-kpi-sub">Missing GSTIN, FX rates &amp; fee splits</span>
+          </div>
+          <div class="pretax-kpi-card" style="border-color: rgba(52,211,153,0.3);">
+            <span class="pretax-kpi-label" style="color: #a7f3d0;">Clean Taxable Base Ready</span>
+            <span class="pretax-kpi-val" style="color: #34d399;">$574,550</span>
+            <span class="pretax-kpi-sub">100% verified for GST &amp; ITR calculations</span>
+          </div>
+        </div>
+
+        <!-- Filter Chips Toolbar -->
+        <div class="pretax-filters-bar">
+          <div class="pretax-filter-group" id="preTaxFilterChips">
+            <button type="button" class="pretax-chip active" onclick="filterPreTaxData('all', this)">All Inspected Data (8 Sampled)</button>
+            <button type="button" class="pretax-chip" onclick="filterPreTaxData('transfers', this)">Account Transfers / Contra (2)</button>
+            <button type="button" class="pretax-chip" onclick="filterPreTaxData('resolved', this)">Resolved Inconsistencies (2)</button>
+            <button type="button" class="pretax-chip" onclick="filterPreTaxData('verified', this)">Verified Taxable Data (4)</button>
+          </div>
+          <span style="font-size: 0.78rem; color: #94a3b8;">Status: <strong style="color: #34d399;">Zero Unresolved Anomalies</strong></span>
+        </div>
+
+        <!-- Pre-Tax Data Table -->
+        <div class="pretax-table-container">
+          <table class="pretax-table">
+            <thead>
+              <tr>
+                <th>Tx ID &amp; Timestamp</th>
+                <th>Counterparty / Description</th>
+                <th>Source Account / Ledger Head</th>
+                <th>Raw Ingested Amount</th>
+                <th>Pre-Tax Check Performed</th>
+                <th>Pre-Tax Status &amp; Resolution</th>
+                <th>Tax Implication</th>
+              </tr>
+            </thead>
+            <tbody id="preTaxTableBody">
+              <tr data-category="transfers">
+                <td>
+                  <strong style="color:#fff;">#TX-8801</strong><br>
+                  <small style="color:#94a3b8;">12 Aug 2026, 11:30</small>
+                </td>
+                <td>
+                  <strong style="color:#fff;">HDFC Current ➔ ICICI Operational</strong><br>
+                  <small style="color:#94a3b8;">Internal balance rebalancing transfer</small>
+                </td>
+                <td><span class="tax-check-type">Bank Contra Ledger</span></td>
+                <td><strong class="font-mono" style="color:#fff;">₹ 2,50,000.00</strong><br><small style="color:#94a3b8;">$3,000.00 USD</small></td>
+                <td><span class="tax-check-type" style="color: #7dd3fc; border-color: rgba(56,189,248,0.3);">Transfer Between Accounts</span></td>
+                <td><span class="status-badge-contra">🔄 Auto-Excluded (Contra)</span></td>
+                <td><span class="tax-impact-preview" style="color: #7dd3fc;">₹0.00 Tax (Non-taxable internal liquidity)</span></td>
+              </tr>
+              <tr data-category="resolved">
+                <td>
+                  <strong style="color:#fff;">#TX-8802</strong><br>
+                  <small style="color:#94a3b8;">11 Aug 2026, 16:45</small>
+                </td>
+                <td>
+                  <strong style="color:#fff;">Amazon Web Services EMEA</strong><br>
+                  <small style="color:#94a3b8;">Monthly Cloud Computing Infrastructure</small>
+                </td>
+                <td><span class="tax-check-type">Cloud Services COGS</span></td>
+                <td><strong class="font-mono" style="color:#fff;">$4,200.00</strong><br><small style="color:#94a3b8;">₹ 3,50,364.00 (@ 83.42)</small></td>
+                <td><span class="tax-check-type" style="color: #fde68a; border-color: rgba(245,158,11,0.3);">Missing GSTIN &amp; Cross-Border FX</span></td>
+                <td><span class="status-badge-resolved">⚡ Auto-Resolved (RCM Applied)</span></td>
+                <td><span class="tax-impact-preview" style="color: #34d399;">Eligible for 18% Input Tax Credit ($756.00)</span></td>
+              </tr>
+              <tr data-category="verified">
+                <td>
+                  <strong style="color:#fff;">#TX-8803</strong><br>
+                  <small style="color:#94a3b8;">10 Aug 2026, 09:15</small>
+                </td>
+                <td>
+                  <strong style="color:#fff;">Apex Global Technologies</strong><br>
+                  <small style="color:#94a3b8;">Enterprise Advisory Retainer Q3</small>
+                </td>
+                <td><span class="tax-check-type">Advisory Revenue (Domestic)</span></td>
+                <td><strong class="font-mono" style="color:#fff;">₹ 25,00,000.00</strong><br><small style="color:#94a3b8;">$30,000.00 USD</small></td>
+                <td><span class="tax-check-type">Client GSTIN Verification</span></td>
+                <td><span class="status-badge-verified">&#10003; Pre-Tax Verified</span></td>
+                <td><span class="tax-impact-preview" style="color: #f43f5e;">Taxable Supply: 18% Output GST (₹4,50,000)</span></td>
+              </tr>
+              <tr data-category="resolved">
+                <td>
+                  <strong style="color:#fff;">#TX-8804</strong><br>
+                  <small style="color:#94a3b8;">09 Aug 2026, 18:20</small>
+                </td>
+                <td>
+                  <strong style="color:#fff;">Stripe Payment Gateway Payout</strong><br>
+                  <small style="color:#94a3b8;">Gross $18,950 ➔ Payout to Treasury</small>
+                </td>
+                <td><span class="tax-check-type">Merchant Clearing A/c</span></td>
+                <td><strong class="font-mono" style="color:#fff;">$18,400.00</strong><br><small style="color:#94a3b8;">Net Payout (Fee: $550)</small></td>
+                <td><span class="tax-check-type" style="color: #fde68a; border-color: rgba(245,158,11,0.3);">Gateway Fee &amp; Transfer Discrepancy</span></td>
+                <td><span class="status-badge-resolved">⚡ Auto-Resolved (Fee Split)</span></td>
+                <td><span class="tax-impact-preview" style="color: #cbd5e1;">Revenue $18,400 / Gateway Fee $550 Deductible</span></td>
+              </tr>
+              <tr data-category="verified">
+                <td>
+                  <strong style="color:#fff;">#TX-8805</strong><br>
+                  <small style="color:#94a3b8;">08 Aug 2026, 14:10</small>
+                </td>
+                <td>
+                  <strong style="color:#fff;">Zerodha Securities Portfolio Sale</strong><br>
+                  <small style="color:#94a3b8;">Listed Equity Liquidation Proceeds</small>
+                </td>
+                <td><span class="tax-check-type">Capital Asset Account</span></td>
+                <td><strong class="font-mono" style="color:#fff;">₹ 5,80,000.00</strong><br><small style="color:#94a3b8;">Cost: ₹ 4,95,000.00</small></td>
+                <td><span class="tax-check-type">Capital Asset vs Trading Revenue</span></td>
+                <td><span class="status-badge-verified">&#10003; Auto-Classified</span></td>
+                <td><span class="tax-impact-preview" style="color: #c084fc;">Capital Gains Pool (LTCG 12.5% Sec 112A)</span></td>
+              </tr>
+              <tr data-category="verified">
+                <td>
+                  <strong style="color:#fff;">#TX-8806</strong><br>
+                  <small style="color:#94a3b8;">07 Aug 2026, 12:05</small>
+                </td>
+                <td>
+                  <strong style="color:#fff;">Microsoft Azure Subscription</strong><br>
+                  <small style="color:#94a3b8;">Software Services (MS India Pvt Ltd)</small>
+                </td>
+                <td><span class="tax-check-type">Software &amp; Tools COGS</span></td>
+                <td><strong class="font-mono" style="color:#fff;">₹ 1,18,000.00</strong><br><small style="color:#94a3b8;">Base: ₹ 1,00,000.00</small></td>
+                <td><span class="tax-check-type">GSTR-2B Inward Match</span></td>
+                <td><span class="status-badge-verified">&#10003; Pre-Tax Verified</span></td>
+                <td><span class="tax-impact-preview" style="color: #34d399;">Input Tax Credit (ITC) Available: ₹18,000.00</span></td>
+              </tr>
+              <tr data-category="transfers">
+                <td>
+                  <strong style="color:#fff;">#TX-8807</strong><br>
+                  <small style="color:#94a3b8;">05 Aug 2026, 17:50</small>
+                </td>
+                <td>
+                  <strong style="color:#fff;">Director Share Capital Infusion</strong><br>
+                  <small style="color:#94a3b8;">Private equity deposit to Current A/c</small>
+                </td>
+                <td><span class="tax-check-type">Equity Share Capital</span></td>
+                <td><strong class="font-mono" style="color:#fff;">₹ 15,00,000.00</strong><br><small style="color:#94a3b8;">Direct Equity Credit</small></td>
+                <td><span class="tax-check-type" style="color: #7dd3fc; border-color: rgba(56,189,248,0.3);">Capital Infusion vs Revenue</span></td>
+                <td><span class="status-badge-contra">🔄 Auto-Excluded from Turnover</span></td>
+                <td><span class="tax-impact-preview" style="color: #7dd3fc;">₹0.00 GST (Balance Sheet Capital Reserve)</span></td>
+              </tr>
+              <tr data-category="verified">
+                <td>
+                  <strong style="color:#fff;">#TX-8808</strong><br>
+                  <small style="color:#94a3b8;">03 Aug 2026, 10:30</small>
+                </td>
+                <td>
+                  <strong style="color:#fff;">Tripathi &amp; Associates Retainer</strong><br>
+                  <small style="color:#94a3b8;">Audit &amp; Assurance Invoice Recv</small>
+                </td>
+                <td><span class="tax-check-type">Professional Fees Revenue</span></td>
+                <td><strong class="font-mono" style="color:#fff;">₹ 3,54,000.00</strong><br><small style="color:#94a3b8;">Base: ₹ 3,00,000.00</small></td>
+                <td><span class="tax-check-type">TDS Sec 194J &amp; GST Matching</span></td>
+                <td><span class="status-badge-verified">&#10003; Pre-Tax Verified</span></td>
+                <td><span class="tax-impact-preview" style="color: #34d399;">Output GST: ₹54,000 | TDS Credit: ₹30,000</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Proceed Action Box -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.4rem; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(52, 211, 153, 0.25); border-radius: 16px; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 800; color: #fff;">Pre-Tax Data Verification Completed (100% Passed)</div>
+            <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 2px;">All 142 records sanitized: contra transfers separated, missing GSTINs retrieved, and clean figures ready.</div>
+          </div>
+          <button type="button" class="btn-primary" onclick="closeTaxFeaturesModal(); switchNavTab('compliance');" style="padding: 0.75rem 1.6rem; font-size: 0.9rem; font-weight: 800; background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <span>Proceed to Tax Calculation &amp; Compliance &rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 2: MULTI-ASSET & TAX FEATURES SHOWCASE -->
+      <div id="taxModalViewFeat" style="display: none;">
+        <!-- 1. Hero Section: Track, Report & Optimise Investments -->
+        <div class="feat-hero-section">
         <div class="feat-hero-text">
           <div class="feat-pill-tag">Multi-Asset Tax &amp; Portfolio</div>
           <h1 class="feat-hero-title">Track, report and optimise your investments</h1>
@@ -1498,7 +1792,8 @@
           </div>
         </div>
 
-      </div>
+      </div> <!-- end feat-items-container -->
+      </div> <!-- end taxModalViewFeat -->
 
       <!-- Modal Footer -->
       <div style="padding: 1.5rem 3.5rem; background: rgba(10, 6, 20, 0.95); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
