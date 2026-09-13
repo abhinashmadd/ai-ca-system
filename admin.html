@@ -3,30 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel | AI CA Platform – Profile & ID Management</title>
-  <meta name="description" content="Administrator portal for managing user profiles, access IDs, and platform security.">
+  <title>Admin Command Center | AI CA Platform</title>
+  <meta name="description" content="Comprehensive Administrator Portal for managing users, statutory compliance documents, audit logs, and system diagnostics.">
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* ===== ADMIN-SPECIFIC OVERRIDES ===== */
+    /* ===== ADMIN COMMAND CENTER STYLES ===== */
+    :root {
+      --admin-accent: #c084fc;
+      --admin-cyan: #38bdf8;
+      --admin-emerald: #10b981;
+      --admin-amber: #f59e0b;
+      --admin-rose: #f43f5e;
+      --admin-bg-dark: #07050d;
+      --admin-card-bg: rgba(16, 11, 28, 0.75);
+      --admin-card-border: rgba(168, 85, 247, 0.22);
+    }
+
+    body {
+      background-color: var(--admin-bg-dark);
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 119, 198, 0.15), transparent),
+        radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.08), transparent 40%),
+        radial-gradient(circle at 10% 40%, rgba(168, 85, 247, 0.07), transparent 30%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
     .admin-layout {
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      position: relative;
-      z-index: 1;
     }
 
-    /* Header */
-    .admin-header {
-      background: rgba(10, 7, 18, 0.90);
-      border-bottom: 1px solid rgba(168, 85, 247, 0.22);
-      backdrop-filter: blur(18px);
+    /* Top Navigation Bar */
+    .admin-navbar {
+      background: rgba(10, 7, 18, 0.88);
+      border-bottom: 1px solid var(--admin-card-border);
+      backdrop-filter: blur(20px);
       padding: 0 2rem;
-      height: 62px;
+      height: 68px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -38,159 +59,309 @@
     .admin-brand {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
+      text-decoration: none;
     }
 
-    .admin-brand .brand-logo-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 11px;
-      background: rgba(14, 10, 26, 0.65);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(56, 189, 248, 0.35);
+    .admin-brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(14, 10, 26, 0.7);
+      border: 1px solid rgba(56, 189, 248, 0.4);
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
       padding: 2px;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4), 0 0 10px rgba(168, 85, 247, 0.3);
-      flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
     }
 
-    .admin-brand-text {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .admin-brand-title {
-      font-size: 0.92rem;
+    .admin-brand-text h2 {
+      font-size: 1rem;
       font-weight: 700;
       color: #ffffff;
+      margin: 0;
       letter-spacing: -0.01em;
     }
 
-    .admin-brand-badge {
-      font-size: 0.62rem;
+    .admin-brand-text span {
+      font-size: 0.65rem;
       font-weight: 700;
-      letter-spacing: 0.1em;
-      color: #c084fc;
-      font-family: var(--font-mono);
+      letter-spacing: 0.12em;
+      color: var(--admin-accent);
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    .admin-header-actions {
+    .admin-nav-actions {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
 
-    .db-status-pill {
+    .status-badge-live {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      padding: 0.3rem 0.75rem;
-      border-radius: 20px;
+      gap: 0.45rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
       font-size: 0.74rem;
       font-weight: 600;
-      font-family: var(--font-mono);
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--admin-emerald);
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .db-status-pill.connected {
-      background: rgba(16,185,129,0.12);
-      border: 1px solid rgba(16,185,129,0.35);
-      color: #10b981;
+    .status-badge-live:hover {
+      background: rgba(16, 185, 129, 0.2);
     }
 
-    .db-status-pill.fallback {
-      background: rgba(245,158,11,0.12);
-      border: 1px solid rgba(245,158,11,0.35);
-      color: #f59e0b;
-    }
-
-    .db-status-dot {
+    .pulse-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
       background: currentColor;
-      animation: pulse 2s infinite;
+      animation: pulseAnim 2s infinite;
     }
 
-    /* Main Content */
-    .admin-body {
-      padding: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
-      flex: 1;
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
     }
 
-    .admin-page-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      gap: 1rem;
+    .btn-admin {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 9px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      border: none;
+      text-decoration: none;
     }
 
-    .admin-page-header h1 {
-      font-size: 1.8rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #ffffff 30%, #c084fc 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .btn-admin-primary {
+      background: linear-gradient(135deg, #9333ea 0%, #3b82f6 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(147, 51, 234, 0.35);
     }
 
-    .admin-page-header p {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-top: 0.25rem;
+    .btn-admin-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(147, 51, 234, 0.5);
     }
 
-    /* Stats Row */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin-bottom: 2rem;
+    .btn-admin-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--admin-card-border);
+      color: #e2e8f0;
     }
 
-    .stat-card {
-      background: rgba(17, 11, 29, 0.72);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 1.1rem 1.25rem;
+    .btn-admin-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--admin-accent);
+    }
+
+    /* Subheader & Navigation Tabs */
+    .admin-subnav {
+      background: rgba(13, 9, 23, 0.6);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 0 2rem;
       display: flex;
       align-items: center;
-      gap: 0.9rem;
-      transition: all 0.2s;
+      gap: 0.5rem;
+      overflow-x: auto;
     }
 
-    .stat-card:hover {
-      border-color: rgba(192, 132, 252, 0.4);
-      box-shadow: 0 8px 24px -6px rgba(168, 85, 247, 0.2);
+    .admin-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.9rem 1.25rem;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
-    .stat-icon {
-      font-size: 1.6rem;
+    .admin-tab-btn:hover {
+      color: #f1f5f9;
     }
 
-    .stat-info strong {
+    .admin-tab-btn.active {
+      color: #38bdf8;
+      border-bottom-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.05);
+    }
+
+    .admin-tab-btn .tab-badge {
+      padding: 0.15rem 0.45rem;
+      border-radius: 9999px;
+      font-size: 0.68rem;
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+    }
+
+    .admin-tab-btn.active .tab-badge {
+      background: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+    }
+
+    /* Main Content Container */
+    .admin-main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .tab-pane.active {
       display: block;
-      font-size: 1.5rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Metrics Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-box {
+      background: var(--admin-card-bg);
+      border: 1px solid var(--admin-card-border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s ease;
+    }
+
+    .stat-box:hover {
+      border-color: rgba(192, 132, 252, 0.45);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.18);
+    }
+
+    .stat-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #9333ea, #38bdf8);
+      opacity: 0.6;
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .stat-title {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-icon-wrap {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .stat-value {
+      font-size: 1.85rem;
       font-weight: 800;
       color: #ffffff;
       letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 0.4rem;
     }
 
-    .stat-info small {
+    .stat-meta {
       font-size: 0.74rem;
-      color: var(--text-muted);
-      font-weight: 500;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
     }
 
-    /* Controls Row */
-    .controls-row {
+    .stat-meta.good { color: var(--admin-emerald); }
+    .stat-meta.warn { color: var(--admin-amber); }
+    .stat-meta.alert { color: var(--admin-rose); }
+
+    /* Overview Section Panels */
+    .overview-panels {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .overview-panels { grid-template-columns: 1fr; }
+    }
+
+    .admin-card {
+      background: var(--admin-card-bg);
+      border: 1px solid var(--admin-card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .admin-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .admin-card-header h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Filter & Controls Toolbar */
+    .controls-toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -199,237 +370,195 @@
       flex-wrap: wrap;
     }
 
-    .search-bar {
+    .search-box {
       position: relative;
       flex: 1;
-      min-width: 220px;
-      max-width: 380px;
+      min-width: 250px;
+      max-width: 400px;
     }
 
-    .search-bar svg {
+    .search-box svg {
       position: absolute;
-      left: 0.8rem;
+      left: 0.9rem;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--text-muted);
+      color: #64748b;
       pointer-events: none;
     }
 
-    .search-bar input {
+    .search-input {
       width: 100%;
-      padding: 0.55rem 0.85rem 0.55rem 2.5rem;
-      background: rgba(10, 7, 18, 0.65);
-      border: 1px solid var(--border-subtle);
-      border-radius: 9px;
-      color: var(--text-primary);
-      font-size: 0.84rem;
+      padding: 0.6rem 0.9rem 0.6rem 2.6rem;
+      background: rgba(10, 7, 18, 0.7);
+      border: 1px solid var(--admin-card-border);
+      border-radius: 10px;
+      color: #f1f5f9;
+      font-size: 0.85rem;
       transition: all 0.2s;
     }
 
-    .search-bar input:focus {
+    .search-input:focus {
       outline: none;
-      border-color: var(--cyan-primary);
-      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+      border-color: var(--admin-cyan);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
     }
 
-    /* Table */
-    .profiles-table-wrap {
-      background: rgba(14, 9, 24, 0.65);
-      border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: var(--shadow-card);
+    .select-dropdown {
+      padding: 0.6rem 1rem;
+      background: rgba(10, 7, 18, 0.7);
+      border: 1px solid var(--admin-card-border);
+      border-radius: 10px;
+      color: #f1f5f9;
+      font-size: 0.85rem;
+      cursor: pointer;
     }
 
-    .profiles-table {
+    .select-dropdown:focus {
+      outline: none;
+      border-color: var(--admin-cyan);
+    }
+
+    /* Responsive Data Tables */
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .admin-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.83rem;
+      font-size: 0.84rem;
+      text-align: left;
     }
 
-    .profiles-table thead th {
-      background: rgba(10, 7, 18, 0.75);
-      padding: 0.8rem 1rem;
-      text-align: left;
-      font-size: 0.7rem;
+    .admin-table thead th {
+      background: rgba(12, 8, 20, 0.85);
+      padding: 0.85rem 1rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      letter-spacing: 0.07em;
-      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      color: #94a3b8;
       text-transform: uppercase;
-      border-bottom: 1px solid var(--border-subtle);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       white-space: nowrap;
     }
 
-    .profiles-table tbody tr {
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+    .admin-table tbody tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       transition: background 0.15s;
     }
 
-    .profiles-table tbody tr:last-child {
-      border-bottom: none;
+    .admin-table tbody tr:hover {
+      background: rgba(168, 85, 247, 0.07);
     }
 
-    .profiles-table tbody tr:hover {
-      background: rgba(168, 85, 247, 0.06);
-    }
-
-    .profiles-table td {
-      padding: 0.85rem 1rem;
+    .admin-table td {
+      padding: 0.9rem 1rem;
       vertical-align: middle;
     }
 
-    .user-name-cell {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-    }
-
-    .user-mini-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(168, 85, 247, 0.14);
+    .user-avatar-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(168, 85, 247, 0.15);
       border: 1px solid rgba(168, 85, 247, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
-      font-size: 0.75rem;
       font-weight: 700;
-      color: var(--cyan-primary);
-      font-family: var(--font-mono);
+      color: var(--admin-accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
     }
 
-    .user-name-text strong {
-      display: block;
-      color: #ffffff;
-      font-weight: 600;
-      font-size: 0.84rem;
-    }
-
-    .user-name-text small {
-      color: var(--text-muted);
-      font-size: 0.72rem;
-      font-family: var(--font-mono);
-    }
-
-    .role-badge {
+    .role-tag {
       display: inline-block;
-      padding: 0.2rem 0.6rem;
+      padding: 0.2rem 0.65rem;
       border-radius: 6px;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 600;
-      letter-spacing: 0.03em;
     }
 
-    .role-badge.ca {
-      background: rgba(168, 85, 247, 0.15);
-      color: #c084fc;
-      border: 1px solid rgba(168, 85, 247, 0.3);
-    }
+    .role-tag.ca { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .role-tag.client { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .role-tag.auditor { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .role-tag.admin { background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); }
 
-    .role-badge.client {
-      background: rgba(16,185,129,0.12);
-      color: #10b981;
-      border: 1px solid rgba(16,185,129,0.25);
-    }
-
-    .role-badge.auditor {
-      background: rgba(245,158,11,0.12);
-      color: #f59e0b;
-      border: 1px solid rgba(245,158,11,0.25);
-    }
-
-    .role-badge.admin {
-      background: rgba(124, 58, 237, 0.15);
-      color: #c084fc;
-      border: 1px solid rgba(124, 58, 237, 0.3);
-    }
-
-    .status-pill {
+    .status-tag {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
       padding: 0.2rem 0.6rem;
       border-radius: 6px;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 600;
     }
 
-    .status-pill.active {
-      background: rgba(16,185,129,0.12);
-      color: #10b981;
-    }
+    .status-tag.active { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+    .status-tag.expiring { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    .status-tag.expired { background: rgba(244, 63, 94, 0.15); color: #f43f5e; }
+    .status-tag.renewed { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
 
-    .status-pill.inactive {
-      background: rgba(100,116,139,0.15);
-      color: #94a3b8;
-    }
-
-    .action-btns {
+    .action-group {
       display: flex;
+      align-items: center;
       gap: 0.4rem;
     }
 
-    .btn-icon-sm {
-      width: 30px;
-      height: 30px;
-      border-radius: 7px;
-      border: 1px solid var(--border-subtle);
-      background: transparent;
-      cursor: pointer;
+    .btn-table-action {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: #94a3b8;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
       transition: all 0.15s;
-      color: var(--text-muted);
     }
 
-    .btn-icon-sm:hover.view { border-color: rgba(168, 85, 247, 0.45); color: #c084fc; background: rgba(168, 85, 247, 0.1); }
-    .btn-icon-sm:hover.edit { border-color: rgba(245,158,11,0.4); color: #f59e0b; background: rgba(245,158,11,0.08); }
-    .btn-icon-sm:hover.delete { border-color: rgba(244,63,94,0.4); color: #f43f5e; background: rgba(244,63,94,0.08); }
+    .btn-table-action:hover.view { color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.1); }
+    .btn-table-action:hover.edit { color: #f59e0b; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); }
+    .btn-table-action:hover.pwd { color: #c084fc; border-color: rgba(192, 132, 252, 0.4); background: rgba(192, 132, 252, 0.1); }
+    .btn-table-action:hover.del { color: #f43f5e; border-color: rgba(244, 63, 94, 0.4); background: rgba(244, 63, 94, 0.1); }
+    .btn-table-action:hover.verify { color: #10b981; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); }
 
-    .empty-state {
-      text-align: center;
-      padding: 3.5rem 1rem;
-      color: var(--text-muted);
-    }
-
-    .empty-state svg { margin-bottom: 0.75rem; opacity: 0.4; }
-    .empty-state p { font-size: 0.86rem; }
-
-    /* Modal */
-    .modal-overlay {
-      display: none;
+    /* Modal Overlay & Card */
+    .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(5, 3, 10, 0.88);
+      background: rgba(4, 2, 8, 0.85);
       backdrop-filter: blur(8px);
-      z-index: 200;
+      display: none;
       align-items: center;
       justify-content: center;
+      z-index: 1000;
       padding: 1.5rem;
     }
 
-    .modal-overlay.open {
+    .modal-backdrop.active {
       display: flex;
     }
 
-    .modal-card {
-      background: rgba(15, 10, 26, 0.98);
-      border: 1px solid rgba(168, 85, 247, 0.28);
-      border-radius: 16px;
+    .modal-box {
+      background: #0d0818;
+      border: 1px solid var(--admin-card-border);
+      border-radius: 18px;
       padding: 2rem;
       width: 100%;
-      max-width: 560px;
-      box-shadow: 0 30px 80px -15px rgba(0,0,0,0.92);
-      animation: modalPop 0.28s cubic-bezier(0.16,1,0.3,1) forwards;
+      max-width: 580px;
+      box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.9);
+      animation: modalSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       max-height: 90vh;
       overflow-y: auto;
     }
 
-    @keyframes modalPop {
-      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    @keyframes modalSlide {
+      from { opacity: 0; transform: scale(0.96) translateY(12px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
@@ -438,916 +567,1173 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .modal-header h3 {
-      font-size: 1.1rem;
+    .modal-header h4 {
+      font-size: 1.15rem;
       font-weight: 700;
       color: #ffffff;
-    }
-
-    .modal-header p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 0.15rem;
+      margin: 0;
     }
 
     .modal-close-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border-subtle);
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.25rem;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      transition: all 0.15s;
-      flex-shrink: 0;
+      line-height: 1;
+      padding: 0.25rem;
     }
 
-    .modal-close-btn:hover {
-      background: rgba(244,63,94,0.12);
-      border-color: rgba(244,63,94,0.35);
-      color: #f43f5e;
-    }
+    .modal-close-btn:hover { color: #f1f5f9; }
 
-    .modal-form {
-      display: flex;
-      flex-direction: column;
-      gap: 0.95rem;
-    }
-
-    .modal-form .form-row-2 {
+    /* Form Fields */
+    .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
+      gap: 1rem;
     }
 
-    .modal-form .form-group {
+    .form-group {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
     }
 
-    .modal-form label {
-      font-size: 0.77rem;
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+
+    .form-label {
+      font-size: 0.78rem;
       font-weight: 600;
-      color: var(--text-secondary);
+      color: #cbd5e1;
     }
 
-    .modal-form input,
-    .modal-form select {
-      padding: 0.6rem 0.85rem;
-      background: rgba(7,9,14,0.65);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      color: var(--text-primary);
-      font-size: 0.84rem;
-      font-family: var(--font-main);
+    .form-input {
+      padding: 0.65rem 0.9rem;
+      background: rgba(14, 10, 24, 0.85);
+      border: 1px solid var(--admin-card-border);
+      border-radius: 9px;
+      color: #f1f5f9;
+      font-size: 0.85rem;
       transition: all 0.2s;
     }
 
-    .modal-form select option { background: #0e1320; }
-
-    .modal-form input:focus,
-    .modal-form select:focus {
+    .form-input:focus {
       outline: none;
-      border-color: var(--cyan-primary);
-      box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
+      border-color: var(--admin-accent);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.18);
     }
 
     .modal-footer {
       display: flex;
-      gap: 0.65rem;
+      align-items: center;
       justify-content: flex-end;
-      margin-top: 1.5rem;
-    }
-
-    /* View modal profile card */
-    .profile-view-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
       gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .profile-view-item {
-      background: rgba(7,9,14,0.5);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 0.65rem 0.85rem;
-    }
-
-    .profile-view-item label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      display: block;
-      margin-bottom: 0.2rem;
-    }
-
-    .profile-view-item span {
-      font-size: 0.83rem;
-      color: #ffffff;
-      font-weight: 500;
-      word-break: break-all;
-    }
-
-    .profile-view-item.full-width {
-      grid-column: 1 / -1;
-    }
-
-    /* Delete confirm modal */
-    .delete-confirm-body {
-      text-align: center;
-      padding: 0.5rem 0 1rem;
-    }
-
-    .delete-icon-circle {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: rgba(244,63,94,0.12);
-      border: 1px solid rgba(244,63,94,0.3);
+    /* Diagnostics & System info */
+    .diag-item {
       display: flex;
       align-items: center;
-      justify-content: center;
-      margin: 0 auto 1rem;
-      color: #f43f5e;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.83rem;
     }
 
-    .delete-confirm-body h4 {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 0.4rem;
-    }
+    .diag-item span:first-child { color: #94a3b8; }
+    .diag-item span:last-child { font-family: 'JetBrains Mono', monospace; color: #f1f5f9; font-weight: 600; }
 
-    .delete-confirm-body p {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      max-width: 320px;
-      margin: 0 auto;
-      line-height: 1.5;
-    }
-
-    /* Notification Toast overrides for admin */
-    .toast-container { bottom: 1.5rem; right: 1.5rem; }
-
-    /* Loading state */
-    .table-loading {
-      text-align: center;
-      padding: 2.5rem;
-      color: var(--text-muted);
-      font-size: 0.84rem;
-    }
-
-    /* Error state */
-    .api-error-banner {
-      background: rgba(244,63,94,0.1);
-      border: 1px solid rgba(244,63,94,0.3);
+    /* Audit Log Stream */
+    .log-entry {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 0.85rem;
       border-radius: 10px;
-      padding: 0.9rem 1.2rem;
-      margin-bottom: 1.25rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      margin-bottom: 0.65rem;
+      font-size: 0.82rem;
+    }
+
+    .log-badge {
+      padding: 0.2rem 0.5rem;
+      border-radius: 5px;
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+
+    .log-badge.INFO { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+    .log-badge.WARNING { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    .log-badge.ERROR { background: rgba(244, 63, 94, 0.15); color: #f43f5e; }
+
+    /* Toast Notification */
+    #adminToastContainer {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .admin-toast {
+      padding: 0.85rem 1.25rem;
+      background: #0f0a1c;
+      border: 1px solid var(--admin-accent);
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      animation: toastIn 0.25s ease;
       display: flex;
       align-items: center;
       gap: 0.65rem;
-      font-size: 0.82rem;
-      color: #fca5a5;
     }
 
-    @media (max-width: 768px) {
-      .stats-row { grid-template-columns: repeat(2, 1fr); }
-      .modal-form .form-row-2 { grid-template-columns: 1fr; }
-      .profile-view-grid { grid-template-columns: 1fr; }
-      .profile-view-item.full-width { grid-column: unset; }
-      .admin-body { padding: 1rem; }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <!-- Ambient Background -->
-  <div class="ambient-background">
-    <div class="glow-orb orb-primary"></div>
-    <div class="glow-orb orb-secondary"></div>
-    <div class="blueprint-grid"></div>
-  </div>
-
   <div class="admin-layout">
-    <!-- Admin Header -->
-    <header class="admin-header">
-      <div class="admin-brand">
-        <div class="brand-logo-icon">
-          <img src="logo.png" alt="AI Chartered Accountant Logo" class="brand-logo-img">
+    <!-- Top Navigation Bar -->
+    <header class="admin-navbar">
+      <a href="admin.html" class="admin-brand">
+        <div class="admin-brand-icon">
+          <img src="logo.png" alt="AI CA Platform" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         <div class="admin-brand-text">
-          <div class="admin-brand-title">AI Chartered Accountant</div>
-          <div class="admin-brand-badge">ADMIN PANEL v2.0</div>
+          <h2>AI CA COMMAND CENTER</h2>
+          <span>ADMINISTRATIVE GOVERNANCE</span>
         </div>
-      </div>
+      </a>
 
-      <div class="admin-header-actions">
-        <div class="db-status-pill fallback" id="dbStatusPill">
-          <span class="db-status-dot"></span>
-          <span id="dbStatusText">Connecting...</span>
+      <div class="admin-nav-actions">
+        <div class="status-badge-live" id="dbStatusPill" onclick="refreshDiagnostics()" title="Click to test database connectivity">
+          <span class="pulse-dot"></span>
+          <span id="dbStatusLabel">Checking MongoDB...</span>
         </div>
-        <button class="btn-secondary" style="height:36px; font-size:0.8rem;" onclick="window.location.href='index.html'" id="backToDashBtn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
-          <span>Dashboard</span>
+
+        <button class="btn-admin btn-admin-secondary" onclick="triggerManualScheduler()" id="runScanBtn">
+          ⚡ Trigger Expiry Scan
         </button>
-        <button class="btn-secondary" style="height:36px; font-size:0.8rem;" onclick="doLogout()" id="adminLogoutBtn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-          </svg>
-          <span>Log Out</span>
+
+        <a href="/api/docs" target="_blank" class="btn-admin btn-admin-secondary">
+          📖 API Docs
+        </a>
+
+        <a href="dashboard.html" class="btn-admin btn-admin-primary">
+          📊 CA Dashboard
+        </a>
+
+        <button class="btn-admin btn-admin-secondary" onclick="adminSignOut()" title="Sign Out">
+          🚪 Logout
         </button>
       </div>
     </header>
 
-    <!-- Admin Body -->
-    <main class="admin-body">
-      <div class="admin-page-header">
-        <div>
-          <div class="section-tag" style="margin-bottom:0.5rem;">ADMINISTRATOR PORTAL • PROFILE & ID REGISTRY</div>
-          <h1>Profile & Access Management</h1>
-          <p>View, add, edit, and remove user profiles and institutional access IDs from the platform.</p>
-        </div>
-        <button class="btn-primary" id="addProfileBtn" onclick="openAddModal()" style="height:42px; font-size:0.88rem;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-          <span>Add New Profile / ID</span>
-        </button>
-      </div>
+    <!-- Sub Navigation / Tab Bar -->
+    <nav class="admin-subnav">
+      <button class="admin-tab-btn active" onclick="switchAdminTab('overviewTab', this)">
+        <span>📊 Overview & Analytics</span>
+      </button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('usersTab', this)">
+        <span>👥 User & Access Control</span>
+        <span class="tab-badge" id="tabUserCount">0</span>
+      </button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('documentsTab', this)">
+        <span>📑 Compliance & Documents</span>
+        <span class="tab-badge" id="tabDocCount">0</span>
+      </button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('auditTab', this)">
+        <span>📜 Audit Trail & Logs</span>
+      </button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('systemTab', this)">
+        <span>⚙️ System Diagnostics & Export</span>
+      </button>
+    </nav>
 
-      <!-- API Error Banner -->
-      <div class="api-error-banner" id="apiBanner" style="display:none;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg>
-        <span id="apiBannerText">Could not connect to backend. Showing embedded data.</span>
-      </div>
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      
+      <!-- ================= TAB 1: OVERVIEW & METRICS ================= -->
+      <section id="overviewTab" class="tab-pane active">
+        <!-- Key Metrics Cards -->
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-top">
+              <span class="stat-title">Total Registered Users</span>
+              <div class="stat-icon-wrap">👥</div>
+            </div>
+            <div class="stat-value" id="kpiTotalUsers">—</div>
+            <div class="stat-meta good" id="kpiUsersBreakdown">Loading user distribution...</div>
+          </div>
 
-      <!-- Stats -->
-      <div class="stats-row" id="statsRow">
-        <div class="stat-card">
-          <div class="stat-icon">👥</div>
-          <div class="stat-info">
-            <strong id="statTotal">—</strong>
-            <small>Total Profiles</small>
+          <div class="stat-box">
+            <div class="stat-top">
+              <span class="stat-title">Managed Documents</span>
+              <div class="stat-icon-wrap">📑</div>
+            </div>
+            <div class="stat-value" id="kpiTotalDocs">—</div>
+            <div class="stat-meta good" id="kpiDocsBreakdown">Tracking statutory validity</div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-top">
+              <span class="stat-title">Compliance Health</span>
+              <div class="stat-icon-wrap">🛡️</div>
+            </div>
+            <div class="stat-value" id="kpiComplianceRate">—%</div>
+            <div class="stat-meta good" id="kpiComplianceMeta">Statutory validity compliance</div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-top">
+              <span class="stat-title">Expiring / Expired Docs</span>
+              <div class="stat-icon-wrap">⚠️</div>
+            </div>
+            <div class="stat-value" id="kpiExpiringCount">—</div>
+            <div class="stat-meta warn" id="kpiExpiringMeta">Action required</div>
           </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon">⚡</div>
-          <div class="stat-info">
-            <strong id="statActive">—</strong>
-            <small>Active Accounts</small>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🏢</div>
-          <div class="stat-info">
-            <strong id="statCa">—</strong>
-            <small>CA Practitioners</small>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📋</div>
-          <div class="stat-info">
-            <strong id="statOther">—</strong>
-            <small>Clients & Auditors</small>
-          </div>
-        </div>
-      </div>
 
-      <!-- Controls -->
-      <div class="controls-row">
-        <div class="search-bar">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-          <input type="text" id="searchInput" placeholder="Search by name, email, ID..." oninput="filterProfiles()">
-        </div>
-        <div style="display:flex; gap:0.5rem; align-items:center;">
-          <select id="roleFilter" onchange="filterProfiles()" style="background:rgba(7,9,14,0.65); border:1px solid rgba(255,255,255,0.08); color:var(--text-secondary); padding:0.5rem 0.85rem; border-radius:8px; font-size:0.82rem; font-family:var(--font-main); cursor:pointer;">
-            <option value="">All Roles</option>
-            <option value="ca">Chartered Accountant</option>
-            <option value="client">Enterprise Client</option>
-            <option value="auditor">Auditor</option>
-          </select>
-          <button class="btn-secondary" style="height:36px; font-size:0.8rem;" onclick="loadProfiles()" title="Refresh">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.49-4.21"/>
-            </svg>
-          </button>
-        </div>
-      </div>
+        <!-- Overview Panels -->
+        <div class="overview-panels">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>⚡ Quick System Operations</h3>
+              <span style="font-size: 0.78rem; color: #94a3b8;">Automated Background Workflows</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--admin-card-border); border-radius: 12px; padding: 1.2rem;">
+                <h4 style="margin: 0 0 0.4rem 0; color: #f1f5f9; font-size: 0.95rem;">📅 Daily Expiry Scan</h4>
+                <p style="font-size: 0.78rem; color: #94a3b8; margin: 0 0 1rem 0;">Evaluates document expiration dates, triggers automated notifications, and updates compliance statuses.</p>
+                <button class="btn-admin btn-admin-primary" onclick="triggerManualScheduler()" style="width: 100%; justify-content: center;">
+                  Execute Expiry Scan Now
+                </button>
+              </div>
 
-      <!-- Profiles Table -->
-      <div class="profiles-table-wrap">
-        <table class="profiles-table" id="profilesTable">
-          <thead>
-            <tr>
-              <th>Profile</th>
-              <th>Role</th>
-              <th>Email</th>
-              <th>Firm / Organization</th>
-              <th>Membership ID</th>
-              <th>Status</th>
-              <th>Joined</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="profilesTbody">
-            <tr>
-              <td colspan="8" class="table-loading">
-                <span>⏳ Loading profiles from database...</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--admin-card-border); border-radius: 12px; padding: 1.2rem;">
+                <h4 style="margin: 0 0 0.4rem 0; color: #f1f5f9; font-size: 0.95rem;">💾 Compliance Data Backup</h4>
+                <p style="font-size: 0.78rem; color: #94a3b8; margin: 0 0 1rem 0;">Export full system records, audit trails, and document registers into JSON or CSV format.</p>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn-admin btn-admin-secondary" onclick="exportData('json')" style="flex: 1; justify-content: center;">
+                    JSON Export
+                  </button>
+                  <button class="btn-admin btn-admin-secondary" onclick="exportData('csv')" style="flex: 1; justify-content: center;">
+                    CSV Export
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>🩺 System Health Status</h3>
+            </div>
+            <div class="diag-item">
+              <span>Database Engine</span>
+              <span id="quickDbMode">MongoDB Live</span>
+            </div>
+            <div class="diag-item">
+              <span>API Gateway</span>
+              <span style="color: #10b981;">FastAPI v2.0.0 (Online)</span>
+            </div>
+            <div class="diag-item">
+              <span>Expiry Scheduler</span>
+              <span id="quickSchedulerState" style="color: #10b981;">Active (24h Loop)</span>
+            </div>
+            <div class="diag-item">
+              <span>Last Scheduler Run</span>
+              <span id="quickLastRun" style="font-size: 0.74rem;">Pending Run</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 2: USER & ACCESS CONTROL ================= -->
+      <section id="usersTab" class="tab-pane">
+        <div class="admin-card">
+          <div class="controls-toolbar">
+            <div class="search-box">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <input type="text" id="userSearchInput" class="search-input" placeholder="Search by name, username, FRN, COP..." oninput="filterUsersTable()">
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+              <select id="userRoleFilter" class="select-dropdown" onchange="filterUsersTable()">
+                <option value="">All Roles</option>
+                <option value="ca">CA Partners & Practitioners</option>
+                <option value="client">Enterprise Clients / CFOs</option>
+                <option value="auditor">Lead Statutory Auditors</option>
+              </select>
+
+              <button class="btn-admin btn-admin-primary" onclick="openAddUserModal()">
+                ➕ Add New User / Profile
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>User & ID</th>
+                  <th>Role</th>
+                  <th>Firm / Organization</th>
+                  <th>Membership / FRN</th>
+                  <th>DSC Status</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr><td colspan="7" style="text-align: center; color: #94a3b8; padding: 2rem;">Loading users...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: COMPLIANCE & DOCUMENTS HUB ================= -->
+      <section id="documentsTab" class="tab-pane">
+        <div class="admin-card">
+          <div class="controls-toolbar">
+            <div class="search-box">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <input type="text" id="docSearchInput" class="search-input" placeholder="Search by document name, holder, authority..." oninput="filterDocsTable()">
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+              <select id="docStatusFilter" class="select-dropdown" onchange="filterDocsTable()">
+                <option value="">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Expiring Soon">Expiring Soon</option>
+                <option value="Expired">Expired</option>
+                <option value="Renewal Completed">Renewal Completed</option>
+              </select>
+
+              <button class="btn-admin btn-admin-secondary" onclick="loadDocuments()">
+                🔄 Refresh Documents
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Document Name & Ref</th>
+                  <th>Holder / Entity</th>
+                  <th>Category</th>
+                  <th>Issuing Authority</th>
+                  <th>Validity / Expiry</th>
+                  <th>Status</th>
+                  <th>Verification</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="documentsTableBody">
+                <tr><td colspan="8" style="text-align: center; color: #94a3b8; padding: 2rem;">Loading compliance documents...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 4: AUDIT TRAIL & LOGS ================= -->
+      <section id="auditTab" class="tab-pane">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3>📜 System Audit Log & Notification Dispatch Trail</h3>
+            <button class="btn-admin btn-admin-secondary" onclick="clearLogs()" style="color: #f43f5e;">
+              🗑️ Clear All Logs
+            </button>
+          </div>
+          
+          <div id="auditLogStream" style="max-height: 600px; overflow-y: auto; padding-right: 0.5rem;">
+            <div style="text-align: center; color: #94a3b8; padding: 2rem;">Loading audit logs...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 5: SYSTEM DIAGNOSTICS & SETTINGS ================= -->
+      <section id="systemTab" class="tab-pane">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>🖥️ Server Environment & Diagnostics</h3>
+            </div>
+            <div id="diagnosticsDetails">
+              <div class="diag-item"><span>Loading server diagnostics...</span></div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <h3>📦 Database Storage & Backup</h3>
+            </div>
+            <div id="storageDetails">
+              <div class="diag-item"><span>Loading storage diagnostics...</span></div>
+            </div>
+            <div style="margin-top: 1.5rem;">
+              <button class="btn-admin btn-admin-primary" onclick="exportData('json')" style="width: 100%; justify-content: center; margin-bottom: 0.75rem;">
+                📥 Export Entire Database (JSON)
+              </button>
+              <button class="btn-admin btn-admin-secondary" onclick="exportData('csv')" style="width: 100%; justify-content: center;">
+                📄 Export Compliance Report (CSV)
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
-  <!-- ===== MODALS ===== -->
+  <!-- ================= MODALS ================= -->
 
-  <!-- ADD / EDIT PROFILE MODAL -->
-  <div class="modal-overlay" id="profileModal">
-    <div class="modal-card">
+  <!-- User Add / Edit Modal -->
+  <div class="modal-backdrop" id="userModal">
+    <div class="modal-box">
       <div class="modal-header">
-        <div>
-          <h3 id="modalTitle">Add New Profile / ID</h3>
-          <p id="modalSubtitle">Register a new user account and access credentials.</p>
-        </div>
-        <button class="modal-close-btn" onclick="closeModal('profileModal')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
+        <h4 id="userModalTitle">Add New User Profile</h4>
+        <button class="modal-close-btn" onclick="closeModal('userModal')">&times;</button>
       </div>
-
-      <div id="modalError" class="auth-error-message" style="margin-bottom:1rem;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-        <span id="modalErrorText">An error occurred.</span>
-      </div>
-
-      <form class="modal-form" id="profileForm" onsubmit="submitProfileForm(event)">
-        <input type="hidden" id="editingId">
-
-        <div class="form-row-2">
-          <div class="form-group">
-            <label>Full Name *</label>
-            <input type="text" id="fName" placeholder="e.g. CA. Aditya Tripathi, FCA" required>
+      <form id="userForm" onsubmit="handleUserSubmit(event)">
+        <input type="hidden" id="editUserId" value="">
+        
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label class="form-label">Full Name *</label>
+            <input type="text" id="uName" class="form-input" required placeholder="e.g. CA. Rahul Verma, FCA">
           </div>
-          <div class="form-group">
-            <label>Username / ID *</label>
-            <input type="text" id="fUsername" placeholder="e.g. aditya tripathi" required>
-          </div>
-        </div>
 
-        <div class="form-row-2">
           <div class="form-group">
-            <label>Password *</label>
-            <input type="password" id="fPassword" placeholder="Min 4 characters">
+            <label class="form-label">Username / Login ID *</label>
+            <input type="text" id="uUsername" class="form-input" required placeholder="e.g. rahul.verma">
           </div>
+
           <div class="form-group">
-            <label>Role *</label>
-            <select id="fRole">
+            <label class="form-label" id="uPasswordLabel">Password *</label>
+            <input type="password" id="uPassword" class="form-input" placeholder="Min 4 characters">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Role *</label>
+            <select id="uRole" class="form-input">
               <option value="Senior Partner CA">Senior Partner CA</option>
-              <option value="Enterprise CFO">Enterprise CFO / Client</option>
-              <option value="Statutory Lead Auditor">Statutory Lead Auditor</option>
-              <option value="Admin">Platform Admin</option>
               <option value="Chartered Accountant">Chartered Accountant</option>
+              <option value="Enterprise CFO">Enterprise CFO</option>
+              <option value="Statutory Lead Auditor">Statutory Lead Auditor</option>
+              <option value="Administrator">Administrator</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="uEmail" class="form-input" placeholder="e.g. rahul@tripathi-ca.com">
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Firm / Company Name</label>
+            <input type="text" id="uFirm" class="form-input" placeholder="e.g. Verma & Associates CA">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Membership / Client ID</label>
+            <input type="text" id="uMembershipId" class="form-input" placeholder="e.g. CA-RAHUL-1029">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Firm Reg Number (FRN)</label>
+            <input type="text" id="uFrn" class="form-input" placeholder="e.g. FRN-098271N">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">DSC Status</label>
+            <input type="text" id="uDsc" class="form-input" placeholder="e.g. Class 3 Active (Nov 2027)">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Account Status</label>
+            <select id="uStatus" class="form-input">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
             </select>
           </div>
         </div>
 
-        <div class="form-group">
-          <label>Email Address *</label>
-          <input type="email" id="fEmail" placeholder="e.g. name@firm.com" required>
-        </div>
-
-        <div class="form-row-2">
-          <div class="form-group">
-            <label>Firm / Organization</label>
-            <input type="text" id="fFirm" placeholder="e.g. Tripathi & Associates CA">
-          </div>
-          <div class="form-group">
-            <label>Membership / Access ID</label>
-            <input type="text" id="fMembershipId" placeholder="e.g. CA-ADITYA-7701">
-          </div>
-        </div>
-
-        <div class="form-row-2">
-          <div class="form-group">
-            <label>FRN (Firm Reg. Number)</label>
-            <input type="text" id="fFrn" placeholder="e.g. FRN-012938N" style="font-family:var(--font-mono);">
-          </div>
-          <div class="form-group">
-            <label>DSC / Signature Status</label>
-            <input type="text" id="fDsc" placeholder="e.g. Class 3 DSC Active">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Account Status</label>
-          <select id="fStatus">
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-            <option value="Suspended">Suspended</option>
-          </select>
-        </div>
-
         <div class="modal-footer">
-          <button type="button" class="btn-secondary" onclick="closeModal('profileModal')">Cancel</button>
-          <button type="submit" class="btn-primary" id="profileSubmitBtn">
-            <span id="profileSubmitText">Create Profile</span>
-          </button>
+          <button type="button" class="btn-admin btn-admin-secondary" onclick="closeModal('userModal')">Cancel</button>
+          <button type="submit" class="btn-admin btn-admin-primary" id="userSubmitBtn">Save Profile</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- VIEW PROFILE MODAL -->
-  <div class="modal-overlay" id="viewModal">
-    <div class="modal-card">
+  <!-- Admin Reset Password Modal -->
+  <div class="modal-backdrop" id="resetPwdModal">
+    <div class="modal-box" style="max-width: 440px;">
       <div class="modal-header">
-        <div>
-          <h3 id="viewModalName">Profile Details</h3>
-          <p id="viewModalRole">Role</p>
+        <h4>🔑 Direct Password Reset</h4>
+        <button class="modal-close-btn" onclick="closeModal('resetPwdModal')">&times;</button>
+      </div>
+      <p style="font-size: 0.82rem; color: #94a3b8; margin-bottom: 1.25rem;">
+        Set a new password directly for user <strong id="resetTargetUsername" style="color: #ffffff;"></strong>.
+      </p>
+      <form onsubmit="handleResetPasswordSubmit(event)">
+        <input type="hidden" id="resetTargetId" value="">
+        <div class="form-group">
+          <label class="form-label">New Password *</label>
+          <input type="password" id="adminNewPassword" class="form-input" required minlength="4" placeholder="Min 4 characters">
         </div>
-        <button class="modal-close-btn" onclick="closeModal('viewModal')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-      </div>
-      <div class="profile-view-grid" id="viewModalBody"></div>
-      <div class="modal-footer" style="margin-top:1.25rem;">
-        <button class="btn-secondary" onclick="closeModal('viewModal')">Close</button>
-      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-admin btn-admin-secondary" onclick="closeModal('resetPwdModal')">Cancel</button>
+          <button type="submit" class="btn-admin btn-admin-primary">Update Password</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- DELETE CONFIRM MODAL -->
-  <div class="modal-overlay" id="deleteModal">
-    <div class="modal-card" style="max-width:420px;">
-      <div class="delete-confirm-body">
-        <div class="delete-icon-circle">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-            <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-          </svg>
-        </div>
-        <h4>Remove Profile & Access ID</h4>
-        <p>Are you sure you want to permanently delete <strong id="deleteTargetName" style="color:#fff;">"Profile"</strong> from the platform? This action cannot be undone.</p>
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-backdrop" id="deleteConfirmModal">
+    <div class="modal-box" style="max-width: 440px;">
+      <div class="modal-header">
+        <h4 style="color: #f43f5e;">⚠️ Confirm Deletion</h4>
+        <button class="modal-close-btn" onclick="closeModal('deleteConfirmModal')">&times;</button>
       </div>
-      <div class="modal-footer" style="justify-content:center; gap:0.75rem; margin-top:0.5rem;">
-        <button class="btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
-        <button class="btn-primary" id="confirmDeleteBtn" style="background:linear-gradient(135deg,#f43f5e,#e11d48); box-shadow: 0 4px 14px rgba(244,63,94,0.4);" onclick="confirmDelete()">
-          Permanently Delete
-        </button>
+      <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 1.5rem;" id="deleteConfirmMessage">
+        Are you sure you want to permanently delete this item?
+      </p>
+      <div class="modal-footer">
+        <button type="button" class="btn-admin btn-admin-secondary" onclick="closeModal('deleteConfirmModal')">Cancel</button>
+        <button type="button" class="btn-admin btn-admin-primary" style="background: #f43f5e;" onclick="executeDelete()">Permanently Delete</button>
       </div>
     </div>
   </div>
 
   <!-- Toast Container -->
-  <div class="toast-container" id="toastContainer"></div>
+  <div id="adminToastContainer"></div>
 
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? (window.location.port === '8000' ? '' : 'http://localhost:8000')
-      : (window.location.origin && window.location.origin.startsWith('http') ? window.location.origin : 'https://ai-ca-system.onrender.com');
-    let allProfiles = [];
-    let deletingId = null;
-    let isEditing = false;
-    let usingFallback = false;
+    const API_BASE = window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1")
+      ? window.location.origin
+      : "";
 
-    // ---- INIT ----
-    document.addEventListener("DOMContentLoaded", async () => {
-      // Check auth guard
-      const user = localStorage.getItem("ai_ca_user") || sessionStorage.getItem("ai_ca_user");
-      if (!user) { window.location.replace("signin.html"); return; }
+    let allUsers = [];
+    let allDocs = [];
+    let deleteCallback = null;
 
-      await checkDbStatus();
-      await loadProfiles();
+    // Initialize Admin Dashboard on Page Load
+    document.addEventListener("DOMContentLoaded", () => {
+      loadOverviewStats();
+      loadUsers();
+      loadDocuments();
+      loadAuditLogs();
+      refreshDiagnostics();
     });
 
-    // ---- DATABASE STATUS ----
-    async function checkDbStatus() {
+    // Tab Navigation
+    function switchAdminTab(tabId, btn) {
+      document.querySelectorAll(".tab-pane").forEach(pane => pane.classList.remove("active"));
+      document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
+
+      const targetPane = document.getElementById(tabId);
+      if (targetPane) targetPane.classList.add("active");
+      if (btn) btn.classList.add("active");
+
+      if (tabId === "overviewTab") loadOverviewStats();
+      if (tabId === "usersTab") loadUsers();
+      if (tabId === "documentsTab") loadDocuments();
+      if (tabId === "auditTab") loadAuditLogs();
+      if (tabId === "systemTab") refreshDiagnostics();
+    }
+
+    // ---- 1. OVERVIEW & METRICS ----
+    async function loadOverviewStats() {
       try {
-        const res = await fetch(`${API_BASE}/api/auth/status`, { signal: AbortSignal.timeout(3000) });
+        const res = await fetch(`${API_BASE}/api/admin/overview`);
+        if (!res.ok) throw new Error("Failed to load overview statistics");
         const data = await res.json();
-        const pill = document.getElementById("dbStatusPill");
-        const text = document.getElementById("dbStatusText");
-        if (data.connected_to_live_mongodb) {
-          pill.className = "db-status-pill connected";
-          text.textContent = "MongoDB Live";
-        } else {
-          pill.className = "db-status-pill fallback";
-          text.textContent = "Embedded DB (JSON)";
-          usingFallback = true;
-        }
-      } catch {
-        const pill = document.getElementById("dbStatusPill");
-        const text = document.getElementById("dbStatusText");
-        pill.className = "db-status-pill fallback";
-        text.textContent = "Backend Offline";
-        showApiError("Backend server not running. Start it with: python -m uvicorn backend.main:app --reload");
-        usingFallback = true;
-      }
-    }
 
-    function showApiError(msg) {
-      const banner = document.getElementById("apiBanner");
-      banner.style.display = "flex";
-      document.getElementById("apiBannerText").textContent = msg;
-    }
+        document.getElementById("kpiTotalUsers").textContent = data.totalUsers || 0;
+        document.getElementById("kpiUsersBreakdown").textContent = 
+          `${data.rolesBreakdown.ca_partners || 0} CA Partners • ${data.rolesBreakdown.enterprise_clients || 0} Clients • ${data.rolesBreakdown.lead_auditors || 0} Auditors`;
 
-    // ---- LOAD PROFILES ----
-    async function loadProfiles() {
-      const tbody = document.getElementById("profilesTbody");
-      tbody.innerHTML = `<tr><td colspan="8" class="table-loading">⏳ Loading profiles...</td></tr>`;
+        document.getElementById("kpiTotalDocs").textContent = data.totalDocuments || 0;
+        document.getElementById("kpiDocsBreakdown").textContent = 
+          `${data.documentsBreakdown.active || 0} Active • ${data.documentsBreakdown.renewalCompleted || 0} Renewed`;
 
-      try {
-        const res = await fetch(`${API_BASE}/api/profiles`, { signal: AbortSignal.timeout(4000) });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        allProfiles = await res.json();
-        document.getElementById("apiBanner").style.display = "none";
+        document.getElementById("kpiComplianceRate").textContent = `${data.complianceRate}%`;
+        document.getElementById("kpiExpiringCount").textContent = 
+          (data.expiringSoonCount || 0) + (data.expiredCount || 0);
+
+        document.getElementById("quickDbMode").textContent = data.databaseMode || "Live Database";
+        document.getElementById("quickSchedulerState").textContent = "Active (24h Daily Loop)";
+        document.getElementById("quickLastRun").textContent = data.lastSchedulerRun 
+          ? new Date(data.lastSchedulerRun).toLocaleString() 
+          : "Active on schedule";
+
       } catch (err) {
-        // Load from localStorage as fallback
-        const stored = localStorage.getItem("ai_ca_user") || sessionStorage.getItem("ai_ca_user");
-        if (stored) {
-          const user = JSON.parse(stored);
-          allProfiles = [{
-            id: user.membershipId || "USR-7701",
-            username: user.username || "aditya tripathi",
-            name: user.name || "CA. Aditya Tripathi, FCA",
-            role: user.role || "Senior Partner CA",
-            email: user.email || "",
-            firm: user.firm || "",
-            frn: user.frn || "",
-            cop: user.cop || "",
-            membershipId: user.membershipId || "",
-            dscStatus: user.dscStatus || "Active",
-            status: "Active",
-            created_at: user.loginDate || ""
-          }];
-        } else {
-          allProfiles = [];
-        }
-        showApiError("Backend API not reachable — showing limited local session data. Start server with: python -m uvicorn backend.main:app --reload");
+        console.error("Error loading overview stats:", err);
       }
-
-      updateStats();
-      renderTable(allProfiles);
     }
 
-    // ---- RENDER TABLE ----
-    function renderTable(profiles) {
-      const tbody = document.getElementById("profilesTbody");
+    // ---- 2. USERS MANAGEMENT ----
+    async function loadUsers() {
+      try {
+        const res = await fetch(`${API_BASE}/api/profiles`);
+        if (!res.ok) throw new Error("Failed to load users");
+        allUsers = await res.json();
 
-      if (!profiles || profiles.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="8">
-              <div class="empty-state">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
-                <p>No profiles found. Add your first profile using the button above.</p>
-              </div>
-            </td>
-          </tr>`;
+        document.getElementById("tabUserCount").textContent = allUsers.length;
+        renderUsersTable(allUsers);
+      } catch (err) {
+        document.getElementById("usersTableBody").innerHTML = 
+          `<tr><td colspan="7" style="text-align: center; color: #f43f5e; padding: 2rem;">Error loading users: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderUsersTable(users) {
+      const tbody = document.getElementById("usersTableBody");
+      if (!users || users.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94a3b8; padding: 2rem;">No user profiles found.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = profiles.map(p => {
-        const initials = (p.name || p.username || "?")
-          .split(" ")
-          .filter(Boolean)
-          .slice(0, 2)
-          .map(w => w[0])
-          .join("")
-          .toUpperCase();
-
-        const roleLower = (p.role || "").toLowerCase();
+      tbody.innerHTML = users.map(u => {
+        const initials = (u.name || u.username || "U").split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
         let roleClass = "ca";
-        if (roleLower.includes("client") || roleLower.includes("cfo")) roleClass = "client";
-        else if (roleLower.includes("audit")) roleClass = "auditor";
-        else if (roleLower.includes("admin")) roleClass = "admin";
+        const rLower = (u.role || "").toLowerCase();
+        if (rLower.includes("client") || rLower.includes("cfo")) roleClass = "client";
+        else if (rLower.includes("audit")) roleClass = "auditor";
+        else if (rLower.includes("admin")) roleClass = "admin";
 
-        const statusClass = (p.status || "Active").toLowerCase() === "active" ? "active" : "inactive";
-        const dateStr = p.created_at ? new Date(p.created_at).toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" }) : "—";
+        const escapedUser = encodeURIComponent(JSON.stringify(u));
 
         return `
           <tr>
             <td>
-              <div class="user-name-cell">
-                <div class="user-mini-avatar">${initials.slice(0,2)}</div>
-                <div class="user-name-text">
-                  <strong>${escHtml(p.name || p.username)}</strong>
-                  <small>${escHtml(p.username || "")}</small>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div class="user-avatar-badge">${initials}</div>
+                <div>
+                  <strong style="color: #ffffff; display: block; font-size: 0.88rem;">${escHtml(u.name || u.username)}</strong>
+                  <span style="font-size: 0.74rem; color: #94a3b8; font-family: 'JetBrains Mono', monospace;">${escHtml(u.username)} • ${escHtml(u.email || "No email")}</span>
                 </div>
               </div>
             </td>
-            <td><span class="role-badge ${roleClass}">${escHtml(p.role || "—")}</span></td>
-            <td style="font-size:0.79rem; color:var(--text-secondary);">${escHtml(p.email || "—")}</td>
-            <td style="font-size:0.79rem; color:var(--text-secondary); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escHtml(p.firm || "")}">${escHtml(p.firm || "—")}</td>
-            <td style="font-family:var(--font-mono); font-size:0.75rem; color:var(--cyan-primary);">${escHtml(p.membershipId || p.id || "—")}</td>
+            <td><span class="role-tag ${roleClass}">${escHtml(u.role || "CA")}</span></td>
+            <td><span style="color: #cbd5e1;">${escHtml(u.firm || "—")}</span></td>
             <td>
-              <span class="status-pill ${statusClass}">
-                <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block;"></span>
-                ${escHtml(p.status || "Active")}
-              </span>
-            </td>
-            <td style="font-size:0.76rem; color:var(--text-muted);">${dateStr}</td>
-            <td>
-              <div class="action-btns">
-                <button class="btn-icon-sm view" onclick="viewProfile(${JSON.stringify(JSON.stringify(p))})" title="View Profile">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                </button>
-                <button class="btn-icon-sm edit" onclick="openEditModal(${JSON.stringify(JSON.stringify(p))})" title="Edit Profile">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                </button>
-                <button class="btn-icon-sm delete" onclick="openDeleteModal(${JSON.stringify(JSON.stringify(p))})" title="Delete Profile">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-                </button>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
+                <div>${escHtml(u.membershipId || "—")}</div>
+                <div style="color: #64748b;">${escHtml(u.frn || "")}</div>
               </div>
             </td>
-          </tr>`;
+            <td><span style="font-size: 0.75rem; color: #94a3b8;">${escHtml(u.dscStatus || "—")}</span></td>
+            <td><span class="status-tag ${u.status === 'Active' ? 'active' : 'expired'}">${escHtml(u.status || 'Active')}</span></td>
+            <td>
+              <div class="action-group">
+                <button class="btn-table-action edit" title="Edit Profile" onclick="openEditUserModal('${escapedUser}')">✏️</button>
+                <button class="btn-table-action pwd" title="Direct Password Reset" onclick="openResetPasswordModal('${u.id || u.username}', '${escHtml(u.name || u.username)}')">🔑</button>
+                <button class="btn-table-action del" title="Delete User" onclick="promptDeleteUser('${u.id || u.username}', '${escHtml(u.name || u.username)}')">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
       }).join("");
     }
 
-    // ---- STATS ----
-    function updateStats() {
-      document.getElementById("statTotal").textContent = allProfiles.length;
-      document.getElementById("statActive").textContent = allProfiles.filter(p => (p.status || "Active").toLowerCase() === "active").length;
-      document.getElementById("statCa").textContent = allProfiles.filter(p => (p.role || "").toLowerCase().includes("ca") || (p.role || "").toLowerCase().includes("chartered")).length;
-      document.getElementById("statOther").textContent = allProfiles.filter(p => !((p.role || "").toLowerCase().includes("ca") || (p.role || "").toLowerCase().includes("chartered"))).length;
-    }
+    function filterUsersTable() {
+      const q = document.getElementById("userSearchInput").value.toLowerCase().trim();
+      const role = document.getElementById("userRoleFilter").value.toLowerCase();
 
-    // ---- SEARCH / FILTER ----
-    function filterProfiles() {
-      const query = document.getElementById("searchInput").value.trim().toLowerCase();
-      const roleFilter = document.getElementById("roleFilter").value.toLowerCase();
+      const filtered = allUsers.filter(u => {
+        const matchQ = !q ||
+          (u.name && u.name.toLowerCase().includes(q)) ||
+          (u.username && u.username.toLowerCase().includes(q)) ||
+          (u.email && u.email.toLowerCase().includes(q)) ||
+          (u.firm && u.firm.toLowerCase().includes(q)) ||
+          (u.membershipId && u.membershipId.toLowerCase().includes(q)) ||
+          (u.frn && u.frn.toLowerCase().includes(q));
 
-      let filtered = allProfiles.filter(p => {
-        const matchText = !query || 
-          (p.name || "").toLowerCase().includes(query) ||
-          (p.username || "").toLowerCase().includes(query) ||
-          (p.email || "").toLowerCase().includes(query) ||
-          (p.membershipId || "").toLowerCase().includes(query) ||
-          (p.firm || "").toLowerCase().includes(query) ||
-          (p.id || "").toLowerCase().includes(query);
+        const rLower = (u.role || "").toLowerCase();
+        const matchRole = !role ||
+          (role === "ca" && (rLower.includes("ca") || rLower.includes("chartered") || rLower.includes("partner"))) ||
+          (role === "client" && (rLower.includes("client") || rLower.includes("cfo"))) ||
+          (role === "auditor" && rLower.includes("audit"));
 
-        const roleLower = (p.role || "").toLowerCase();
-        const matchRole = !roleFilter || 
-          (roleFilter === "ca" && (roleLower.includes("ca") || roleLower.includes("chartered"))) ||
-          (roleFilter === "client" && (roleLower.includes("client") || roleLower.includes("cfo"))) ||
-          (roleFilter === "auditor" && roleLower.includes("audit"));
-
-        return matchText && matchRole;
+        return matchQ && matchRole;
       });
 
-      renderTable(filtered);
+      renderUsersTable(filtered);
     }
 
-    // ---- ADD MODAL ----
-    function openAddModal() {
-      isEditing = false;
-      document.getElementById("modalTitle").textContent = "Add New Profile / ID";
-      document.getElementById("modalSubtitle").textContent = "Register a new user account and access credentials.";
-      document.getElementById("profileSubmitText").textContent = "Create Profile";
-      document.getElementById("editingId").value = "";
-      document.getElementById("profileForm").reset();
-      document.getElementById("fPassword").required = true;
-      document.getElementById("fPassword").placeholder = "Min 4 characters (required)";
-      hideModalError();
-      openModal("profileModal");
+    function openAddUserModal() {
+      document.getElementById("userModalTitle").textContent = "Add New User Profile";
+      document.getElementById("editUserId").value = "";
+      document.getElementById("userForm").reset();
+      document.getElementById("uPassword").required = true;
+      document.getElementById("uPasswordLabel").textContent = "Password *";
+      openModal("userModal");
     }
 
-    // ---- EDIT MODAL ----
-    function openEditModal(jsonStr) {
-      const p = JSON.parse(jsonStr);
-      isEditing = true;
-      document.getElementById("modalTitle").textContent = "Edit Profile";
-      document.getElementById("modalSubtitle").textContent = `Editing: ${p.name || p.username}`;
-      document.getElementById("profileSubmitText").textContent = "Save Changes";
-      document.getElementById("editingId").value = p.id || p.username;
+    function openEditUserModal(userJsonEncoded) {
+      const u = JSON.parse(decodeURIComponent(userJsonEncoded));
+      document.getElementById("userModalTitle").textContent = `Edit Profile: ${u.name || u.username}`;
+      document.getElementById("editUserId").value = u.id || u.username;
 
-      document.getElementById("fName").value = p.name || "";
-      document.getElementById("fUsername").value = p.username || "";
-      document.getElementById("fPassword").value = "";
-      document.getElementById("fPassword").required = false;
-      document.getElementById("fPassword").placeholder = "Leave blank to keep unchanged";
-      document.getElementById("fRole").value = p.role || "Senior Partner CA";
-      document.getElementById("fEmail").value = p.email || "";
-      document.getElementById("fFirm").value = p.firm || "";
-      document.getElementById("fMembershipId").value = p.membershipId || "";
-      document.getElementById("fFrn").value = p.frn || "";
-      document.getElementById("fDsc").value = p.dscStatus || "";
-      document.getElementById("fStatus").value = p.status || "Active";
+      document.getElementById("uName").value = u.name || "";
+      document.getElementById("uUsername").value = u.username || "";
+      document.getElementById("uPassword").value = "";
+      document.getElementById("uPassword").required = false;
+      document.getElementById("uPasswordLabel").textContent = "Password (leave blank to keep unchanged)";
+      document.getElementById("uRole").value = u.role || "Senior Partner CA";
+      document.getElementById("uEmail").value = u.email || "";
+      document.getElementById("uFirm").value = u.firm || "";
+      document.getElementById("uMembershipId").value = u.membershipId || "";
+      document.getElementById("uFrn").value = u.frn || "";
+      document.getElementById("uDsc").value = u.dscStatus || "";
+      document.getElementById("uStatus").value = u.status || "Active";
 
-      hideModalError();
-      openModal("profileModal");
+      openModal("userModal");
     }
 
-    // ---- SUBMIT FORM (ADD / EDIT) ----
-    async function submitProfileForm(e) {
+    async function handleUserSubmit(e) {
       e.preventDefault();
-      const btn = document.getElementById("profileSubmitBtn");
+      const editId = document.getElementById("editUserId").value;
+      const btn = document.getElementById("userSubmitBtn");
       btn.disabled = true;
-      btn.innerHTML = `<span>Processing...</span>`;
 
       const payload = {
-        name: document.getElementById("fName").value.trim(),
-        username: document.getElementById("fUsername").value.trim(),
-        password: document.getElementById("fPassword").value,
-        role: document.getElementById("fRole").value,
-        email: document.getElementById("fEmail").value.trim(),
-        firm: document.getElementById("fFirm").value.trim(),
-        membershipId: document.getElementById("fMembershipId").value.trim(),
-        frn: document.getElementById("fFrn").value.trim(),
-        dscStatus: document.getElementById("fDsc").value.trim(),
-        status: document.getElementById("fStatus").value
+        name: document.getElementById("uName").value.trim(),
+        username: document.getElementById("uUsername").value.trim(),
+        role: document.getElementById("uRole").value,
+        email: document.getElementById("uEmail").value.trim(),
+        firm: document.getElementById("uFirm").value.trim(),
+        membershipId: document.getElementById("uMembershipId").value.trim(),
+        frn: document.getElementById("uFrn").value.trim(),
+        dscStatus: document.getElementById("uDsc").value.trim(),
+        status: document.getElementById("uStatus").value
       };
 
-      if (!payload.password && !isEditing) {
-        showModalError("Password is required for new profiles.");
-        btn.disabled = false;
-        btn.innerHTML = `<span>Create Profile</span>`;
-        return;
-      }
+      const pwd = document.getElementById("uPassword").value;
+      if (pwd) payload.password = pwd;
 
       try {
-        let res, data;
-
-        if (!isEditing) {
+        let res;
+        if (editId) {
+          res = await fetch(`${API_BASE}/api/profiles/${encodeURIComponent(editId)}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          if (!pwd) {
+            showToast("Password is required for new users", true);
+            btn.disabled = false;
+            return;
+          }
           res = await fetch(`${API_BASE}/api/profiles`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-            signal: AbortSignal.timeout(5000)
-          });
-        } else {
-          const updatePayload = { ...payload };
-          if (!updatePayload.password) delete updatePayload.password;
-          const id = document.getElementById("editingId").value;
-          res = await fetch(`${API_BASE}/api/profiles/${encodeURIComponent(id)}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatePayload),
-            signal: AbortSignal.timeout(5000)
+            body: JSON.stringify(payload)
           });
         }
 
-        data = await res.json();
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Operation failed");
 
-        if (!res.ok) {
-          showModalError(data.detail || "An unexpected error occurred.");
-          btn.disabled = false;
-          btn.innerHTML = `<span>${isEditing ? "Save Changes" : "Create Profile"}</span>`;
+        closeModal("userModal");
+        showToast(editId ? "✅ User updated successfully!" : "✅ User created successfully!");
+        loadUsers();
+        loadOverviewStats();
+      } catch (err) {
+        showToast(`❌ ${err.message}`, true);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function openResetPasswordModal(id, name) {
+      document.getElementById("resetTargetId").value = id;
+      document.getElementById("resetTargetUsername").textContent = name;
+      document.getElementById("adminNewPassword").value = "";
+      openModal("resetPwdModal");
+    }
+
+    async function handleResetPasswordSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById("resetTargetId").value;
+      const newPwd = document.getElementById("adminNewPassword").value;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/users/${encodeURIComponent(id)}/reset-password`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ new_password: newPwd })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Password reset failed");
+
+        closeModal("resetPwdModal");
+        showToast("🔑 Password successfully updated!");
+      } catch (err) {
+        showToast(`❌ ${err.message}`, true);
+      }
+    }
+
+    function promptDeleteUser(id, name) {
+      document.getElementById("deleteConfirmMessage").innerHTML = 
+        `Are you sure you want to permanently delete user <strong>${escHtml(name)}</strong>? All associated sessions will be revoked.`;
+      
+      deleteCallback = async () => {
+        try {
+          const res = await fetch(`${API_BASE}/api/profiles/${encodeURIComponent(id)}`, { method: "DELETE" });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.detail || "Failed to delete user");
+          showToast(`🗑️ User deleted`);
+          loadUsers();
+          loadOverviewStats();
+        } catch (err) {
+          showToast(`❌ ${err.message}`, true);
+        }
+      };
+
+      openModal("deleteConfirmModal");
+    }
+
+    // ---- 3. DOCUMENTS MANAGEMENT ----
+    async function loadDocuments() {
+      try {
+        const res = await fetch(`${API_BASE}/api/documents`);
+        if (!res.ok) throw new Error("Failed to load documents");
+        allDocs = await res.json();
+
+        document.getElementById("tabDocCount").textContent = allDocs.length;
+        renderDocumentsTable(allDocs);
+      } catch (err) {
+        document.getElementById("documentsTableBody").innerHTML = 
+          `<tr><td colspan="8" style="text-align: center; color: #f43f5e; padding: 2rem;">Error loading documents: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderDocumentsTable(docs) {
+      const tbody = document.getElementById("documentsTableBody");
+      if (!docs || docs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #94a3b8; padding: 2rem;">No statutory compliance documents registered.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = docs.map(d => {
+        let statusClass = "active";
+        const st = d.status || "Active";
+        if (st === "Expired") statusClass = "expired";
+        else if (st === "Expiring Soon") statusClass = "expiring";
+        else if (st === "Renewal Completed") statusClass = "renewed";
+
+        const days = d.daysRemaining !== null && d.daysRemaining !== undefined 
+          ? `${d.daysRemaining} days` 
+          : "—";
+
+        return `
+          <tr>
+            <td>
+              <div>
+                <strong style="color: #ffffff; display: block; font-size: 0.88rem;">${escHtml(d.documentName)}</strong>
+                <span style="font-size: 0.74rem; color: #94a3b8; font-family: 'JetBrains Mono', monospace;">${escHtml(d.documentNumber || d.id)}</span>
+              </div>
+            </td>
+            <td><span style="color: #cbd5e1; font-weight: 500;">${escHtml(d.holderName || "—")}</span></td>
+            <td><span class="role-tag ca">${escHtml(d.documentType || "Statutory")}</span></td>
+            <td><span style="color: #94a3b8; font-size: 0.78rem;">${escHtml(d.issuingAuthority || "—")}</span></td>
+            <td>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;">
+                <div>${escHtml(d.expiryDate || "Perpetual")}</div>
+                <div style="color: ${d.daysRemaining < 30 ? '#f43f5e' : '#64748b'}; font-size: 0.72rem;">${days}</div>
+              </div>
+            </td>
+            <td><span class="status-tag ${statusClass}">${escHtml(st)}</span></td>
+            <td>
+              ${d.isVerified ? `
+                <span style="display: inline-flex; align-items: center; gap: 0.3rem; color: #10b981; font-size: 0.75rem; font-weight: 600;">
+                  ✓ Verified
+                </span>
+              ` : `
+                <button class="btn-admin btn-admin-secondary" style="padding: 0.2rem 0.6rem; font-size: 0.72rem;" onclick="verifyDoc('${d.id}')">
+                  Verify Now
+                </button>
+              `}
+            </td>
+            <td>
+              <div class="action-group">
+                <button class="btn-table-action del" title="Delete Document" onclick="promptDeleteDoc('${d.id}', '${escHtml(d.documentName)}')">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function filterDocsTable() {
+      const q = document.getElementById("docSearchInput").value.toLowerCase().trim();
+      const status = document.getElementById("docStatusFilter").value;
+
+      const filtered = allDocs.filter(d => {
+        const matchQ = !q ||
+          (d.documentName && d.documentName.toLowerCase().includes(q)) ||
+          (d.holderName && d.holderName.toLowerCase().includes(q)) ||
+          (d.documentNumber && d.documentNumber.toLowerCase().includes(q)) ||
+          (d.issuingAuthority && d.issuingAuthority.toLowerCase().includes(q));
+
+        const matchStatus = !status || d.status === status;
+        return matchQ && matchStatus;
+      });
+
+      renderDocumentsTable(filtered);
+    }
+
+    async function verifyDoc(docId) {
+      try {
+        const res = await fetch(`${API_BASE}/api/documents/${docId}/verify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            documentName: "Verified Document",
+            holderName: "Verified Holder",
+            documentNumber: "VER-100",
+            issuingAuthority: "CA Audit Authority",
+            verifiedBy: "CA Administrator"
+          })
+        });
+        if (!res.ok) throw new Error("Verification failed");
+        showToast("✅ Document marked as verified!");
+        loadDocuments();
+      } catch (err) {
+        showToast(`❌ ${err.message}`, true);
+      }
+    }
+
+    function promptDeleteDoc(id, name) {
+      document.getElementById("deleteConfirmMessage").innerHTML = 
+        `Are you sure you want to permanently remove document <strong>${escHtml(name)}</strong>?`;
+
+      deleteCallback = async () => {
+        try {
+          const res = await fetch(`${API_BASE}/api/documents/${id}`, { method: "DELETE" });
+          if (!res.ok) throw new Error("Failed to delete document");
+          showToast("🗑️ Document deleted");
+          loadDocuments();
+          loadOverviewStats();
+        } catch (err) {
+          showToast(`❌ ${err.message}`, true);
+        }
+      };
+
+      openModal("deleteConfirmModal");
+    }
+
+    // ---- 4. AUDIT TRAIL & LOGS ----
+    async function loadAuditLogs() {
+      try {
+        const [auditRes, notifRes] = await Promise.all([
+          fetch(`${API_BASE}/api/admin/audit-logs?limit=50`),
+          fetch(`${API_BASE}/api/admin/notifications?limit=50`)
+        ]);
+
+        const auditData = auditRes.ok ? await auditRes.json() : { logs: [] };
+        const notifData = notifRes.ok ? await notifRes.json() : { notifications: [] };
+
+        const allLogs = [
+          ...auditData.logs.map(l => ({ ...l, type: "AUDIT" })),
+          ...notifData.notifications.map(n => ({
+            id: n.id,
+            timestamp: n.timestamp,
+            action: `NOTIFICATION (${n.channel || 'ALERT'})`,
+            actor: n.recipient || "User",
+            details: { message: n.message || n.statutoryAlert || "" },
+            level: "INFO",
+            type: "NOTIFICATION"
+          }))
+        ];
+
+        allLogs.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+
+        const container = document.getElementById("auditLogStream");
+        if (allLogs.length === 0) {
+          container.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 2rem;">No audit logs or notification records recorded yet.</div>`;
           return;
         }
 
-        closeModal("profileModal");
-        showToast(isEditing ? `✅ Profile updated successfully!` : `✅ New profile created for ${payload.name}!`);
-        await loadProfiles();
+        container.innerHTML = allLogs.map(l => `
+          <div class="log-entry">
+            <span class="log-badge ${l.level || 'INFO'}">${l.level || 'INFO'}</span>
+            <div style="flex: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                <strong style="color: #ffffff;">${escHtml(l.action)}</strong>
+                <span style="font-size: 0.72rem; color: #64748b; font-family: 'JetBrains Mono', monospace;">
+                  ${l.timestamp ? new Date(l.timestamp).toLocaleString() : '—'}
+                </span>
+              </div>
+              <div style="font-size: 0.78rem; color: #94a3b8;">
+                Actor: <span style="color: #cbd5e1; font-weight: 500;">${escHtml(l.actor || "System")}</span>
+                ${l.details && Object.keys(l.details).length > 0 ? `
+                  • <span style="color: #64748b;">${escHtml(JSON.stringify(l.details))}</span>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `).join("");
 
       } catch (err) {
-        showModalError(`API not reachable: ${err.message}. Please start the backend server.`);
-        btn.disabled = false;
-        btn.innerHTML = `<span>${isEditing ? "Save Changes" : "Create Profile"}</span>`;
+        console.error("Error loading audit logs:", err);
       }
     }
 
-    // ---- VIEW MODAL ----
-    function viewProfile(jsonStr) {
-      const p = JSON.parse(jsonStr);
-      document.getElementById("viewModalName").textContent = p.name || p.username;
-      document.getElementById("viewModalRole").textContent = p.role || "Unknown Role";
-
-      const fields = [
-        { label: "Full Name", value: p.name },
-        { label: "Username / Login ID", value: p.username },
-        { label: "Role", value: p.role },
-        { label: "Email", value: p.email },
-        { label: "Firm / Organization", value: p.firm, full: true },
-        { label: "Membership ID", value: p.membershipId },
-        { label: "FRN", value: p.frn },
-        { label: "Certificate of Practice", value: p.cop },
-        { label: "DSC Status", value: p.dscStatus, full: true },
-        { label: "Account Status", value: p.status },
-        { label: "Internal ID", value: p.id },
-        { label: "Created", value: p.created_at ? new Date(p.created_at).toLocaleString() : "—" }
-      ];
-
-      document.getElementById("viewModalBody").innerHTML = fields.map(f =>
-        `<div class="profile-view-item${f.full ? " full-width" : ""}">
-          <label>${f.label}</label>
-          <span>${escHtml(f.value || "—")}</span>
-        </div>`
-      ).join("");
-
-      openModal("viewModal");
+    async function clearLogs() {
+      if (!confirm("Are you sure you want to clear all notification logs and audit records?")) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/clear-logs`, { method: "POST" });
+        if (!res.ok) throw new Error("Failed to clear logs");
+        showToast("🧹 All logs cleared successfully");
+        loadAuditLogs();
+      } catch (err) {
+        showToast(`❌ ${err.message}`, true);
+      }
     }
 
-    // ---- DELETE ----
-    function openDeleteModal(jsonStr) {
-      const p = JSON.parse(jsonStr);
-      deletingId = p.id || p.username;
-      document.getElementById("deleteTargetName").textContent = p.name || p.username;
-      openModal("deleteModal");
+    // ---- 5. DIAGNOSTICS & EXPORT ----
+    async function refreshDiagnostics() {
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/system-diagnostics`);
+        if (!res.ok) throw new Error("Failed to fetch diagnostics");
+        const diag = await res.json();
+
+        // Update Nav DB Status Pill
+        const pill = document.getElementById("dbStatusPill");
+        const label = document.getElementById("dbStatusLabel");
+        if (diag.database.isConnectedToMongo) {
+          pill.className = "status-badge-live";
+          label.textContent = `MongoDB Live (${diag.database.pingLatencyMs || 0}ms)`;
+        } else {
+          pill.className = "status-badge-live";
+          pill.style.borderColor = "#f59e0b";
+          pill.style.color = "#f59e0b";
+          label.textContent = "Embedded JSON Store";
+        }
+
+        // Render Diagnostics Tab
+        document.getElementById("diagnosticsDetails").innerHTML = `
+          <div class="diag-item"><span>Platform Operating System</span><span>${diag.platform.system} ${diag.platform.release} (${diag.platform.architecture})</span></div>
+          <div class="diag-item"><span>Python Runtime</span><span>Python ${diag.platform.pythonVersion}</span></div>
+          <div class="diag-item"><span>Server Timestamp</span><span>${new Date(diag.serverTime).toLocaleString()}</span></div>
+          <div class="diag-item"><span>Active API Endpoints</span><span>${diag.apiEndpointsActive} Registered</span></div>
+          <div class="diag-item"><span>Scheduler Status</span><span>${diag.scheduler.isRunning ? 'Active Background Thread' : 'Idle'}</span></div>
+          <div class="diag-item"><span>Scan Frequency</span><span>${diag.scheduler.scanInterval}</span></div>
+        `;
+
+        document.getElementById("storageDetails").innerHTML = `
+          <div class="diag-item"><span>Storage Engine</span><span>${diag.database.mode}</span></div>
+          <div class="diag-item"><span>Database Name</span><span>${diag.database.databaseName}</span></div>
+          <div class="diag-item"><span>Total Users in Store</span><span>${diag.database.collections.users}</span></div>
+          <div class="diag-item"><span>Total Documents in Store</span><span>${diag.database.collections.documents}</span></div>
+          <div class="diag-item"><span>Notifications Recorded</span><span>${diag.database.collections.notifications}</span></div>
+          <div class="diag-item"><span>JSON Storage Size</span><span>${diag.database.backupFileSizeKb} KB</span></div>
+        `;
+
+      } catch (err) {
+        console.error("Diagnostics refresh failed:", err);
+      }
     }
 
-    async function confirmDelete() {
-      if (!deletingId) return;
-      const btn = document.getElementById("confirmDeleteBtn");
+    async function triggerManualScheduler() {
+      const btn = document.getElementById("runScanBtn");
       btn.disabled = true;
-      btn.textContent = "Deleting...";
+      btn.textContent = "Scanning...";
 
       try {
-        const res = await fetch(`${API_BASE}/api/profiles/${encodeURIComponent(deletingId)}`, {
-          method: "DELETE",
-          signal: AbortSignal.timeout(5000)
-        });
+        const res = await fetch(`${API_BASE}/api/admin/trigger-scheduler`, { method: "POST" });
         const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Scan failed");
 
-        if (!res.ok) {
-          showToast(`❌ Error: ${data.detail || "Failed to delete."}`, true);
-        } else {
-          showToast(`🗑️ ${data.message}`);
-          closeModal("deleteModal");
-          await loadProfiles();
-        }
+        showToast("⚡ Daily expiry scan and reminder evaluation complete!");
+        loadOverviewStats();
+        loadDocuments();
+        loadAuditLogs();
       } catch (err) {
-        showToast(`❌ API not reachable: ${err.message}`, true);
+        showToast(`❌ ${err.message}`, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "⚡ Trigger Expiry Scan";
       }
-
-      btn.disabled = false;
-      btn.textContent = "Permanently Delete";
-      deletingId = null;
     }
 
-    // ---- LOGOUT ----
-    function doLogout() {
+    function exportData(format) {
+      window.open(`${API_BASE}/api/admin/export?format=${format}`, "_blank");
+    }
+
+    // Modal Helpers
+    function openModal(id) { document.getElementById(id).classList.add("active"); }
+    function closeModal(id) { document.getElementById(id).classList.remove("active"); }
+
+    function executeDelete() {
+      if (deleteCallback) deleteCallback();
+      closeModal("deleteConfirmModal");
+    }
+
+    function adminSignOut() {
       localStorage.removeItem("ai_ca_user");
       sessionStorage.removeItem("ai_ca_user");
-      showToast("Logging out...");
-      setTimeout(() => window.location.replace("signin.html"), 700);
+      showToast("Logging out of Admin Session...");
+      setTimeout(() => window.location.href = "signin.html", 600);
     }
 
-    // ---- MODAL HELPERS ----
-    function openModal(id) { document.getElementById(id).classList.add("open"); }
-    function closeModal(id) { document.getElementById(id).classList.remove("open"); }
-
-    function showModalError(msg) {
-      const el = document.getElementById("modalError");
-      document.getElementById("modalErrorText").textContent = msg;
-      el.classList.add("show");
-    }
-
-    function hideModalError() {
-      document.getElementById("modalError").classList.remove("show");
-    }
-
-    // ---- TOAST ----
     function showToast(msg, isError = false) {
-      const container = document.getElementById("toastContainer");
-      const toast = document.createElement("div");
-      toast.className = "toast";
-      toast.style.borderColor = isError ? "rgba(244,63,94,0.4)" : "rgba(168,85,247,0.35)";
-      toast.innerHTML = `<span>${msg}</span>`;
-      container.appendChild(toast);
+      const c = document.getElementById("adminToastContainer");
+      const t = document.createElement("div");
+      t.className = "admin-toast";
+      if (isError) {
+        t.style.borderColor = "#f43f5e";
+        t.style.boxShadow = "0 8px 25px rgba(244, 63, 94, 0.35)";
+      }
+      t.textContent = msg;
+      c.appendChild(t);
       setTimeout(() => {
-        toast.style.opacity = "0";
-        toast.style.transform = "translateX(40px)";
-        toast.style.transition = "all 0.3s ease";
-        setTimeout(() => toast.remove(), 300);
+        t.style.opacity = "0";
+        t.style.transform = "translateY(10px)";
+        t.style.transition = "all 0.3s ease";
+        setTimeout(() => t.remove(), 300);
       }, 3500);
     }
 
     function escHtml(str) {
       if (!str) return "";
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 
     // Close modals on backdrop click
-    document.querySelectorAll(".modal-overlay").forEach(overlay => {
+    document.querySelectorAll(".modal-backdrop").forEach(overlay => {
       overlay.addEventListener("click", e => {
-        if (e.target === overlay) overlay.classList.remove("open");
+        if (e.target === overlay) overlay.classList.remove("active");
       });
     });
   </script>
