@@ -9,7 +9,7 @@
   // Backend API Base URL
   const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? (window.location.port === '8000' ? '' : 'http://127.0.0.1:8000')
-    : '';
+    : (window.location.origin && window.location.origin.startsWith('http') ? window.location.origin : 'https://ai-ca-system.onrender.com');
 
   // State
   let allDocuments = [];

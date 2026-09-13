@@ -5,6 +5,15 @@
 
 ---
 
+## 🌐 Live Production Deployment
+
+- 🚀 **Live Web Application:** [https://ai-ca-system.onrender.com](https://ai-ca-system.onrender.com)
+- 📑 **Interactive API Docs (Swagger / OpenAPI):** [https://ai-ca-system.onrender.com/api/docs](https://ai-ca-system.onrender.com/api/docs)
+- 📖 **ReDoc API Documentation:** [https://ai-ca-system.onrender.com/api/redoc](https://ai-ca-system.onrender.com/api/redoc)
+- 💓 **Backend Health Check:** [https://ai-ca-system.onrender.com/api/health](https://ai-ca-system.onrender.com/api/health)
+
+---
+
 ## 1. Executive Summary & Problem-Solution Fit
 
 Traditional accounting is hindered by high costs, manual data-entry bottlenecks, and human errors. The **AI Chartered Accountant Automation System** transforms this into a **24/7 fast, accurate, and cost-effective financial ecosystem** by automating bookkeeping, tax estimation, live analytics, and bank reconciliation under human Chartered Accountant supervision.

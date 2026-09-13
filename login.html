@@ -148,7 +148,9 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <script>
-    const API = "http://localhost:8000";
+    const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? (window.location.port === '8000' ? '' : 'http://localhost:8000')
+      : (window.location.origin && window.location.origin.startsWith('http') ? window.location.origin : 'https://ai-ca-system.onrender.com');
 
     document.addEventListener("DOMContentLoaded", () => {
       /* ---- DOM refs ---- */
